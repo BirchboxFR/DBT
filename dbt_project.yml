@@ -35,17 +35,9 @@ models:
       +materialized: table
     payment:
       +materialized: table
-    pnl:
-      +materialized: table
     product:
       +materialized: table
     sales:
       +materialized: table
     snippets:
-      +materialized: table
-    survey:
-      +materialized: table
-    traffic:
-      +materialized: table
-    user:
       +materialized: table

@@ -20,5 +20,5 @@ SELECT bd.shipping_mode_id, max(bd.price) price, bd.min_weight, bd.max_weight, m
 det.date_end, max(COALESCE(det.shipping_taxes_rate,lc.price)) AS shipping_taxes_rate
 FROM base_data bd
 LEFT JOIN date_end_table det USING(shipping_mode_id, date_start)
-LEFT JOIN `ops.logistics_costs` lc ON lc.name = 'shipping_taxes_rate' AND lc.date_start<= bd.date_start AND (lc.date_end >= bd.date_start OR lc.date_end IS NULL)
+LEFT JOIN {{ ref('logistics_costs') }} lc ON lc.name = 'shipping_taxes_rate' AND lc.date_start<= bd.date_start AND (lc.date_end >= bd.date_start OR lc.date_end IS NULL)
 group by all
