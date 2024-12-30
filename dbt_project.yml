@@ -22,6 +22,30 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  dwh:  # Nom du projet (doit correspondre au champ `name`)
-    # Configuration globale pour tous les fichiers sous le dossier `models`
-    +materialized: table  # Matérialisation par défaut pour tous les modèles
+  dwh:
+    accounting:
+      +materialized: table
+    allocation:
+      +materialized: table
+    blissim_analytics:
+      +materialized: table
+    marketing:
+      +materialized: table
+    ops:
+      +materialized: table
+    payment:
+      +materialized: table
+    pnl:
+      +materialized: table
+    product:
+      +materialized: table
+    sales:
+      +materialized: table
+    snippets:
+      +materialized: table
+    survey:
+      +materialized: table
+    traffic:
+      +materialized: table
+    user:
+      +materialized: table
