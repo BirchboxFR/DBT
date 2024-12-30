@@ -13,8 +13,10 @@
     {%- for schema, tables in schema_mapping.items() -%}
         {%- if node.name in tables -%}
             {{ schema }}
-        {%- break -%}
-    {%- else -%}
-        {{ default_schema }}
+            {%- break -%}
+        {%- endif -%}
     {%- endfor -%}
+
+    {# Si aucun schéma spécifique n'est trouvé, retourner le schéma par défaut #}
+    {{ default_schema }}
 {%- endmacro %}
