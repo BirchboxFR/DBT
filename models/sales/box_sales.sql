@@ -24,7 +24,7 @@ group by all
 shipping_mode_dedup as(
 select 
 shipping_mode_id,max(price)price,min_weight,max_weight,max(price_daily) price_daily,date_Start,date_end,max(shipping_taxes_rate)shipping_taxes_rate
-from ops.shipping_costs
+from {{ ref('shipping_costs') }}
 group by all
 ),
 ranked_sub_history AS
@@ -282,7 +282,7 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
   LEFT JOIN inter.sub_offers so_parents ON so_parents.id = so.parent_offer_id AND so_parents.dw_country_code = so.dw_country_code
   LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
-  LEFT JOIN sales.box_gift bg ON bg.dw_country_code = s.dw_country_code AND bg.sub_id = s.id
+  LEFT JOIN {{ ref('box_gift') }} bg ON bg.dw_country_code = s.dw_country_code AND bg.sub_id = s.id
   LEFT JOIN snippets.yearly_coupons yc ON o.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
   /*LEFT JOIN (select user_id,month,year,dw_country_code,box_id,max(sub_suspended_reason_lvl1)sub_suspended_reason_lvl1,max(sub_suspended_reason_lvl2)sub_suspended_reason_lvl2,max(sub_suspended_reason_lvl3)sub_suspended_reason_lvl3 from`teamdata-291012.sales.box_sales_by_user_by_type`  group by 1,2,3,4,5)bsbu ON o.dw_country_code = bsbu.dw_country_code AND bsbu.user_id=o.user_id and bsbu.box_id = s.box_id + 1*/
   LEFT JOIN `inter.partial_box_paid` pbp ON pbp.dw_country_code = s.dw_country_code AND pbp.sub_id = s.id
