@@ -9,14 +9,17 @@
         'snippets_tmp': ['current_box']
     } -%}
 
-    {# Générer le schéma en vérifiant les noms des tables #}
+    {# Initialiser une variable pour stocker le schéma sélectionné #}
+    {%- set selected_schema = default_schema -%}
+
+    {# Vérifier si le nom du modèle correspond à une liste de tables #}
     {%- for schema, tables in schema_mapping.items() -%}
         {%- if node.name in tables -%}
-            {{ schema.strip() }}
-            {%- return -%}  {# Terminer dès qu'un schéma correspondant est trouvé #}
+            {%- set selected_schema = schema -%}
+            {%- break -%} {# Sortir de la boucle après avoir trouvé une correspondance #}
         {%- endif -%}
     {%- endfor -%}
 
-    {# Si aucun schéma spécifique trouvé, retourner le schéma par défaut #}
-    {{ default_schema.strip() }}
+    {# Retourner le schéma sélectionné #}
+    {{ selected_schema }}
 {%- endmacro %}
