@@ -16,7 +16,7 @@ WITH details_product AS (
          SUM(IF(pc.category_lvl_2 = 'Consumable item', COALESCE(p2.attr_discounted_purchase_price, p2.attr_purchase_price), 0)) AS consumable_cost,
          COUNTIF(pc.category_lvl_2 = 'Consumable item' AND COALESCE(p2.attr_discounted_purchase_price, p2.attr_purchase_price) IS NULL) AS nb_missing_consumable_item_price,
          MAX(ak.kit_type) AS kit_type
-  FROM product.all_kits ak
+  FROM {{ ref('all_kits') }} ak
   INNER JOIN inter.products p1 ON ak.country_code = p1.dw_country_code AND ak.kit_id = p1.id
   LEFT JOIN inter.posts po ON p1.dw_country_code = po.dw_country_code AND p1.post_id = po.id
   INNER JOIN inter.products p2 ON ak.country_code = p2.dw_country_code AND ak.product_id = p2.id
@@ -44,7 +44,7 @@ wout_total_costs AS (
          MAX(nb_products) AS nb_products,
          MAX(nb_packs) AS nb_packs
   FROM details_product dp
-  INNER JOIN ops.logistics_costs dlc ON dp.ii_date >= DATE(dlc.date_start) AND (dp.ii_date <= DATE(dlc.date_end) OR date_end IS NULL)
+  INNER JOIN {{ ref('logistics_costs') }} dlc ON dp.ii_date >= DATE(dlc.date_start) AND (dp.ii_date <= DATE(dlc.date_end) OR date_end IS NULL)
   WHERE dlc.name IN ('assembly basis',
                      'assembly basis lte',
                      'assembly product supp',
