@@ -1,0 +1,27 @@
+# Nom du projet (doit être en minuscules et sans espaces)
+name: 'dwh'
+version: '1.0.0'
+config-version: 2
+
+# Profil à utiliser pour la connexion aux bases de données
+profile: 'default'
+
+# Emplacements des différents fichiers de dbt
+model-paths: ["models"]  # Assurez-vous que vos modèles sont dans ce dossier
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Chemin cible pour les fichiers compilés
+target-path: "target"  # Dossier pour stocker les fichiers SQL compilés
+clean-targets:         # Dossiers supprimés par la commande `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuration des modèles
+models:
+  dwh:  # Nom du projet (doit correspondre au champ `name`)
+    # Configuration globale pour tous les fichiers sous le dossier `models`
+    +materialized: table  # Matérialisation par défaut pour tous les modèles
