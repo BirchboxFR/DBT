@@ -2,8 +2,8 @@
     {%- set default_schema = target.schema -%}
 
     {# Listes des tables spécifiques pour chaque schéma #}
-    {%- set sales_tmp_tables = ['box_sales', 'other_sales_table1', 'other_sales_table2'] -%}
-    {%- set product_tmp_tables = ['catalog', 'product_table1', 'product_table2'] -%}
+    {%- set sales_tmp_tables = ['box_sales'] -%}
+    {%- set product_tmp_tables = ['catalog', 'algolia_product_categories', 'categories','kit_costs','nice_names'] -%}
 
     {%- if node.name in sales_tmp_tables -%}
         sales_tmp
