@@ -31,7 +31,7 @@ select merchantAccountCode,date(date_trunc(eventDate, month)) as date,
 ifnull(sum(case when eventcode IN('AUTHORISATION','REFUND_FAILED') then value/100 end ),0) as adyen_authorisation,
 ifnull(sum(case when eventcode in ('REFUND','CANCEL_OR_REFUND') then value/100 end ),0) as adyen_refund,
 ifnull(sum(case when eventcode='AUTHORISATION' then value/100 end ),0)-ifnull(sum(case when eventcode in ('REFUND','CANCEL_OR_REFUND') then value/100 end ),0) as Adyen_total
- from inter.adyen_notifications
+ from {{ ref('adyen_notifications') }}
  
 where success=1  
 group by all

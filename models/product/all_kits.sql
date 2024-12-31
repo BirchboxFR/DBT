@@ -7,7 +7,7 @@ SELECT country_code, kit_id, product_id, max(quantity) AS quantity,'BOX' as kit_
 FROM
 (
 SELECT dw_country_code AS country_code, kit_id, product_id, quantity, 'BOX' AS kit_type
-FROM inter.kit_links
+FROM {{ ref('kit_links') }}
 UNION ALL
 SELECT country_code, kit_id, product_id, quantity, kit_type
 FROM lte_kits

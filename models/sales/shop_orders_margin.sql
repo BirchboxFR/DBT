@@ -90,9 +90,9 @@ FROM
                AS quantity,
     CASE WHEN o.gift_message IS NULL OR o.gift_message = '' THEN 0 ELSE 1 END AS msg_perso
   FROM {{ ref('shop_sales') }} AS ss
-  LEFT JOIN inter.orders o ON o.id = ss.order_id AND ss.dw_country_code = o.dw_country_code
+  LEFT JOIN {{ ref('orders') }} o ON o.id = ss.order_id AND ss.dw_country_code = o.dw_country_code
   LEFT JOIN {{ ref('catalog') }} AS c ON ss.dw_country_code = c.dw_country_code AND c.product_id = ss.product_id
-  INNER JOIN inter.products p ON p.dw_country_code = ss.dw_country_code AND p.id = ss.product_id
+  INNER JOIN {{ ref('products') }} p ON p.dw_country_code = ss.dw_country_code AND p.id = ss.product_id
   LEFT JOIN {{ ref('logistics_costs') }} dlc_taxes ON dlc_taxes.name = 'shipping_taxes_rate' AND ss.order_date >= DATE(dlc_taxes.date_start) AND (ss.order_date <= DATE(dlc_taxes.date_end) OR dlc_taxes.date_end IS NULL)
   LEFT JOIN {{ ref('logistics_costs') }} dlc_first_product ON dlc_first_product.name = 'picking first article' AND ss.order_date >= DATE(dlc_first_product.date_start) AND (ss.order_date <= DATE(dlc_first_product.date_end) OR dlc_first_product.date_end IS NULL)
   LEFT JOIN {{ ref('logistics_costs') }} dlc_next_product ON dlc_next_product.name = 'picking next article' AND ss.order_date >= DATE(dlc_next_product.date_start) AND (ss.order_date <= DATE(dlc_next_product.date_end) OR dlc_next_product.date_end IS NULL)

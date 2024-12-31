@@ -9,7 +9,7 @@ WITH eligible_planning_categories AS (
              planning_category_1,
              SUM(sell_out) AS sell_out
       FROM {{ ref('shop_sales') }} ss
-      INNER JOIN inter.products p ON ss.dw_country_code = p.dw_country_code AND ss.product_id = p.id
+      INNER JOIN {{ ref('products') }} p ON ss.dw_country_code = p.dw_country_code AND ss.product_id = p.id
       WHERE planning_category_1 IS NOT NULL
       AND ss.order_date >= DATE_SUB(DATE_TRUNC(CURRENT_DATE(), MONTH), INTERVAL 1 YEAR)
       AND ss.order_status = 'Validée'
@@ -28,7 +28,7 @@ sell_out_by_brand_date AS (
          DATE_TRUNC(order_date, MONTH) AS date,
          SUM(sell_out) AS sell_out
   FROM {{ ref('shop_sales') }} ss
-  INNER JOIN inter.products p ON ss.dw_country_code = p.dw_country_code AND ss.product_id = p.id
+  INNER JOIN {{ ref('products') }} p ON ss.dw_country_code = p.dw_country_code AND ss.product_id = p.id
   INNER JOIN eligible_planning_categories epc USING(brand_id, planning_category_1)
   WHERE planning_category_1 IS NOT NULL
   AND ss.order_date >= DATE_SUB(DATE_TRUNC(CURRENT_DATE(), MONTH), INTERVAL 1 YEAR)

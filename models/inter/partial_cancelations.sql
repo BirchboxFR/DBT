@@ -11,7 +11,7 @@
         "interval": 12500
       }
     },
-    cluster_by=['dw_country_code', 'company_id']
+    cluster_by=['dw_country_code']
 ) }}
 
 SELECT 'FR' AS dw_country_code, * FROM `bdd_prod_fr.wp_jb_partial_cancelations` 

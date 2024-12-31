@@ -17,11 +17,11 @@ WITH details_product AS (
          COUNTIF(pc.category_lvl_2 = 'Consumable item' AND COALESCE(p2.attr_discounted_purchase_price, p2.attr_purchase_price) IS NULL) AS nb_missing_consumable_item_price,
          MAX(ak.kit_type) AS kit_type
   FROM {{ ref('all_kits') }} ak
-  INNER JOIN inter.products p1 ON ak.country_code = p1.dw_country_code AND ak.kit_id = p1.id
-  LEFT JOIN inter.posts po ON p1.dw_country_code = po.dw_country_code AND p1.post_id = po.id
-  INNER JOIN inter.products p2 ON ak.country_code = p2.dw_country_code AND ak.product_id = p2.id
+  INNER JOIN {{ ref('products') }} p1 ON ak.country_code = p1.dw_country_code AND ak.kit_id = p1.id
+  LEFT JOIN {{ ref('posts') }} po ON p1.dw_country_code = po.dw_country_code AND p1.post_id = po.id
+  INNER JOIN {{ ref('products') }} p2 ON ak.country_code = p2.dw_country_code AND ak.product_id = p2.id
   INNER JOIN inter.product_codification pc ON p2.dw_country_code = pc.dw_country_code AND p2.product_codification_id = pc.id
-  INNER JOIN inter.inventory_items ii ON p1.dw_country_code = ii.dw_country_code AND p1.inventory_item_id = ii.id
+  INNER JOIN {{ ref('inventory_items') }} ii ON p1.dw_country_code = ii.dw_country_code AND p1.inventory_item_id = ii.id
   GROUP BY all
 ),
 wout_total_costs AS (

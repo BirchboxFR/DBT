@@ -33,7 +33,7 @@ boxes_free AS
 boxes_reexp AS
 (
   SELECT bs.dw_country_code, bs.year, bs.month, count(distinct bs.sub_id) AS value
-  FROM inter.tags ta
+  FROM {{ ref('tags') } ta
   JOIN {{ ref('box_sales') }} bs ON bs.sub_id = ta.link_id AND ta.type = 'SUB' AND ta.dw_country_code = bs.dw_country_code
   WHERE 1=1
   GROUP BY bs.dw_country_code, bs.year, bs.month
