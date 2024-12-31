@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE inter_tmp.posts AS 
+
 SELECT 'FR' AS dw_country_code, * FROM `bdd_prod_fr.wp_posts` 
 UNION ALL 
 SELECT 'DE' AS dw_country_code, * FROM `bdd_prod_de.wp_posts` 

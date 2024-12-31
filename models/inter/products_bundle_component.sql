@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE inter_tmp.products_bundle_component AS 
+
 SELECT 'FR' AS dw_country_code, * FROM `bdd_prod_fr.wp_jb_products_bundle_component` 
 UNION ALL 
 SELECT 'DE' AS dw_country_code, * FROM `bdd_prod_de.wp_jb_products_bundle_component` 

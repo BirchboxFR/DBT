@@ -1,7 +1,18 @@
-CREATE OR REPLACE TABLE inter_tmp.adyen_notifications 
-partition by RANGE_BUCKET(success,GENERATE_ARRAY(0, 1, 1))
-cluster by eventcode
-AS 
+{{ config(
+    materialized='table',
+    partition_by={
+      "field": "success",
+      "data_type": "int64",
+      "range": {
+        "start": 0,
+        "end": 2,
+        "interval": 1
+      }
+    },
+    cluster_by=['dw_country_code', 'eventCode']
+) }}
+
+
 SELECT 'FR' AS dw_country_code, * FROM `bdd_prod_fr.wp_jb_adyen_notifications` 
 UNION ALL 
 SELECT 'DE' AS dw_country_code, * FROM `bdd_prod_de.wp_jb_adyen_notifications` 
