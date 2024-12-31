@@ -15,7 +15,7 @@ SELECT dw_country_code, sku, min(pwl.dluo) AS dluo_min,
 SUM(CASE WHEN zone_key IN ('Z1', 'Z2') THEN stock ELSE 0 END) AS stock_POT1,
 SUM(CASE WHEN zone_key = 'Z3' THEN stock ELSE 0 END) AS stock_POT2
 
-FROM {{ ref('product_warehouse_location') } pwl
+FROM {{ ref('product_warehouse_location') }} pwl
 WHERE pwl.created_at >= CURRENT_DATE
 AND stock > 0
 GROUP BY dw_country_code, sku
