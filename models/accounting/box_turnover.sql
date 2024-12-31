@@ -6,7 +6,7 @@ WITH all_box_sales AS (
   UNION ALL
   SELECT EXTRACT(YEAR FROM ana.eventDate) AS year_payment_date, EXTRACT(MONTH FROM ana.eventDate) AS month_payment_date, DATE(ana.eventDate) AS payment_date, br.box_id, br.store_code, br.shipping_country, br.gift, br.vat_rate, br.payment_status, br.self, br.year, br.month, br.date, -br.gross_revenue, -br.vat_on_gross_revenue, -br.discount, -br.vat_on_discount, -br.shipping, -br.vat_on_shipping
   FROM {{ ref('box_refunds') }} br
-  INNER JOIN {{ ref('order_detail_sub') } s ON br.sub_id = s.id AND br.dw_country_code = s.dw_country_code
+  INNER JOIN {{ ref('order_detail_sub') }} s ON br.sub_id = s.id AND br.dw_country_code = s.dw_country_code
   LEFT JOIN {{ ref('box_sales') }} bs ON bs.sub_id = s.id AND br.dw_country_code = bs.dw_country_code
   LEFT JOIN {{ ref('adyen_notifications_authorization') }} ana ON ana.sub_id = br.sub_id AND ana.dw_country_code = br.dw_country_code
   WHERE bs.sub_id IS NULL
