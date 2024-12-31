@@ -32,6 +32,8 @@
         accounting_tmp
     {%- elif node.name in blissim_analytics_tmp_tables -%}
         blissim_analytics_tmp
+    {%- elif node.name in inter_tmp_tables -%}
+        inter_tmp
     {%- else -%}
         {{ default_schema }}
     {%- endif -%}
