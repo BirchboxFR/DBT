@@ -109,7 +109,7 @@ self_churn_reason AS
   SELECT sol.dw_country_code,
          sol.sub_id,
          COALESCE(SUM(c.purchase_price * d.quantity), 0) AS gws_costs
-  FROM inter.sub_order_link sol
+  FROM {{ ref('sub_order_link') }} sol
   INNER JOIN {{ ref('orders') }} o ON sol.dw_country_code = o.dw_country_code AND sol.order_id = o.id
   INNER JOIN {{ ref('order_details') }} d ON o.dw_country_code = d.dw_country_code AND o.id = d.order_id
   INNER JOIN {{ ref('catalog') }} c ON d.dw_country_code = c.dw_country_code AND d.product_id = c.product_id
@@ -277,10 +277,10 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   LEFT JOIN shipping_mode_dedup  sc ON b.date >= sc.date_start AND (b.date <= sc.date_end OR sc.date_end IS NULL) AND s.shipping_mode = sc.shipping_mode_id AND CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END >= min_weight AND (CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END < max_weight OR max_weight IS NULL)
   LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
   LEFT JOIN {{ ref('adyen_notifications_authorization') }} an ON an.sub_id = s.id AND an.dw_country_code = s.dw_country_code
-  LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
-  LEFT JOIN inter.coupons coupons_parents ON coupons_parents.id = c.parent_id AND coupons_parents.dw_country_code = c.dw_country_code
-  LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
-  LEFT JOIN inter.sub_offers so_parents ON so_parents.id = so.parent_offer_id AND so_parents.dw_country_code = so.dw_country_code
+  LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
+  LEFT JOIN {{ ref('coupons') }} coupons_parents ON coupons_parents.id = c.parent_id AND coupons_parents.dw_country_code = c.dw_country_code
+  LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
+  LEFT JOIN {{ ref('sub_offers') }} so_parents ON so_parents.id = so.parent_offer_id AND so_parents.dw_country_code = so.dw_country_code
   LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
   LEFT JOIN {{ ref('box_gift') }} bg ON bg.dw_country_code = s.dw_country_code AND bg.sub_id = s.id
   LEFT JOIN snippets.yearly_coupons yc ON o.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id

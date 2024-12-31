@@ -12,7 +12,7 @@
     {%- set accounting_tmp_tables = ['reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
 
-    {%- set inter_tmp_tables = ['products','products_bundle_component','posts','adyen_notifications','wp_jb_products_stock_log','orders','order_details','order_detail_sub'] -%}
+    {%- set inter_tmp_tables = ['products','products_bundle_component','posts','adyen_notifications','wp_jb_products_stock_log','orders','order_details','order_detail_sub','sub_offers','coupons','sub_order_link'] -%}
 
     {%- if node.name in sales_tmp_tables -%}
         sales_tmp
