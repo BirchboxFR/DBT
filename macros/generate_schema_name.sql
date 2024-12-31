@@ -12,6 +12,8 @@
     {%- set accounting_tmp_tables = ['reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
 
+    {%- set inter_tmp_tables = ['products','products_bundle_component'] -%}
+
     {%- if node.name in sales_tmp_tables -%}
         sales_tmp
     {%- elif node.name in product_tmp_tables -%}

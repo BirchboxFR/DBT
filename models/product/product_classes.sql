@@ -69,7 +69,7 @@ days_in_stock AS (
 all_net_revenue_last_year AS (
   SELECT ss.product_id, SUM(ss.net_revenue) AS net_revenue
   FROM {{ ref('shop_sales') }} ss
-  LEFT JOIN inter.products p ON ss.dw_country_code = p.dw_country_code AND ss.bundle_product_id = p.id
+  LEFT JOIN {{ ref('products') }} p ON ss.dw_country_code = p.dw_country_code AND ss.bundle_product_id = p.id
   WHERE ss.dw_country_code = 'FR'
   AND ss.order_status = 'Validée'
   AND DATE(ss.order_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH)
