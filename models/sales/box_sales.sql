@@ -5,9 +5,9 @@ SELECT * EXCEPT (row_num)
 FROM
 (
 SELECT sr.dw_country_code, sr.customer_id AS user_id, b.id AS box_id, sqa.title AS survey_reason, ROW_NUMBER() OVER (PARTITION BY sr.dw_country_code, sr.customer_id, b.id ORDER BY sr.answered_at DESC) AS row_num
-FROM `teamdata-291012.inter.sub_suspend_survey_result` sr
+FROM {{ ref('sub_suspend_survey_result') }} sr
 JOIN `teamdata-291012.inter.boxes` b ON b.dw_country_code = sr.dw_country_code AND b.id = sr.last_received_box_id + 1
-JOIN `teamdata-291012.inter.sub_suspend_survey_result_answer` sra ON sra.result_id = sr.result_id AND sr.dw_country_code = sra.dw_country_code
+JOIN {{ ref('sub_suspend_survey_result_answer') }} sra ON sra.result_id = sr.result_id AND sr.dw_country_code = sra.dw_country_code
 JOIN `teamdata-291012.bdd_prod_fr.wp_jb_sub_suspend_survey_question_answer` sqa ON sqa.question_answer_id = sra.question_answer_id 
 WHERE sra.question_id = 1
 ) t
@@ -275,7 +275,7 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   LEFT JOIN products p ON o.dw_country_code = p.dw_country_code AND b.id = p.box_id AND s.coffret_id = p.coffret_id AND p.product_codification_id = 29
   LEFT JOIN {{ ref('kit_costs') }} kc ON o.dw_country_code = kc.country_code AND p.inventory_item_id = kc.inventory_item_id and kc.kit_id=p.id
   LEFT JOIN shipping_mode_dedup  sc ON b.date >= sc.date_start AND (b.date <= sc.date_end OR sc.date_end IS NULL) AND s.shipping_mode = sc.shipping_mode_id AND CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END >= min_weight AND (CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END < max_weight OR max_weight IS NULL)
-  LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
+  LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
   LEFT JOIN {{ ref('adyen_notifications_authorization') }} an ON an.sub_id = s.id AND an.dw_country_code = s.dw_country_code
   LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
   LEFT JOIN {{ ref('coupons') }} coupons_parents ON coupons_parents.id = c.parent_id AND coupons_parents.dw_country_code = c.dw_country_code

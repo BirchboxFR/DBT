@@ -15,10 +15,10 @@ WITH ranked_sub_history AS
   END AS sub_suspended_reason_lvl2, 
   'reason from survey' AS sub_suspended_reason_lvl3,
   ROW_NUMBER() OVER (PARTITION BY o.user_id, sh.box_id, sh.dw_country_code ORDER BY timestamp DESC) AS row_num
-  FROM inter.sub_history sh
-  JOIN inter.order_detail_sub s ON s.order_detail_id = sh.order_detail_id AND s.box_id = sh.box_id AND sh.dw_country_code = s.dw_country_code
-  JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-  JOIN inter.orders o ON o.id = d.order_id AND d.dw_country_code = o.dw_country_code
+  FROM {{ ref('sub_history') }} sh
+  JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = sh.order_detail_id AND s.box_id = sh.box_id AND sh.dw_country_code = s.dw_country_code
+  JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+  JOIN {{ ref('orders') }} o ON o.id = d.order_id AND d.dw_country_code = o.dw_country_code
   JOIN `inter.sub_suspended_reasons` ssr ON ssr.dw_country_code = sh.dw_country_code AND ssr.id = sh.sub_suspended_reasons_id
   
   AND sh.action = -1
@@ -38,10 +38,10 @@ adyen_ranked AS
   CASE WHEN an.reason LIKE '%xpired%' THEN 'expired card' ELSE 'breakage' END AS sub_suspended_reason_lvl2,
   an.reason AS sub_suspended_reason_lvl3,
   ROW_NUMBER() OVER (PARTITION BY o.user_id, s.box_id, s.dw_country_code ORDER BY an.eventDate DESC) AS row_num
-  FROM `inter.adyen_notifications` an
-  JOIN inter.order_detail_sub s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
-  JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-  JOIN inter.orders o ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
+  FROM {{ ref('adyen_notifications') }} an
+  JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
+  JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+  JOIN {{ ref('orders') }} o ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
   WHERE an.success = 0
   
 ),

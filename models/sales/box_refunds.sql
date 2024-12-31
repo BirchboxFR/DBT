@@ -39,14 +39,14 @@ s.total_shipping AS total_shipping,
 CASE WHEN s.sub_payment_status_id = 3 THEN 'forthcoming' ELSE 'paid' END AS payment_status,
 sps.name AS sub_payment_status,
 d.sub_start_box
-FROM inter.adyen_notifications an
-INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_detail_sub s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+FROM {{ ref('adyen_notifications') }} an
+INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
 INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
-LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
-LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
-LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
+LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
+LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
+LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
 INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
 LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
 LEFT JOIN snippets.yearly_coupons yc ON an.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
@@ -85,14 +85,14 @@ s.shipping_country AS shipping_country,
 CASE WHEN s.sub_payment_status_id = 3 THEN 'forthcoming' ELSE 'paid' END AS payment_status,
 sps.name AS sub_payment_status,
 d.sub_start_box
-FROM inter.adyen_notifications an
-INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_detail_sub s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+FROM {{ ref('adyen_notifications') }} an
+INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
 INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
-LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
-LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
-LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
+LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
+LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
+LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
 INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
 LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
 LEFT JOIN snippets.yearly_coupons yc ON an.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
@@ -133,14 +133,14 @@ s.shipping_country AS shipping_country,
 CASE WHEN s.sub_payment_status_id = 3 THEN 'forthcoming' ELSE 'paid' END AS payment_status,
 sps.name AS sub_payment_status,
 d.sub_start_box
-FROM inter.adyen_notifications an
-INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_detail_sub s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+FROM {{ ref('adyen_notifications') }} an
+INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
 INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
-LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
-LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
-LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
+LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
+LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
+LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
 INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
 LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
 LEFT JOIN snippets.yearly_coupons yc ON an.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
@@ -186,14 +186,14 @@ s.total_shipping AS total_shipping,
 CASE WHEN s.sub_payment_status_id = 3 THEN 'forthcoming' ELSE 'paid' END AS payment_status,
 sps.name AS sub_payment_status,
 d.sub_start_box
-FROM inter.adyen_notifications an
-INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-INNER JOIN inter.order_details d ON d.order_id = o.id AND d.product_id = 1 AND d.dw_country_code = o.dw_country_code
-INNER JOIN inter.order_detail_sub s ON s.order_detail_id = d.id AND s.box_id = d.sub_start_box AND s.dw_country_code = d.dw_country_code
+FROM {{ ref('adyen_notifications') }} an
+INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+INNER JOIN {{ ref('order_details') }} d ON d.order_id = o.id AND d.product_id = 1 AND d.dw_country_code = o.dw_country_code
+INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.box_id = d.sub_start_box AND s.dw_country_code = d.dw_country_code
 INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
-LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
-LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
-LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
+LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
+LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
+LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
 INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
 LEFT JOIN inter.tva_product tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
 LEFT JOIN snippets.yearly_coupons yc ON an.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id

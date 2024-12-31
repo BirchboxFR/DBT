@@ -16,7 +16,7 @@ WITH last_adyen_notifications AS (
            sub_id,
            value,
            ROW_NUMBER() OVER (PARTITION BY dw_country_code, pspReference ORDER BY eventDate DESC) rn
-    FROM inter.adyen_notifications
+    FROM {{ ref('adyen_notifications') }}
     WHERE success = 1
   )
   WHERE rn = 1
@@ -108,21 +108,21 @@ FROM (
         sm.country AS shipping_country,
         p.selections
         FROM last_adyen_notifications an
-        INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-        INNER JOIN inter.order_details d ON d.order_id = o.ID AND d.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.products p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
+        INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+        INNER JOIN {{ ref('order_details') }} d ON d.order_id = o.ID AND d.dw_country_code = o.dw_country_code
+        LEFT JOIN {{ ref('products') }} p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
         LEFT JOIN {{ ref('catalog') }} catalog ON catalog.product_id = p.id AND catalog.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('nice_names') }} pnn ON pnn.product_id = p.id AND pnn.dw_country_code = p.dw_country_code
         LEFT JOIN inter.product_codification pc ON pc.id = p.product_codification_id AND pc.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('categories') }} apc ON apc.term_id = p.attr_planning_category AND apc.dw_country_code = p.dw_country_code
         LEFT JOIN inter.brands b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
         LEFT JOIN inter.order_status os ON os.id = o.status_id AND os.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.posts p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
+        LEFT JOIN {{ ref('posts') }} p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
         LEFT JOIN inter.shipping_modes sm ON sm.id = o.shipping_mode AND sm.dw_country_code = o.dw_country_code
         LEFT JOIN inter.tva_product tva ON tva.country_code = sm.country AND tva.category = 'normal' AND tva.dw_country_code = sm.dw_country_code
-        LEFT JOIN inter.gift_cards gc ON gc.order_detail_id = d.id AND gc.dw_country_code = d.dw_country_code
-        LEFT JOIN inter.coupons coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.coupons coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = coupons.dw_country_code
+        LEFT JOIN {{ ref('gift_cards') }} gc ON gc.order_detail_id = d.id AND gc.dw_country_code = d.dw_country_code
+        LEFT JOIN {{ ref('coupons') }} coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
+        LEFT JOIN {{ ref('coupons') }} coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = coupons.dw_country_code
         LEFT JOIN inter.da_eu_countries eu ON sm.country = eu.country_code AND sm.dw_country_code = eu.dw_country_code
         LEFT JOIN {{ ref('codification_bundle_product') }} cbp ON d.dw_country_code = cbp.dw_country_code AND d.product_id = cbp.component_product_id AND d.bundle_product_id = cbp.bundle_product_id
         WHERE an.eventCode IN ('REFUND', 'CANCEL_OR_REFUND')
@@ -193,21 +193,21 @@ FROM (
         sm.country AS shipping_country,
         p.selections
         FROM last_adyen_notifications an
-        INNER JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-        INNER JOIN inter.partial_cancelations d ON d.order_id = o.ID AND d.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.products p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
+        INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+        INNER JOIN {{ ref('partial_cancelations') }} d ON d.order_id = o.ID AND d.dw_country_code = o.dw_country_code
+        LEFT JOIN {{ ref('products') }} p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
         LEFT JOIN {{ ref('catalog') }} catalog ON catalog.product_id = p.id AND catalog.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('nice_names') }} pnn ON pnn.product_id = p.id AND pnn.dw_country_code = p.dw_country_code
         LEFT JOIN inter.product_codification pc ON pc.id = p.product_codification_id AND pc.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('categories') }} apc ON apc.term_id = p.attr_planning_category AND apc.dw_country_code = p.dw_country_code
         LEFT JOIN inter.brands b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
         LEFT JOIN inter.order_status os ON os.id = o.status_id AND os.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.posts p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
+        LEFT JOIN {{ ref('posts') }} p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
         LEFT JOIN inter.shipping_modes sm ON sm.id = o.shipping_mode AND sm.dw_country_code = o.dw_country_code
         LEFT JOIN inter.tva_product tva ON tva.country_code = sm.country AND tva.category = 'normal' AND tva.dw_country_code = sm.dw_country_code
-        LEFT JOIN inter.gift_cards gc ON gc.order_detail_id = d.order_detail_id AND gc.dw_country_code = d.dw_country_code -- order_detail_id instead of id for wp_jb_order_details
-        LEFT JOIN inter.coupons coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.coupons coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = an.dw_country_code
+        LEFT JOIN {{ ref('gift_cards') }} gc ON gc.order_detail_id = d.order_detail_id AND gc.dw_country_code = d.dw_country_code -- order_detail_id instead of id for wp_jb_order_details
+        LEFT JOIN {{ ref('coupons') }} coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
+        LEFT JOIN {{ ref('coupons') }} coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = an.dw_country_code
         LEFT JOIN inter.da_eu_countries eu ON sm.country = eu.country_code AND sm.dw_country_code = eu.dw_country_code
         WHERE an.eventCode IN ('REFUND', 'CANCEL_OR_REFUND')
         AND (an.sub_id =0 OR an.sub_id IS NULL)
@@ -277,8 +277,8 @@ FROM (
         NULL AS bundle_index,
         sm.country AS shipping_country,
         p.selections
-        FROM inter.orders o
-        INNER JOIN inter.partial_cancelations d ON d.order_id = o.ID AND o.dw_country_code = d.dw_country_code
+        FROM {{ ref('orders') }} o
+        INNER JOIN {{ ref('partial_cancelations') }} d ON d.order_id = o.ID AND o.dw_country_code = d.dw_country_code
         INNER JOIN
               (
                   SELECT an.dw_country_code,
@@ -286,9 +286,9 @@ FROM (
                          FORMAT_DATE('%Y-%m-%d', an.created_at) AS d,
                          SUM(1.0*an.value/100) AS adyen_refunds
                   FROM last_adyen_notifications an
-                  LEFT JOIN inter.orders o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-                  LEFT JOIN inter.order_details dbox ON dbox.order_id = o.id AND dbox.product_id = 1 AND dbox.dw_country_code = o.dw_country_code
-                  LEFT JOIN inter.order_detail_sub sbox ON sbox.order_detail_id = dbox.id AND sbox.box_id = dbox.sub_start_box AND sbox.dw_country_code = dbox.dw_country_code
+                  LEFT JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
+                  LEFT JOIN {{ ref('order_details') }} dbox ON dbox.order_id = o.id AND dbox.product_id = 1 AND dbox.dw_country_code = o.dw_country_code
+                  LEFT JOIN {{ ref('order_detail_sub') }} sbox ON sbox.order_detail_id = dbox.id AND sbox.box_id = dbox.sub_start_box AND sbox.dw_country_code = dbox.dw_country_code
                   WHERE an.eventDate>= '2021-05-01'
                   AND an.eventCode IN ('REFUND', 'CANCEL_OR_REFUND')
                   AND (an.sub_id =0 OR an.sub_id IS NULL)
@@ -298,19 +298,19 @@ FROM (
                            an.order_id,
                            d
               ) partial_refunds ON partial_refunds.order_id = d.order_id AND partial_refunds.d = FORMAT_DATE('%Y-%m-%d', d.date) AND partial_refunds.dw_country_code = d.dw_country_code AND partial_refunds.dw_country_code = d.dw_country_code
-        LEFT JOIN inter.products p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
+        LEFT JOIN {{ ref('products') }} p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code
         LEFT JOIN {{ ref('catalog') }} ON catalog.product_id = p.id AND catalog.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('nice_names') }} pnn ON pnn.product_id = p.id AND pnn.dw_country_code = p.dw_country_code
         LEFT JOIN inter.product_codification pc ON pc.id = p.product_codification_id AND pc.dw_country_code = p.dw_country_code
         LEFT JOIN {{ ref('categories') }} apc ON apc.term_id = p.attr_planning_category AND apc.dw_country_code = p.dw_country_code
         LEFT JOIN inter.brands b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
         LEFT JOIN inter.order_status os ON os.id = o.status_id AND os.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.posts p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
+        LEFT JOIN {{ ref('posts') }} p_brand ON p_brand.ID = b.attr_group_post_id AND p_brand.dw_country_code = b.dw_country_code
         LEFT JOIN inter.shipping_modes sm ON sm.id = o.shipping_mode AND sm.dw_country_code = o.dw_country_code
         LEFT JOIN inter.tva_product tva ON tva.country_code = sm.country AND tva.category = 'normal' AND tva.dw_country_code = sm.dw_country_code
-        LEFT JOIN inter.gift_cards gc ON gc.order_detail_id = d.order_detail_id AND gc.dw_country_code = d.dw_country_code -- order_detail_id instead of id for wp_jb_order_details
-        LEFT JOIN inter.coupons coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
-        LEFT JOIN inter.coupons coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = coupons.dw_country_code
+        LEFT JOIN {{ ref('gift_cards') }} gc ON gc.order_detail_id = d.order_detail_id AND gc.dw_country_code = d.dw_country_code -- order_detail_id instead of id for wp_jb_order_details
+        LEFT JOIN {{ ref('coupons') }} coupons ON coupons.id = o.coupon_code_id AND coupons.dw_country_code = o.dw_country_code
+        LEFT JOIN {{ ref('coupons') }} coupons_parents ON coupons_parents.id = coupons.parent_id AND coupons_parents.dw_country_code = coupons.dw_country_code
         LEFT JOIN inter.da_eu_countries eu ON sm.country = eu.country_code AND sm.dw_country_code = eu.dw_country_code
         WHERE o.status_id IN (1, 3, 4)
         AND p.product_codification_id IN (0, 2, 8, 13, 18, 23, 34, 38, 40, 41, 42, 47)

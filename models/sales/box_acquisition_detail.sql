@@ -21,9 +21,9 @@ FROM
            s.last_payment_date,
            o.user_id,
            CASE WHEN d.gift_card_id = 0 OR (d.gift_card_id > 0 AND (s.box_id - d.sub_start_box >= d.quantity)) THEN 1 ELSE 0 END AS self
-           FROM inter.orders o
-           INNER JOIN inter.order_details d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
-           INNER JOIN inter.order_detail_sub s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
+           FROM {{ ref('orders') }} o
+           INNER JOIN {{ ref('order_details') }} d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
+           INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
            LEFT JOIN all_boxes_by_user bu ON o.dw_country_code = bu.dw_country_code AND bu.box_id + 1 = s.box_id AND o.user_id = bu.user_id
            WHERE o.status_id IN (1, 3)
            AND s.shipping_Status_id IN (2, 3, 4, 5, 22)
