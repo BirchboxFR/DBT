@@ -36,7 +36,7 @@ catalog_date AS
 ),
 orders_with_box as (
 select order_id,dw_country_code 
-from `teamdata-291012.{{ ref('order_details') }}`
+from {{ ref('order_details') }}
 where product_id=1
 group by all
 
