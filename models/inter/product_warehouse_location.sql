@@ -1,9 +1,8 @@
-
 {{ config(
     materialized='table',
     partition_by={
       "field": "created_at",
-      "data_type": "timestamp",  -- Pour un champ DATETIME ou TIMESTAMP
+      "data_type": "timestamp",
       "granularity": "day"
     }
 ) }}
