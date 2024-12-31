@@ -17,7 +17,7 @@ products as (
 select 
 box_id,coffret_id,dw_country_code,max(inventory_item_id) inventory_item_id,
 product_codification_id,max(id) as id 
-from inter.products 
+from {{ ref('products') }} 
 
 group by all
 ),
@@ -45,9 +45,9 @@ ranked_sub_history AS
   'reason from survey' AS sub_suspended_reason_lvl3,
   ROW_NUMBER() OVER (PARTITION BY o.user_id, sh.box_id, sh.dw_country_code ORDER BY timestamp DESC) AS row_num
   FROM inter.sub_history sh
-  JOIN inter.order_detail_sub s ON s.order_detail_id = sh.order_detail_id AND s.box_id = sh.box_id AND sh.dw_country_code = s.dw_country_code
-  JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-  JOIN inter.orders o ON o.id = d.order_id AND d.dw_country_code = o.dw_country_code
+  JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = sh.order_detail_id AND s.box_id = sh.box_id AND sh.dw_country_code = s.dw_country_code
+  JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+  JOIN {{ ref('orders') }} o ON o.id = d.order_id AND d.dw_country_code = o.dw_country_code
   JOIN `inter.sub_suspended_reasons` ssr ON ssr.dw_country_code = sh.dw_country_code AND ssr.id = sh.sub_suspended_reasons_id
 
   
@@ -69,9 +69,9 @@ adyen_ranked AS
   an.reason AS sub_suspended_reason_lvl3,
   ROW_NUMBER() OVER (PARTITION BY o.user_id, s.box_id, s.dw_country_code ORDER BY an.eventDate DESC) AS row_num
   FROM `inter.adyen_notifications` an
-  JOIN inter.order_detail_sub s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
-  JOIN inter.order_details d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-  JOIN inter.orders o ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
+  JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
+  JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
+  JOIN {{ ref('orders') }} o ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
   WHERE an.success = 0
   
 ),
@@ -110,8 +110,8 @@ self_churn_reason AS
          sol.sub_id,
          COALESCE(SUM(c.purchase_price * d.quantity), 0) AS gws_costs
   FROM inter.sub_order_link sol
-  INNER JOIN inter.orders o ON sol.dw_country_code = o.dw_country_code AND sol.order_id = o.id
-  INNER JOIN inter.order_details d ON o.dw_country_code = d.dw_country_code AND o.id = d.order_id
+  INNER JOIN {{ ref('orders') }} o ON sol.dw_country_code = o.dw_country_code AND sol.order_id = o.id
+  INNER JOIN {{ ref('order_details') }} d ON o.dw_country_code = d.dw_country_code AND o.id = d.order_id
   INNER JOIN {{ ref('catalog') }} c ON d.dw_country_code = c.dw_country_code AND d.product_id = c.product_id
   WHERE d.special_type = 'GWS' and status=1
   GROUP BY sol.dw_country_code,
@@ -120,7 +120,7 @@ self_churn_reason AS
 box_global_grades AS (
 SELECT p.dw_country_code, p.box_id, p.coffret_id,  max(global_grade) AS global_grade
 FROM `teamdata-291012.Spreadsheet_synchro.raw_doc_compo` c
-JOIN inter.products p ON p.sku = c.sku_compo
+JOIN {{ ref('products') }} p ON p.sku = c.sku_compo
 GROUP BY p.dw_country_code, p.box_id, p.coffret_id
 )
 
@@ -265,18 +265,18 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
     THEN 1 
     ELSE 0 END AS last_committed_box
   -- sub_suspended_reason_lvl1,sub_suspended_reason_lvl2,sub_suspended_reason_lvl3
-  FROM inter.orders o
-  INNER JOIN inter.order_details d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
-  INNER JOIN inter.order_detail_sub s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
+  FROM {{ ref('orders') }} o
+  INNER JOIN {{ ref('order_details') }} d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
+  INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
   INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
   INNER JOIN inter.boxes b1 ON b1.id = s.box_id +1 AND b1.dw_country_code = s.dw_country_code
   INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
-  INNER JOIN snippets.current_box cbt ON o.dw_country_code = cbt.dw_country_code
+  INNER JOIN {{ ref('current_box') }} cbt ON o.dw_country_code = cbt.dw_country_code
   LEFT JOIN products p ON o.dw_country_code = p.dw_country_code AND b.id = p.box_id AND s.coffret_id = p.coffret_id AND p.product_codification_id = 29
-  LEFT JOIN product.kit_costs kc ON o.dw_country_code = kc.country_code AND p.inventory_item_id = kc.inventory_item_id and kc.kit_id=p.id
+  LEFT JOIN {{ ref('kit_costs') }} kc ON o.dw_country_code = kc.country_code AND p.inventory_item_id = kc.inventory_item_id and kc.kit_id=p.id
   LEFT JOIN shipping_mode_dedup  sc ON b.date >= sc.date_start AND (b.date <= sc.date_end OR sc.date_end IS NULL) AND s.shipping_mode = sc.shipping_mode_id AND CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END >= min_weight AND (CASE WHEN b.box_quantity = 1 THEN 0.4 WHEN b.box_quantity = 2 THEN 0.8 END < max_weight OR max_weight IS NULL)
   LEFT JOIN inter.gift_cards gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
-  LEFT JOIN payment.adyen_notifications_authorization an ON an.sub_id = s.id AND an.dw_country_code = s.dw_country_code
+  LEFT JOIN {{ ref('adyen_notifications_authorization') }} an ON an.sub_id = s.id AND an.dw_country_code = s.dw_country_code
   LEFT JOIN inter.coupons c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
   LEFT JOIN inter.coupons coupons_parents ON coupons_parents.id = c.parent_id AND coupons_parents.dw_country_code = c.dw_country_code
   LEFT JOIN inter.sub_offers so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
