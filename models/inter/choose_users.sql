@@ -1,7 +1,7 @@
 {{ config(
     materialized='table',
     partition_by={
-      "field": "box_id",
+      "field": "form_id",
       "data_type": "int64",
       "range": {
         "start": 0,
