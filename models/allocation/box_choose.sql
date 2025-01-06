@@ -27,7 +27,7 @@ b.nme_end_date
   LEFT JOIN
   (
     SELECT user_id, box_id, cc.choice_name, cu.dw_country_code, cu.status_id, cu.created_at as choice_date, cf.name as form_name
-    FROM inter.choose_users cu
+    FROM {{ ref('choose_users') }} cu
     JOIN inter.choose_forms cf ON cf.id = cu.form_id AND cf.dw_country_code = cu.dw_country_code
     JOIN inter.choose_choices cc ON cc.id = cu.choice_id AND cc.dw_country_code = cu.dw_country_code
 
