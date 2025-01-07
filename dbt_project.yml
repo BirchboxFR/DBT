@@ -1,28 +1,51 @@
+# Nom du projet (doit être en minuscules et sans espaces)
 name: 'data_warehouse'
 version: '1.0.0'
 config-version: 2
 
+# Profil à utiliser pour la connexion aux bases de données
 profile: 'default'
 
-model-paths: ["models"]
+# Emplacements des différents fichiers de dbt
+model-paths: ["models"]  # Assurez-vous que vos modèles sont dans ce dossier
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-target-path: "target"
-clean-targets:
- - "target"
- - "dbt_packages"
+# Chemin cible pour les fichiers compilés
+target-path: "target"  # Dossier pour stocker les fichiers SQL compilés
+clean-targets:         # Dossiers supprimés par la commande `dbt clean`
+  - "target"
+  - "dbt_packages"
 
+# Configuration des modèles
 models:
- +materialized: table # Configuration globale
- 
- customer:  # Models du domaine customer
-   +schema: customer
-   +enabled: true
-   
- dwh:  # Models du domaine dwh
-   +schema: dwh 
-   +enabled: false
+  dwh:  # Configuration pour le namespace dwh
+    +schema: dwh_schema
+    accounting:
+      +materialized: table
+    allocation:
+      +materialized: table
+    blissim_analytics:
+      +materialized: table
+    marketing:
+      +materialized: table
+    ops:
+      +materialized: table
+    payment:
+      +materialized: table
+    product:
+      +materialized: table
+    sales:
+      +materialized: table
+    snippets:
+      +materialized: table
+    inter:
+      +materialized: table
+
+  customer:  # Configuration pour le namespace customer
+    +schema: customer_schema
+    segmentation:
+      +materialized: table
