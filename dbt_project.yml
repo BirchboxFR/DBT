@@ -22,10 +22,10 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  {% if target.name == 'dwh' %}
-  dwh:  # Configuration pour le namespace dwh
+  dwh:  # Configuration globale pour le dossier dwh
+    +enabled: "{{ target.name == 'dwh' }}"
     +schema: dwh_schema
-    accounting:
+    accounting:  # Sous-dossier dwh/accounting
       +materialized: table
     allocation:
       +materialized: table
@@ -45,11 +45,9 @@ models:
       +materialized: table
     inter:
       +materialized: table
-  {% endif %}
 
-  {% if target.name == 'customer' %}
-  customer:  # Configuration pour le namespace customer
-    +schema: customer_schema
-    segmentation:
+  customer:
+    +enabled: "{{ target.name == 'customer' }}"  # Configuration globale pour le dossier customer
+    segmentation:  # Sous-dossier customer/segmentation
       +materialized: table
-  {% endif %}
+
