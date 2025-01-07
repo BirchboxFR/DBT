@@ -22,8 +22,9 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  dwh:
-    accounting:
+  dwh:  # Configuration globale pour le dossier dwh
+    +materialized: table  # Défaut pour tout sous dwh
+    accounting:  # Sous-dossier dwh/accounting
       +materialized: table
     allocation:
       +materialized: table
@@ -43,3 +44,9 @@ models:
       +materialized: table
     inter:
       +materialized: table
+
+  customer:  # Configuration globale pour le dossier customer
+    +materialized: table  # Défaut pour tout sous customer
+    segmentation:  # Sous-dossier customer/segmentation
+      +materialized: table
+
