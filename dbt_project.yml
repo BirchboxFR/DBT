@@ -1,5 +1,5 @@
 # Nom du projet (doit être en minuscules et sans espaces)
-name: 'dwh'
+name: 'data_warehouse'
 version: '1.0.0'
 config-version: 2
 
