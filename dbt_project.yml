@@ -1,53 +1,28 @@
-# Nom du projet (doit être en minuscules et sans espaces)
 name: 'data_warehouse'
 version: '1.0.0'
 config-version: 2
 
-# Profil à utiliser pour la connexion aux bases de données
 profile: 'default'
 
-# Emplacements des différents fichiers de dbt
-model-paths: ["models"]  # Assurez-vous que vos modèles sont dans ce dossier
+model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-# Chemin cible pour les fichiers compilés
-target-path: "target"  # Dossier pour stocker les fichiers SQL compilés
-clean-targets:         # Dossiers supprimés par la commande `dbt clean`
-  - "target"
-  - "dbt_packages"
+target-path: "target"
+clean-targets:
+ - "target"
+ - "dbt_packages"
 
-# Configuration des modèles
 models:
-  dwh:  # Configuration globale pour le dossier dwh
-    +enabled: "{{ target.name == 'dwh' }}"
-    +schema: dwh_schema
-    accounting:  # Sous-dossier dwh/accounting
-      +materialized: table
-    allocation:
-      +materialized: table
-    blissim_analytics:
-      +materialized: table
-    marketing:
-      +materialized: table
-    ops:
-      +materialized: table
-    payment:
-      +materialized: table
-    product:
-      +materialized: table
-    sales:
-      +materialized: table
-    snippets:
-      +materialized: table
-    inter:
-      +materialized: table
-
-  customer:
-    +enabled: "{{ target.name == 'customer' }}"  # Configuration globale pour le dossier customer
-    segmentation:  # Sous-dossier customer/segmentation
-      +materialized: table
-
+ +materialized: table # Configuration globale
+ 
+ customer:  # Models du domaine customer
+   +schema: customer
+   +enabled: true
+   
+ dwh:  # Models du domaine dwh
+   +schema: dwh 
+   +enabled: false
