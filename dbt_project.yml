@@ -1,5 +1,5 @@
 # Nom du projet (doit être en minuscules et sans espaces)
-name: 'data_warehouse'
+name: 'warehouse'
 version: '1.0.0'
 config-version: 2
 
@@ -22,29 +22,30 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  dwh:  # Configuration pour le namespace dwh
-    +schema: dwh_schema
-    accounting:
-      +materialized: table
-    allocation:
-      +materialized: table
-    blissim_analytics:
-      +materialized: table
-    marketing:
-      +materialized: table
-    ops:
-      +materialized: table
-    payment:
-      +materialized: table
-    product:
-      +materialized: table
-    sales:
-      +materialized: table
-    snippets:
-      +materialized: table
-    inter:
-      +materialized: table
+  warehouse:
+    dwh:  # Configuration pour le namespace dwh
+      +schema: dwh_schema
+      accounting:
+        +materialized: table
+      allocation:
+        +materialized: table
+      blissim_analytics:
+        +materialized: table
+      marketing:
+        +materialized: table
+      ops:
+        +materialized: table
+      payment:
+        +materialized: table
+      product:
+        +materialized: table
+      sales:
+        +materialized: table
+      snippets:
+        +materialized: table
+      inter:
+        +materialized: table
 
-  customer:  # Configuration pour le namespace customer
-    segmentation:
-      +materialized: table
+    customer:  # Configuration pour le namespace customer
+      segmentation:
+        +materialized: table
