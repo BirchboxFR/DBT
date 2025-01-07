@@ -22,30 +22,29 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  dwh:  # Configuration pour tous les modèles dans le dossier dwh
-    +schema: dwh_schema
-    dwh.accounting:  # Sous-dossier models/dwh/accounting
+  dwh:  # Configuration globale pour le dossier dwh
+    accounting:  # Sous-dossier dwh/accounting
       +materialized: table
-    dwh.allocation:  # Sous-dossier models/dwh/allocation
+    allocation:
       +materialized: table
-    dwh.blissim_analytics:  # Sous-dossier models/dwh/blissim_analytics
+    blissim_analytics:
       +materialized: table
-    dwh.marketing:  # Sous-dossier models/dwh/marketing
+    marketing:
       +materialized: table
-    dwh.ops:  # Sous-dossier models/dwh/ops
+    ops:
       +materialized: table
-    dwh.payment:  # Sous-dossier models/dwh/payment
+    payment:
       +materialized: table
-    dwh.product:  # Sous-dossier models/dwh/product
+    product:
       +materialized: table
-    dwh.sales:  # Sous-dossier models/dwh/sales
+    sales:
       +materialized: table
-    dwh.snippets:  # Sous-dossier models/dwh/snippets
+    snippets:
       +materialized: table
-    dwh.inter:  # Sous-dossier models/dwh/inter
+    inter:
       +materialized: table
 
-  customer:  # Configuration pour tous les modèles dans le dossier customer
-    +schema: customer_schema
-    customer.segmentation:  # Sous-dossier models/customer/segmentation
+  customer:  # Configuration globale pour le dossier customer
+    segmentation:  # Sous-dossier customer/segmentation
       +materialized: table
+

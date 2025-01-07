@@ -2,7 +2,8 @@
     {%- set default_schema = target.schema -%}
 
     {# Limiter la logique aux modèles dans le chemin dwh #}
-    {%- if 'dwh' in node.path -%}
+    {%- if node.package_name == 'dwh' or 'models/dwh/' in node.path -%}
+
 
         {# Listes des tables spécifiques pour chaque schéma #}
         {%- set sales_tmp_tables = ['box_sales', 'box_refunds', 'box_gift', 'kpi_box', 'box_sales_by_user_by_type', 'box_acquisition_daily', 'shop_sales', 'box_acquisition_detail', 'shop_orders_margin', 'shop_refunds'] -%}
@@ -19,7 +20,7 @@
 
         {# Définir le schéma basé sur le nom du modèle #}
         {%- if node.name in sales_tmp_tables -%}
-            sales_tmp
+            sales_tmpx
         {%- elif node.name in product_tmp_tables -%}
             product_tmp
         {%- elif node.name in ops_tmp_tables -%}
