@@ -37,3 +37,4 @@
     {%- else -%}
         {{ default_schema }}
     {%- endif -%}
+{%- endmacro %}
