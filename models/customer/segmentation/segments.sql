@@ -1,5 +1,5 @@
 {{ config(
-    database='normalized-417010',
+    database='normalised-417010',
     schema='user'
 ) }}
 
