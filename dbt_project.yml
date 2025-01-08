@@ -48,4 +48,6 @@ models:
 
     customer:  # Configuration pour le namespace customer
       segmentation:
+        +database: normalised-417010
+        +schema: user
         +materialized: table
