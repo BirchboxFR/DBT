@@ -11,8 +11,9 @@
     {%- set marketing_tmp_tables = ['live_expenses'] -%}
     {%- set accounting_tmp_tables = ['reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
-
     {%- set inter_tmp_tables = ['choose_users','products','users','tags','comments','products_stock_log','product_warehouse_location','kit_links','products_bundle_component','posts','adyen_notifications','wp_jb_products_stock_log','orders','order_details','order_detail_sub','sub_offers','coupons','sub_order_link','gift_cards','sub_history','sub_suspend_survey_result','sub_suspend_survey_result_answer','inventory_items','partial_cancelations'] -%}
+
+    {%- set user_tmp_tables = ['segments'] -%}
 
     {%- if node.name in sales_tmp_tables -%}
         sales_tmp
@@ -34,6 +35,8 @@
         blissim_analytics_tmp
     {%- elif node.name in inter_tmp_tables -%}
         inter_tmp
+    %- elif node.name in user_tmp_tables -%}
+        user
     {%- else -%}
         {{ default_schema }}
     {%- endif -%}
