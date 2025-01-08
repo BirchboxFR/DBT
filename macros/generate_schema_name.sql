@@ -35,7 +35,7 @@
         blissim_analytics_tmp
     {%- elif node.name in inter_tmp_tables -%}
         inter_tmp
-    %- elif node.name in user_tmp_tables -%}
+    {%- elif node.name in user_tmp_tables -%}
         user
     {%- else -%}
         {{ default_schema }}
