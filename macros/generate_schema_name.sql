@@ -13,7 +13,7 @@
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
     {%- set inter_tmp_tables = ['choose_users','products','users','tags','comments','products_stock_log','product_warehouse_location','kit_links','products_bundle_component','posts','adyen_notifications','wp_jb_products_stock_log','orders','order_details','order_detail_sub','sub_offers','coupons','sub_order_link','gift_cards','sub_history','sub_suspend_survey_result','sub_suspend_survey_result_answer','inventory_items','partial_cancelations'] -%}
 
-    {%- set user_tmp_tables = ['segments','today_whales'] -%}
+    {%- set user_tmp_tables = ['segments','today_whales','today_stars'] -%}
 
     {%- if node.name in sales_tmp_tables -%}
         sales_tmp
