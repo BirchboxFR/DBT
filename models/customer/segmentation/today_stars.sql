@@ -20,5 +20,5 @@ FROM (
   )
   GROUP BY user_id
 )
-qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 0 and 5
+qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 5 and 30
 order by gp_tot asc
