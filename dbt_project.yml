@@ -53,6 +53,6 @@ models:
         +materialized: table
     schedule:  # Configuration pour le namespace schedule
       daily:
-        ops:
-          +schema: 5am
+        5am:
+          +schema: ops
           +materialized: table
