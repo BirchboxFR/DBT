@@ -58,3 +58,4 @@ models:
             +materialized: table
           normalised:
             +database: normalised-417010
+            +materialized: table
