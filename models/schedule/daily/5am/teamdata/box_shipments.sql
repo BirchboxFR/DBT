@@ -133,7 +133,7 @@ WHEN COALESCE(gct.nb_gws,0) = 0 THEN picking_daily_mono.price ELSE picking_daily
 bs.shipping_country,
 COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost
 
-FROM sales.box_sales as bs
+FROM {{ ref('box_sales') }} as bs
 LEFT JOIN first_shipping_mode sm1 ON sm1.sub_id = bs.sub_id AND sm1.dw_country_code = bs.dw_country_code
 LEFT JOIN pot_box_shipments pbs ON pbs.sub_id = bs.sub_id AND pbs.dw_country_code = bs.dw_country_code
 JOIN `inter.shipping_modes` sm ON sm.id = COALESCE(sm1.id,bs.shipping_mode) AND sm.dw_country_code = bs.dw_country_code
