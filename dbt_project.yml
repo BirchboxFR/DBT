@@ -51,11 +51,10 @@ models:
         +database: normalised-417010
         +schema: user
         +materialized: table
-    schedule:  # Configuration pour le namespace schedule
+    schedule:
+      +materialized: table  # Configuration pour le namespace schedule
       daily:
         5am:
-          teamdata:
-            +materialized: table
+          teamdata:           
           normalised:
             +database: normalised-417010
-            +materialized: table
