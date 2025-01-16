@@ -23,7 +23,7 @@ SUM(picking_cost) AS total_picking_cost,
 SUM(product_cost) AS product_cost,
 SAFE_DIVIDE(SUM(shipping_transport_cost), count(*)) AS avg_shipping_cost,
 SAFE_DIVIDE(SUM(picking_cost), count(*)) AS avg_picking_cost
-FROM {{ ref('box_shipments') }
+FROM {{ ref('box_shipments') }}
 WHERE year >= 2018
 AND shipping_date <= CURRENT_DATE
 GROUP BY shipment_type, dw_country_code,shipping_mode_nice_name, range_of_weight,min_weight_range, max_weight_range, first_reexp, daily_monthly,mono_multi, box_date, year, month, shipping_date
@@ -55,7 +55,7 @@ SUM(picking_cost) AS total_picking_cost,
 SUM(products_cost) AS product_cost,
 SAFE_DIVIDE(SUM(shipping_transport_cost), count(*)) AS avg_shipping_cost,
 SAFE_DIVIDE(SUM(picking_cost), count(*)) AS avg_picking_cost
-FROM {{ ref('shop_shipments') }
+FROM {{ ref('shop_shipments') }}
 WHERE year >= 2018
 AND shipping_date <= CURRENT_DATE
 GROUP BY shipment_type, dw_country_code,shipping_mode_nice_name, range_of_weight,min_weight_range, max_weight_range, first_reexp,  year, month, shipping_date
