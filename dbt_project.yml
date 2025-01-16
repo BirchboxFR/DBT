@@ -51,3 +51,8 @@ models:
         +database: normalised-417010
         +schema: user
         +materialized: table
+    schedule:  # Configuration pour le namespace schedule
+      daily:
+        ops:
+          +schema: ops
+          +materialized: table
