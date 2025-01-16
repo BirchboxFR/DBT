@@ -45,12 +45,7 @@ models:
         +materialized: table
       inter:
         +materialized: table
-
-    customer:  # Configuration pour le namespace customer
-      segmentation:
-        +database: normalised-417010
-        +schema: user
-        +materialized: table
+        
     schedule:
       +materialized: table  # Configuration pour le namespace schedule
       daily:
