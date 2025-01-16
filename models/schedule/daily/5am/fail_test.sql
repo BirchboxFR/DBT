@@ -1,0 +1,1 @@
+SELECT count(*) FROM sales.box_saless

@@ -2,7 +2,7 @@
     {%- set default_schema = target.schema -%}
 
     {# Listes des tables spécifiques pour chaque schéma #}
-    {%- set sales_tmp_tables = ['box_sales','box_refunds','box_gift','kpi_box','box_sales_by_user_by_type','box_acquisition_daily','shop_sales','box_acquisition_detail','shop_orders_margin','shop_refunds','obj_by_country'] -%}
+    {%- set sales_tmp_tables = ['box_sales','box_refunds','box_gift','kpi_box','box_sales_by_user_by_type','box_acquisition_daily','shop_sales','box_acquisition_detail','shop_orders_margin','shop_refunds','obj_by_country','fail_test'] -%}
     {%- set ops_tmp_tables = ['logistics_costs','shipping_costs','box_shipments','shop_shipments'] -%}
     {%- set snippets_tmp_tables = ['current_box'] -%}
     {%- set allocation_tmp_tables = ['index_user_samples','box_choose'] -%}
