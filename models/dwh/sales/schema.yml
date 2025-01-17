@@ -11,3 +11,4 @@ models:
           severity: warn
           config:
             store_failures: true
+            name: "Doublons box_sales"
