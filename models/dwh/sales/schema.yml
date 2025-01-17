@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: box_sales
+    description: "Table des ventes de box"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - sub_id
+            - dw_country_code
+          severity: warn
+          config:
+            store_failures: true
