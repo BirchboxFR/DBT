@@ -3,11 +3,13 @@ version: 2
 models:
   - name: box_sales
     description: "Table des ventes de box"
+    columns:
+      - name: dw_country_code
+        description: "Code du pays dans la dimension des pays"
+      - name: sub_id
+        description: "Identifiant unique de l'abonné"
     tests:
-      - unique:
+      - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - dw_country_code
             - sub_id
-          severity: warn
-          config:
-            store_failures: true
