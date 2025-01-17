@@ -12,3 +12,4 @@ models:
           config:
             store_failures: true
             name: "Doublons box_sales"
+            schema: dbt_test_failures

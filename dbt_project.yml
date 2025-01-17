@@ -53,5 +53,3 @@ models:
           teamdata:           
           normalised:
             +database: normalised-417010
-test:
-  schema: dbt_test_failures  # Dataset spécifique pour stocker les résultats des tests
