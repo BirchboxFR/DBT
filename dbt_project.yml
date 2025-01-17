@@ -22,7 +22,8 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  warehouse: # faut que que ca matche le name sinon ca plante
+  warehouse:
+    +schema: default_schema # faut que que ca matche le name sinon ca plante
     dwh:  # Configuration pour le namespace dwh
       +schema: dwh_schema
       accounting:
