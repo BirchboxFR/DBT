@@ -5,12 +5,9 @@ models:
     description: "Table des ventes de box"
     tests:
       - unique:
-          columns:
+          combination_of_columns:
             - dw_country_code
             - sub_id
-          severity: warn    # Changé en warn pour ne pas bloquer le run
+          severity: warn
           config:
-            store_failures: true   # Stocke les échecs pour le rapport
-            on_warning:
-              slack_channel: '#alerts_data'  # Remplacez par votre canal
-              notification_threshold: 1  # Envoie une notification dès le premier doublon
+            store_failures: true
