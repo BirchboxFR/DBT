@@ -15,7 +15,9 @@
 
     {%- set user_tmp_tables = ['segments','today_whales','today_stars'] -%}
 
-    {%- if node.name in sales_tmp_tables -%}
+    {%- if node.resource_type == "test" -%}
+        dbt_test_failures  {# Schéma dédié pour les résultats des tests #}
+    {%- elif node.name in sales_tmp_tables -%}
         sales_tmp
     {%- elif node.name in product_tmp_tables -%}
         product_tmp
