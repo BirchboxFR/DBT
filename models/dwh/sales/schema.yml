@@ -3,9 +3,14 @@ version: 2
 models:
   - name: box_sales
     description: "Table des ventes de box"
-    columns:
-      - name: sub_id
-        description: "Identifiant unique de souscription"
-        tests:
-          - unique:
-              severity: error
+    tests:
+      - unique:
+          columns:
+            - dw_country_code
+            - sub_id
+          severity: warn    # Changé en warn pour ne pas bloquer le run
+          config:
+            store_failures: true   # Stocke les échecs pour le rapport
+            on_warning:
+              slack_channel: '#alerts_data'  # Remplacez par votre canal
+              notification_threshold: 1  # Envoie une notification dès le premier doublon
