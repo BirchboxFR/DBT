@@ -23,13 +23,13 @@ b.nme_end_date
  -- JOIN inter.orders o ON o.id = bs.order_id AND o.dw_country_code = bs.dw_country_code
  -- JOIN inter.order_detail_sub s ON s.id = bs.sub_id AND s.dw_country_code = bs.dw_country_code
   JOIN {{ ref('boxes') }} b ON b.id = bs.box_id AND b.dw_country_code = bs.dw_country_code
-  LEFT JOIN  inter.choose_forms cf ON cf.box_id = b.id and cf.dw_country_code = b.dw_country_code
+  LEFT JOIN  {{ ref('choose_forms') }} cf ON cf.box_id = b.id and cf.dw_country_code = b.dw_country_code
   LEFT JOIN
   (
     SELECT user_id, box_id, cc.choice_name, cu.dw_country_code, cu.status_id, cu.created_at as choice_date, cf.name as form_name
     FROM {{ ref('choose_users') }} cu
-    JOIN inter.choose_forms cf ON cf.id = cu.form_id AND cf.dw_country_code = cu.dw_country_code
-    JOIN inter.choose_choices cc ON cc.id = cu.choice_id AND cc.dw_country_code = cu.dw_country_code
+    JOIN {{ ref('choose_forms') }} cf ON cf.id = cu.form_id AND cf.dw_country_code = cu.dw_country_code
+    JOIN {{ ref('choose_choices') }} cc ON cc.id = cu.choice_id AND cc.dw_country_code = cu.dw_country_code
 
     GROUP BY user_id, box_id, cc.choice_name, cu.dw_country_code, cu.status_id, cu.created_at, cf.name
   ) ch ON ch.user_id = bs.user_id AND ch.box_id = bs.box_id AND ch.dw_country_code = bs.dw_country_code AND ch.status_id IN ( 1,2)
