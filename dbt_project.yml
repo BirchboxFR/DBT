@@ -36,6 +36,10 @@ models:
       sales:
       snippets:
       inter:
+        +materialized: table
+        views:
+          +materialized: view
+
         
     schedule:
       +materialized: table  # Configuration pour le namespace schedule
