@@ -8,7 +8,7 @@ models:
           combination_of_columns:
             - sub_id
             - dw_country_code
-        severity: warn  # Correction d'indentation
-        config:
-          store_failures: true
-          name: "Doublons_partial_box_paid"
+          severity: warn
+          config:
+            store_failures: true
+            name: "Doublons partial_box_paid"
