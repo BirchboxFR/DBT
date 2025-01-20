@@ -29,7 +29,7 @@ FROM
            AND s.shipping_Status_id IN (2, 3, 4, 5, 22)
            AND bu.box_id IS NULL
 ) t
-INNER JOIN inter.boxes b ON b.id = t.box_id AND t.dw_country_code = b.dw_country_code
+INNER JOIN {{ ref('boxes') }} b ON b.id = t.box_id AND t.dw_country_code = b.dw_country_code
 INNER JOIN (SELECT dw_country_code, user_id, MIN(box_id) AS first_box_id
             FROM all_boxes_by_user
             GROUP BY dw_country_code,

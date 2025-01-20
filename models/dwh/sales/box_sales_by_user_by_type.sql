@@ -166,7 +166,7 @@ FROM
           END AS type,
           COUNT(*) as nb
     FROM {{ ref('box_sales') }} bs
-    JOIN inter.boxes b ON b.id = bs.box_id + 1 AND b.dw_country_code = bs.dw_country_code
+    JOIN {{ ref('boxes') }} b ON b.id = bs.box_id + 1 AND b.dw_country_code = bs.dw_country_code
     GROUP BY bs.dw_country_code,
             bs.box_id,
             bs.year,

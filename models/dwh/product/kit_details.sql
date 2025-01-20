@@ -5,7 +5,7 @@ FROM `inter.kit_links` kl
 JOIN {{ ref('catalog') }} as kit ON kit.product_id = kl.kit_id AND kit.dw_country_code = kl.dw_country_code
 JOIN {{ ref('products') }} p ON p.id = kit.product_id AND kit.dw_country_code = p.dw_country_code
 JOIN {{ ref('catalog') }} as component ON component.product_id = kl.product_id AND component.dw_country_code = kl.dw_country_code
-LEFT JOIN inter.boxes b ON b.id = p.box_id AND b.dw_country_code = p.dw_country_code
+LEFT JOIN {{ ref('boxes') }} b ON b.id = p.box_id AND b.dw_country_code = p.dw_country_code
 LEFT JOIN `inter.product_codification` pc_kit ON pc_kit.id = kit.product_codification_id AND pc_kit.dw_country_code = kit.dw_country_code
 LEFT JOIN `inter.product_codification` pc_component ON pc_component.id = component.product_codification_id AND pc_component.dw_country_code = component.dw_country_code
 

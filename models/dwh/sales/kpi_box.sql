@@ -120,7 +120,7 @@ all_boxes as
 (
   SELECT b.dw_country_code, id as box_id, extract(year from b.date) as year, extract(month from b.date) AS month, format_date('%Y-%m', b.date) AS box_month, CASE WHEN b.shipping_status_id = 2 THEN true ELSE false END AS is_current, 
   b.id - cb.current_box_id AS diff_current_box
-  FROM inter.boxes b
+  FROM {{ ref('boxes') }} b
   JOIN {{ ref('current_box') }} cb ON cb.dw_country_code = b.dw_country_code
   ORDER BY b.dw_country_code, b.date
 )

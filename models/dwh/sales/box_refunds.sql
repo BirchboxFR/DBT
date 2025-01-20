@@ -43,7 +43,7 @@ FROM {{ ref('adyen_notifications') }} an
 INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
+INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
 LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
 LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
@@ -89,7 +89,7 @@ FROM {{ ref('adyen_notifications') }} an
 INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
+INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
 LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
 LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
@@ -137,7 +137,7 @@ FROM {{ ref('adyen_notifications') }} an
 INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_detail_sub') }} s ON s.id = an.sub_id AND s.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
-INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
+INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
 LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
 LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
@@ -190,7 +190,7 @@ FROM {{ ref('adyen_notifications') }} an
 INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
 INNER JOIN {{ ref('order_details') }} d ON d.order_id = o.id AND d.product_id = 1 AND d.dw_country_code = o.dw_country_code
 INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.box_id = d.sub_start_box AND s.dw_country_code = d.dw_country_code
-INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
+INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
 LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
 LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code

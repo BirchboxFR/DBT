@@ -22,7 +22,7 @@ b.nme_end_date
   FROM {{ ref('box_sales') }} as bs
  -- JOIN inter.orders o ON o.id = bs.order_id AND o.dw_country_code = bs.dw_country_code
  -- JOIN inter.order_detail_sub s ON s.id = bs.sub_id AND s.dw_country_code = bs.dw_country_code
-  JOIN inter.boxes b ON b.id = bs.box_id AND b.dw_country_code = bs.dw_country_code
+  JOIN {{ ref('boxes') }} b ON b.id = bs.box_id AND b.dw_country_code = bs.dw_country_code
   LEFT JOIN  inter.choose_forms cf ON cf.box_id = b.id and cf.dw_country_code = b.dw_country_code
   LEFT JOIN
   (

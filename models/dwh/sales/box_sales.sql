@@ -6,7 +6,7 @@ FROM
 (
 SELECT sr.dw_country_code, sr.customer_id AS user_id, b.id AS box_id, sqa.title AS survey_reason, ROW_NUMBER() OVER (PARTITION BY sr.dw_country_code, sr.customer_id, b.id ORDER BY sr.answered_at DESC) AS row_num
 FROM {{ ref('sub_suspend_survey_result') }} sr
-JOIN `teamdata-291012.inter.boxes` b ON b.dw_country_code = sr.dw_country_code AND b.id = sr.last_received_box_id + 1
+JOIN {{ ref('boxes') }} b ON b.dw_country_code = sr.dw_country_code AND b.id = sr.last_received_box_id + 1
 JOIN {{ ref('sub_suspend_survey_result_answer') }} sra ON sra.result_id = sr.result_id AND sr.dw_country_code = sra.dw_country_code
 JOIN `teamdata-291012.bdd_prod_fr.wp_jb_sub_suspend_survey_question_answer` sqa ON sqa.question_answer_id = sra.question_answer_id 
 WHERE sra.question_id = 1
@@ -268,8 +268,8 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   FROM {{ ref('orders') }} o
   INNER JOIN {{ ref('order_details') }} d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
   INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
-  INNER JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
-  INNER JOIN inter.boxes b1 ON b1.id = s.box_id +1 AND b1.dw_country_code = s.dw_country_code
+  INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
+  INNER JOIN {{ ref('boxes') }} b1 ON b1.id = s.box_id +1 AND b1.dw_country_code = s.dw_country_code
   INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
   INNER JOIN {{ ref('current_box') }} cbt ON o.dw_country_code = cbt.dw_country_code
   LEFT JOIN products p ON o.dw_country_code = p.dw_country_code AND b.id = p.box_id AND s.coffret_id = p.coffret_id AND p.product_codification_id = 29

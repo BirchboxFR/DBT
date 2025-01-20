@@ -26,7 +26,7 @@ FROM
            END AS sub_type
     FROM {{ ref('box_sales') }} bs
     LEFT JOIN {{ ref('box_sales') }} bs1 ON bs.dw_country_code = bs1.dw_country_code AND bs1.user_id = bs.user_id AND bs1.box_id < bs.box_id
-    INNER JOIN `inter.boxes` b ON bs.dw_country_code = b.dw_country_code AND b.id = bs.box_id
+    INNER JOIN {{ ref('boxes') }} b ON bs.dw_country_code = b.dw_country_code AND b.id = bs.box_id
     WHERE bs.payment_date >= b.shipping_date
     AND bs.payment_status = 'paid'
     GROUP BY bs.dw_country_code,
