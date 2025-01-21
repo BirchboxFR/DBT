@@ -40,7 +40,6 @@ models:
         views:
           +materialized: view
         materialized_views:
-        # Configuration par défaut pour toutes les vues matérialisées
           +materialized: materialized_view
           refresh_1h:
           # Vues matérialisées rafraîchies toutes les heures
