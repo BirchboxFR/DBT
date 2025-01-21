@@ -16,6 +16,8 @@
     {%- set user_tmp_tables = ['segments','today_whales','today_stars'] -%}
     {%- set inter_materialized_view_tmp_tables = ['allocation_history','b2c_exported_orders','ga_transactions','mini_reexp','optin','payment_profiles','raf','raf_order_link','reception_details','reward_points_history','reward_points_history_uses','saved_cart','saved_cart_details','store_mouvements','term_relationships','trackings','user_campaign','user_mailing_list'] -%}
 
+    {%- set inter_all_tables = inter_tmp_tables + inter_view_tmp_tables + inter_materialized_view_tmp_tables + user_tmp_tables  -%}
+
 
     {%- if node.resource_type == "test" -%}
         dbt_test_failures  {# Schéma dédié pour les résultats des tests #}
@@ -37,11 +39,7 @@
         accounting_tmp
     {%- elif node.name in blissim_analytics_tmp_tables -%}
         blissim_analytics_tmp
-    {%- elif node.name in inter_tmp_tables -%}
-        inter_tmp
-    {%- elif node.name in inter_view_tmp_tables -%}
-        inter_tmp
-    {%- elif node.name in inter_materialized_view_tmp_tables -%}
+    {%- elif node.name in inter_all_tables -%}
         inter_tmp
     {%- elif node.name in user_tmp_tables -%}
         user
