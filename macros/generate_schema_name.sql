@@ -39,7 +39,7 @@
         blissim_analytics_tmp
     {%- elif node.name in inter_tmp_tables -%}
         inter_tmp
-    {%- elif node.name in inter_views_tmp_tables -%}
+    {%- elif node.name in inter_view_tmp_tables -%}
         inter_tmp
     {%- elif node.name in inter_materialized_view_tmp_tables -%}
         inter_tmp
