@@ -25,6 +25,7 @@ models:
   warehouse: # faut que que ca matche le name sinon ca plante
     dwh:
       +materialized: table  # Configuration pour le namespace dwh
+      region: europe-west1
       +schema: dwh_schema
       accounting:
       allocation:
