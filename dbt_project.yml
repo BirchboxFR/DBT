@@ -39,6 +39,18 @@ models:
         +materialized: table
         views:
           +materialized: view
+        materialized_views:
+        # Configuration par défaut pour toutes les vues matérialisées
+          +materialized: materialized_view
+          refresh_1h:
+          # Vues matérialisées rafraîchies toutes les heures
+            +options:
+              max_staleness: INTERVAL 1 HOUR
+        
+          refresh_2h:
+          # Vues matérialisées rafraîchies toutes les 2 heures
+            +options:
+              max_staleness: INTERVAL 2 HOUR
 
         
     schedule:

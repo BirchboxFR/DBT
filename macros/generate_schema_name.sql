@@ -14,6 +14,7 @@
     {%- set inter_tmp_tables = ['choose_users','products','users','tags','comments','products_stock_log','product_warehouse_location','kit_links','products_bundle_component','posts','adyen_notifications','wp_jb_products_stock_log','orders','order_details','order_detail_sub','sub_offers','coupons','sub_order_link','gift_cards','sub_history','sub_suspend_survey_result','sub_suspend_survey_result_answer','inventory_items','partial_cancelations'] -%}
     {%- set inter_view_tmp_tables = ['inter_tmp.boxes', 'inter_tmp.brands', 'inter_tmp.brands_correspondances', 'inter_tmp.business_objectives', 'inter_tmp.byob_product_link', 'inter_tmp.choose_choices', 'inter_tmp.choose_forms', 'inter_tmp.company', 'inter_tmp.da_box_acquisition_detail', 'inter_tmp.da_box_shipped_detail', 'inter_tmp.da_eu_countries', 'inter_tmp.da_monthly_sub_baseline', 'inter_tmp.expected_inbound_details', 'inter_tmp.expected_inbounds', 'inter_tmp.invoice_credit_notes', 'inter_tmp.invoices', 'inter_tmp.invoice_details', 'inter_tmp.lte_kits', 'inter_tmp.mini_byob_reexp', 'inter_tmp.mini_lte_reexp', 'inter_tmp.open_comment_posts', 'inter_tmp.order_detail_sub_options', 'inter_tmp.order_status', 'inter_tmp.partial_box_paid', 'inter_tmp.prepacked_products', 'inter_tmp.product_codification', 'inter_tmp.purchase_orders', 'inter_tmp.purchase_order_items', 'inter_tmp.raf_offer_details', 'inter_tmp.raf_offers', 'inter_tmp.raf_reward_moment', 'inter_tmp.raf_reward_type', 'inter_tmp.raf_sub_link', 'inter_tmp.range_of_age', 'inter_tmp.sample_product_link', 'inter_tmp.shipping_modes', 'inter_tmp.store_products', 'inter_tmp.sub_payments_status', 'inter_tmp.sub_suspend_survey_question', 'inter_tmp.sub_suspend_survey_question_answer', 'inter_tmp.sub_suspended_reasons', 'inter_tmp.survey_answer_meanings', 'inter_tmp.survey_question_categories', 'inter_tmp.term_taxonomy', 'inter_tmp.terms'] -%}  
     {%- set user_tmp_tables = ['segments','today_whales','today_stars'] -%}
+    {%- set inter_materialized_view_tmp_tables = ['allocation_history'] -%}
 
     {%- if node.resource_type == "test" -%}
         dbt_test_failures  {# Schéma dédié pour les résultats des tests #}
@@ -38,6 +39,8 @@
     {%- elif node.name in inter_tmp_tables -%}
         inter_tmp
     {%- elif node.name in inter_views_tmp_tables -%}
+        inter_tmp
+    {%- elif node.name in inter_materialized_view_tmp_tables -%}
         inter_tmp
     {%- elif node.name in user_tmp_tables -%}
         user
