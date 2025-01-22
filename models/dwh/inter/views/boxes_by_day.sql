@@ -3,7 +3,7 @@ with debut as (
   date,
   min(shipping_date) as first,
   LEAD(min(shipping_date)-1) OVER(ORDER BY dw_country_code,id) as last
-   from `teamdata-291012.inter.boxes` 
+   from {{ ref('boxes') }}
 group by 1,2,3
 order by id 
 )
