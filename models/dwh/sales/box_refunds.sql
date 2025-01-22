@@ -194,7 +194,7 @@ INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_
 LEFT JOIN {{ ref('gift_cards') }} gc ON gc.ID = d.gift_card_id AND gc.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('coupons') }} c ON c.id = o.coupon_code_id AND c.dw_country_code = o.dw_country_code
 LEFT JOIN {{ ref('sub_offers') }} so ON so.id = s.sub_offer_id AND so.dw_country_code = s.dw_country_code
-INNER JOIN {{ ref('sub_payments_statuss') }}sps ON sps.id = s.sub_payment_status_id and sps.dw_country_code='FR'
+INNER JOIN {{ ref('sub_payments_status') }}sps ON sps.id = s.sub_payment_status_id and sps.dw_country_code='FR'
 LEFT JOIN {{ ref('tva_product') }} tva ON tva.country_code = s.shipping_country AND tva.category = 'normal' AND tva.dw_country_code = s.dw_country_code
 LEFT JOIN snippets.yearly_coupons yc ON an.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
 WHERE an.eventdate >= '2018-01-01'
