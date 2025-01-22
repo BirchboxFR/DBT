@@ -8,7 +8,7 @@ SELECT sr.dw_country_code, sr.customer_id AS user_id, b.id AS box_id, sqa.title 
 FROM {{ ref('sub_suspend_survey_result') }} sr
 JOIN {{ ref('boxes') }} b ON b.dw_country_code = sr.dw_country_code AND b.id = sr.last_received_box_id + 1
 JOIN {{ ref('sub_suspend_survey_result_answer') }} sra ON sra.result_id = sr.result_id AND sr.dw_country_code = sra.dw_country_code
-JOIN `teamdata-291012.bdd_prod_fr.wp_jb_sub_suspend_survey_question_answer` sqa ON sqa.question_answer_id = sra.question_answer_id 
+JOIN {{ ref('sub_suspend_survey_question_answer') }} sqa ON sqa.question_answer_id = sra.question_answer_id 
 WHERE sra.question_id = 1
 ) t
 WHERE row_num = 1
@@ -44,11 +44,11 @@ ranked_sub_history AS
   END AS sub_suspended_reason_lvl2, 
   'reason from survey' AS sub_suspended_reason_lvl3,
   ROW_NUMBER() OVER (PARTITION BY o.user_id, sh.box_id, sh.dw_country_code ORDER BY timestamp DESC) AS row_num
-  FROM inter.sub_history sh
+  FROM {{ ref('sub_history') }} sh
   JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = sh.order_detail_id AND s.box_id = sh.box_id AND sh.dw_country_code = s.dw_country_code
   JOIN {{ ref('order_details') }} d ON d.id = s.order_detail_id AND d.dw_country_code = s.dw_country_code
   JOIN {{ ref('orders') }} o ON o.id = d.order_id AND d.dw_country_code = o.dw_country_code
-  JOIN `inter.sub_suspended_reasons` ssr ON ssr.dw_country_code = sh.dw_country_code AND ssr.id = sh.sub_suspended_reasons_id
+  JOIN {{ ref('sub_suspended_reasons') }} ssr ON ssr.dw_country_code = sh.dw_country_code AND ssr.id = sh.sub_suspended_reasons_id
 
   
   AND sh.action = -1
@@ -270,7 +270,7 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
   INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
   INNER JOIN {{ ref('boxes') }} b1 ON b1.id = s.box_id +1 AND b1.dw_country_code = s.dw_country_code
-  INNER JOIN bdd_prod_fr.wp_jb_sub_payments_status sps ON sps.id = s.sub_payment_status_id
+  INNER JOIN {{ ref('sub_payment_status') }} sps ON sps.id = s.sub_payment_status_id and sps.dw_country_code='FR'
   INNER JOIN {{ ref('current_box') }} cbt ON o.dw_country_code = cbt.dw_country_code
   LEFT JOIN products p ON o.dw_country_code = p.dw_country_code AND b.id = p.box_id AND s.coffret_id = p.coffret_id AND p.product_codification_id = 29
   LEFT JOIN {{ ref('kit_costs') }} kc ON o.dw_country_code = kc.country_code AND p.inventory_item_id = kc.inventory_item_id and kc.kit_id=p.id
