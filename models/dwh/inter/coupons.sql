@@ -29,7 +29,7 @@ SELECT 'FR' AS dw_country_code, t.*except(valid_from,validity_date,
 safe_cast(validity_date as date) as validity_date,
 safe_cast(valid_from as date) as valid_from
  FROM `bdd_prod_fr.wp_jb_coupons` t
- WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+ WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'DE' AS dw_country_code, t.*except(valid_from,validity_date,

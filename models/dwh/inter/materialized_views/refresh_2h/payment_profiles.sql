@@ -20,7 +20,7 @@ id,
   card_holder_fullname,
   first_psp_reference
 FROM `bdd_prod_fr.wp_jb_payment_profiles` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 

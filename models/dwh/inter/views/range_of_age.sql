@@ -14,7 +14,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_fr.wp_jb_range_of_age` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 

@@ -6,7 +6,7 @@
 SELECT 'FR' AS dw_country_code,
 NULL AS comments, NULL AS question_category_id, display_inline, sort_order, id, survey_id, visible, created_at, shuffle, intro, NULL AS category_id, title, parent_id, type 
 FROM `bdd_prod_fr.wp_jb_survey_questions` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 

@@ -41,7 +41,7 @@ id,
   updated_at,
   created_by
   FROM `bdd_prod_fr.wp_jb_sub_offers` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 

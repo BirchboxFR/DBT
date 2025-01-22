@@ -6,7 +6,7 @@
 SELECT 'FR' AS dw_country_code,
 id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,auto,status_id, payment_method_id,data,date(date)date,created_at,updated_at  
 FROM `bdd_prod_fr.wp_jb_payments` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 

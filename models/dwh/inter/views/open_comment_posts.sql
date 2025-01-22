@@ -10,7 +10,7 @@ SELECT 'FR' AS dw_country_code,id, post_id, created_at, created_by,
 safe_cast(start_date as date) as start_date,
 safe_cast(end_date as date) as end_date,
   FROM `bdd_prod_fr.wp_jb_open_comment_posts` u
-  WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+  WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 SELECT 'DE' AS dw_country_code,id, post_id, created_at, created_by,  

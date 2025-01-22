@@ -20,7 +20,7 @@ SELECT 'FR' AS dw_country_code,
   created_at,
   updated_at
 FROM `bdd_prod_fr.wp_jb_trackings` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
