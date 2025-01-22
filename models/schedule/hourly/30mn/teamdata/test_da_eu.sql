@@ -1,4 +1,5 @@
-SELECT 'FR' AS dw_country_code, t.* 
+SELECT 'FR' AS dw_country_code,
+t.* {% if '__deleted' in columns | map(attribute='name') and '__ts_ms' in columns | map(attribute='name') %}EXCEPT(__deleted, __ts_ms){% endif %}
 FROM `bdd_prod_fr.da_eu_countries` t
 WHERE {% if '__deleted' in columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 UNION ALL 
