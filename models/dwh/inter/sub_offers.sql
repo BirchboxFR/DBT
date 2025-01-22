@@ -13,7 +13,6 @@
 ) }}
 
 
-
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_sub_offers')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_sub_offers')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_sub_offers')) -%}
@@ -21,20 +20,26 @@
 
 SELECT 'FR' AS dw_country_code,
 id,
-  order_id,
-  order_detail_id,
-  sub_id,
-  mini_reexp_id,
-  number,
-  type,
-  status,
-  SAFE_CAST(date AS STRING) AS date,
-  last_update,
+  parent_offer_id,
+  code,
+  title,
   description,
-  coffret_id,
-  insert_date,
+  conditions,
+  offer_type,
+  offer_value,
+  secondary_offer_value,
+  SAFE_CAST(valid_from AS STRING) AS valid_from,
+  SAFE_CAST(validity_date AS STRING) AS validity_date,
+  max_use,
+  count,
+  sub_engagement_period,
+  start_box,
+  offer_target,
+  subs_paid_in_advance,
+  trigger,
   created_at,
-  updated_at
+  updated_at,
+  created_by
   FROM `bdd_prod_fr.wp_jb_sub_offers` t
 WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
@@ -42,20 +47,26 @@ UNION ALL
 
 SELECT 'DE' AS dw_country_code,
 id,
-  order_id,
-  order_detail_id,
-  sub_id,
-  mini_reexp_id,
-  number,
-  type,
-  status,
-  SAFE_CAST(date AS STRING) AS date,
-  last_update,
+  parent_offer_id,
+  code,
+  title,
   description,
-  coffret_id,
-  insert_date,
+  conditions,
+  offer_type,
+  offer_value,
+  secondary_offer_value,
+  SAFE_CAST(valid_from AS STRING) AS valid_from,
+  SAFE_CAST(validity_date AS STRING) AS validity_date,
+  max_use,
+  count,
+  sub_engagement_period,
+  start_box,
+  offer_target,
+  subs_paid_in_advance,
+  trigger,
   created_at,
-  updated_at
+  updated_at,
+  created_by
 FROM `bdd_prod_de.wp_jb_sub_offers` t
 WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
@@ -63,20 +74,26 @@ UNION ALL
 
 SELECT 'ES' AS dw_country_code,
 id,
-  order_id,
-  order_detail_id,
-  sub_id,
-  mini_reexp_id,
-  number,
-  type,
-  status,
-  SAFE_CAST(date AS STRING) AS date,
-  last_update,
+  parent_offer_id,
+  code,
+  title,
   description,
-  coffret_id,
-  insert_date,
+  conditions,
+  offer_type,
+  offer_value,
+  secondary_offer_value,
+  SAFE_CAST(valid_from AS STRING) AS valid_from,
+  SAFE_CAST(validity_date AS STRING) AS validity_date,
+  max_use,
+  count,
+  sub_engagement_period,
+  start_box,
+  offer_target,
+  subs_paid_in_advance,
+  trigger,
   created_at,
-  updated_at
+  updated_at,
+  created_by
   FROM `bdd_prod_es.wp_jb_sub_offers` t
 WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
@@ -84,19 +101,25 @@ UNION ALL
 
 SELECT 'IT' AS dw_country_code,
 id,
-  order_id,
-  order_detail_id,
-  sub_id,
-  mini_reexp_id,
-  number,
-  type,
-  status,
-  SAFE_CAST(date AS STRING) AS date,
-  last_update,
+  parent_offer_id,
+  code,
+  title,
   description,
-  coffret_id,
-  insert_date,
+  conditions,
+  offer_type,
+  offer_value,
+  secondary_offer_value,
+  SAFE_CAST(valid_from AS STRING) AS valid_from,
+  SAFE_CAST(validity_date AS STRING) AS validity_date,
+  max_use,
+  count,
+  sub_engagement_period,
+  start_box,
+  offer_target,
+  subs_paid_in_advance,
+  trigger,
   created_at,
-  updated_at
+  updated_at,
+  created_by
   FROM `bdd_prod_it.wp_jb_sub_offers` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
