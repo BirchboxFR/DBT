@@ -22,25 +22,25 @@
     {%- if node.resource_type == "test" -%}
         dbt_test_failures  {# Schéma dédié pour les résultats des tests #}
     {%- elif node.name in sales_tmp_tables -%}
-        sales_tmp
+        sales
     {%- elif node.name in product_tmp_tables -%}
-        product_tmp
+        product
     {%- elif node.name in ops_tmp_tables -%}
-        ops_tmp
+        ops
     {%- elif node.name in snippets_tmp_tables -%}
-        snippets_tmp
+        snippets
     {%- elif node.name in allocation_tmp_tables -%}
-        allocation_tmp
+        allocation
     {%- elif node.name in payment_tmp_tables -%}
-        paymenttmp
+        payment
     {%- elif node.name in marketing_tmp_tables -%}
-        marketing_tmp
+        marketing
     {%- elif node.name in accounting_tmp_tables -%}
-        accounting_tmp
+        accounting
     {%- elif node.name in blissim_analytics_tmp_tables -%}
-        blissim_analytics_tmp
+        blissim_analytics
     {%- elif node.name in inter_all_tables -%}
-        inter_tmp
+        inter
     {%- elif node.name in user_tmp_tables -%}
         user
     {%- else -%}

@@ -37,7 +37,7 @@ models:
       sales:
       snippets:
       inter:
-        +schema: inter_tmp 
+        +schema: inter 
         +materialized: table
         views:
           +materialized: view
