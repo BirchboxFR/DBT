@@ -68,7 +68,7 @@ id,
   updated_at,
   created_by
 FROM `bdd_prod_de.wp_jb_sub_offers` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -95,7 +95,7 @@ id,
   updated_at,
   created_by
   FROM `bdd_prod_es.wp_jb_sub_offers` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -122,4 +122,4 @@ id,
   updated_at,
   created_by
   FROM `bdd_prod_it.wp_jb_sub_offers` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
