@@ -270,7 +270,7 @@ CASE WHEN o.raf_parent_id > 0 THEN 1 ELSE 0 END AS raffed,
   INNER JOIN {{ ref('order_detail_sub') }} s ON s.order_detail_id = d.id AND s.dw_country_code = d.dw_country_code
   INNER JOIN {{ ref('boxes') }} b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
   INNER JOIN {{ ref('boxes') }} b1 ON b1.id = s.box_id +1 AND b1.dw_country_code = s.dw_country_code
-  INNER JOIN {{ ref('sub_payment_status') }} sps ON sps.id = s.sub_payment_status_id and sps.dw_country_code='FR'
+  INNER JOIN {{ ref('sub_payments_status') }} sps ON sps.id = s.sub_payment_status_id and sps.dw_country_code='FR'
   INNER JOIN {{ ref('current_box') }} cbt ON o.dw_country_code = cbt.dw_country_code
   LEFT JOIN products p ON o.dw_country_code = p.dw_country_code AND b.id = p.box_id AND s.coffret_id = p.coffret_id AND p.product_codification_id = 29
   LEFT JOIN {{ ref('kit_costs') }} kc ON o.dw_country_code = kc.country_code AND p.inventory_item_id = kc.inventory_item_id and kc.kit_id=p.id
