@@ -22,9 +22,9 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 
 # Configuration des modèles
 models:
-  warehouse: # faut que que ca matche le name sinon ca plante
+  warehouse:
     dwh:
-      +materialized: table  # Configuration pour le namespace dwh
+      +materialized: table
       region: europe-west1
       +schema: dwh_schema
       accounting:
@@ -33,25 +33,20 @@ models:
       marketing:
       ops:
       payment:
-      product:
+      product: 
       sales:
       snippets:
       inter:
-        +schema: inter 
+        +schema: inter
         +materialized: table
         views:
           +materialized: table
         materialized_views:
           +materialized: table
           refresh_1h:
-          # Vues matérialisées rafraîchies toutes les heures
-            +options:
-              max_staleness: INTERVAL 1 HOUR
-        
+            +materialized: table
           refresh_2h:
-          # Vues matérialisées rafraîchies toutes les 2 heures
-            +options:
-              max_staleness: INTERVAL 2 HOUR
+            +materialized: table
 
         
     schedule:
