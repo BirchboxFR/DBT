@@ -43,7 +43,7 @@ SELECT 'DE' AS dw_country_code, t.*except(valid_from,validity_date,
 safe_cast(validity_date as date) as validity_date,
 safe_cast(valid_from as date) as valid_from 
 FROM `bdd_prod_de.wp_jb_coupons` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'ES' AS dw_country_code, t.*except(valid_from,validity_date,
@@ -57,7 +57,7 @@ SELECT 'ES' AS dw_country_code, t.*except(valid_from,validity_date,
 safe_cast(validity_date as date) as validity_date,
 safe_cast(valid_from as date) as valid_from 
 FROM `bdd_prod_es.wp_jb_coupons` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'IT' AS dw_country_code, t.*except(valid_from,validity_date,
@@ -71,7 +71,7 @@ SELECT 'IT' AS dw_country_code, t.*except(valid_from,validity_date,
 safe_cast(validity_date as date) as validity_date,
 safe_cast(valid_from as date) as valid_from 
 FROM `bdd_prod_it.wp_jb_coupons` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 
 

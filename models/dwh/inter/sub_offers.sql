@@ -13,7 +13,7 @@
 ) }}
 
 
-SELECT 'FR' AS dw_country_code, t.*except(valid_from,validity_date), 
+
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_sub_offers')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_sub_offers')) -%}
