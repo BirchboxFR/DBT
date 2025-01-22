@@ -15,10 +15,10 @@
 
 
 
-{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='posts')) -%}
-{%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='posts')) -%}
-{%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='posts')) -%}
-{%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='posts')) -%}
+{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_posts')) -%}
+{%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_posts')) -%}
+{%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_posts')) -%}
+{%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_posts')) -%}
 
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(
@@ -30,7 +30,7 @@ t.* EXCEPT(
  {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
-FROM `bdd_prod_fr.posts` t
+FROM `bdd_prod_fr.wp_posts` t
 WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 UNION ALL
@@ -45,7 +45,7 @@ t.* EXCEPT(
  {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
-FROM `bdd_prod_de.posts` t
+FROM `bdd_prod_de.wp_posts` t
 WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 UNION ALL
@@ -60,7 +60,7 @@ t.* EXCEPT(
  {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
-FROM `bdd_prod_es.posts` t
+FROM `bdd_prod_es.wp_posts` t
 WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
 
 UNION ALL
@@ -75,5 +75,5 @@ t.* EXCEPT(
  {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
-FROM `bdd_prod_it.posts` t
+FROM `bdd_prod_it.wp_posts` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
