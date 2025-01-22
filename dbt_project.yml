@@ -24,6 +24,7 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 models:
   warehouse:
     dwh:
+      +query_tag: "no_cache"
       +materialized: table
       region: europe-west1
       +schema: dwh_schema
