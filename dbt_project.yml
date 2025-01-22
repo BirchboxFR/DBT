@@ -40,9 +40,9 @@ models:
         +schema: inter 
         +materialized: table
         views:
-          +materialized: view
+          +materialized: table
         materialized_views:
-          +materialized: materialized_view
+          +materialized: table
           refresh_1h:
           # Vues matérialisées rafraîchies toutes les heures
             +options:
