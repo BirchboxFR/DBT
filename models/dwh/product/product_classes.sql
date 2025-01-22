@@ -9,22 +9,25 @@ real_parents AS (
   SELECT parent_product_id
   FROM (
     SELECT MAX(CASE WHEN is_parent = 1 THEN id END) AS parent_product_id, COUNT(*) AS nb
-    FROM `bdd_prod_fr.wp_jb_products`
+    FROM {{ ref('products') }}
+    WHERE dw_country_code = 'FR'
     GROUP BY parent_post_id
   )
   WHERE nb >= 2
 ),
 all_bundles AS (
   SELECT pbc.bundle_product_id, pbc.component_product_id
-  FROM `bdd_prod_fr.wp_jb_products_bundle_component` pbc
-  INNER JOIN `bdd_prod_fr.wp_jb_products` p ON pbc.bundle_product_id = p.id AND p.attr_is_bundle = 1
+  FROM {{ ref('products_bundle_component') }} pbc
+  INNER JOIN {{ ref('products') }} p ON pbc.bundle_product_id = p.id AND p.attr_is_bundle = 1 AND pbc.dw_country_code = p.dw_country_code
+  WHERE pbc.dw_country_code = 'FR'
   GROUP BY bundle_product_id, component_product_id
+
 ),
 raw_valid_products AS (
   SELECT p.id AS product_id
-  FROM `bdd_prod_fr.wp_jb_products` p
-  INNER JOIN `bdd_prod_fr.wp_jb_brands` b ON p.brand_id = b.post_id
-  INNER JOIN `bdd_prod_fr.wp_posts` po ON p.post_id = po.id
+  FROM {{ ref('products') }}  p
+  INNER JOIN {{ ref('brands') }}  b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
+  INNER JOIN {{ ref('posts') }}  po ON p.post_id = po.id AND p.dw_country_code = po.dw_country_code
   LEFT JOIN real_parents rp ON p.id = rp.parent_product_id
   WHERE p.product_codification_id = 0
   AND p.attr_not_sold_anymore = 0
@@ -33,6 +36,7 @@ raw_valid_products AS (
   AND p.sku IS NOT NULL
   AND po.post_status = 'publish'
   AND p.special_type IS NULL
+  AND p.dw_country_code = 'FR'
 ),
 valid_products AS (
   SELECT *
@@ -56,12 +60,14 @@ days_in_stock AS (
     SELECT date, product_id, MIN(in_stock) AS in_stock
     FROM (
       SELECT DATE(date) AS date, product_id, stock > 0 AS in_stock
-      FROM `bdd_prod_fr.wp_jb_products_stock_log`
+      FROM {{ ref('products_stock_log') }} 
+      WHERE dw_country_code = 'FR'
       UNION ALL
       SELECT archive_date AS date, id AS product_id, stock > 0 AS in_stock
-      FROM `history_table.bdd_prod_fr__wp_jb_products`
+      FROM {{ ref('products') }}
+      WHERE dw_country_code = 'FR'
     )
-    WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH)
+    WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 month)
     GROUP BY product_id, date
   )
   GROUP BY product_id

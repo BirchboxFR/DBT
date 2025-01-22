@@ -23,4 +23,4 @@ FROM (
   INNER JOIN {{ ref('products') }} p_bundle ON pbc.bundle_product_id = p_bundle.id AND pbc.dw_country_code = p_bundle.dw_country_code AND p_bundle.attr_is_bundle = 1
   LEFT JOIN bundle_with_gift_table bwgt ON pbc.dw_country_code = bwgt.dw_country_code AND pbc.bundle_product_id = bwgt.bundle_product_id
 ) t
-INNER JOIN inter.product_codification pc ON t.dw_country_code = pc.dw_country_code AND t.product_codification_id = pc.id
+INNER JOIN {{ ref('product_codification') }}  pc ON t.dw_country_code = pc.dw_country_code AND t.product_codification_id = pc.id

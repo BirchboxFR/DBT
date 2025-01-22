@@ -21,7 +21,7 @@ shipping_shop AS (
   FROM (
     SELECT store_code, order_id, ss.shipping_country, ss.year, ss.month, MAX(order_total_shipping) AS order_total_shipping, COALESCE(tva.taux, 0) AS vat_rate, MAX(last_day(order_date)) AS last_day
     FROM {{ ref('shop_sales') }} ss
-    LEFT JOIN inter.tva_product tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
+    LEFT JOIN {{ ref('tva_product') }} tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
     GROUP BY store_code, order_id, shipping_country, year, month, tva.taux
   ) t
   GROUP BY store_code, vat_rate, last_day, shipping_country, year, month
@@ -47,7 +47,7 @@ total_vat AS (
       MAX(vat_on_total_shipping) AS vat,
       MAX(LAST_DAY(order_date)) AS last_day
       FROM {{ ref('shop_sales') }} ss
-      LEFT JOIN inter.tva_product tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
+      LEFT JOIN {{ ref('tva_product') }} tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
       GROUP BY ss.order_id, product_cod, store_code, shipping_country, year, month, tva.taux
   ) t
   GROUP BY t.type, product_codification, t.store_code, t.shipping_country, year, month, t.vat_rate_, last_day

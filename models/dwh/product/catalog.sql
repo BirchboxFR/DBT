@@ -65,16 +65,16 @@ FROM
     p.price*(100-tp.taux)/100 AS ht_sale_price
     FROM {{ ref('products') }} p
     LEFT JOIN {{ ref('kit_costs') }} kc ON p.inventory_item_id = kc.inventory_item_id AND p.dw_country_code = kc.country_code
-    LEFT JOIN inter.brands b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
-    LEFT JOIN inter.posts pp ON pp.id = p.post_id AND pp.dw_country_code = p.dw_country_code
+    LEFT JOIN {{ ref('brands') }} b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
+    LEFT JOIN {{ ref('posts') }} pp ON pp.id = p.post_id AND pp.dw_country_code = p.dw_country_code
     LEFT JOIN {{ ref('nice_names') }} pnn ON pnn.product_id = p.id AND pnn.dw_country_code = p.dw_country_code
-    LEFT JOIN inter.brands b_group ON b_group.post_id = b.attr_group_post_id AND b_group.dw_country_code = b.dw_country_code
-    LEFT JOIN inter.product_codification pc ON pc.id = p.product_codification_id AND pc.dw_country_code = p.dw_country_code
+    LEFT JOIN {{ ref('brands') }} b_group ON b_group.post_id = b.attr_group_post_id AND b_group.dw_country_code = b.dw_country_code
+    LEFT JOIN {{ ref('product_codification') }} pc ON pc.id = p.product_codification_id AND pc.dw_country_code = p.dw_country_code
     LEFT JOIN {{ ref('algolia_product_categories') }} apc ON apc.term_id = p.attr_planning_category AND apc.dw_country_code = p.dw_country_code
     LEFT JOIN {{ ref('categories') }} dpc ON dpc.term_id = p.attr_planning_category AND dpc.dw_country_code = p.dw_country_code
     LEFT JOIN {{ ref('inventory_items') }} ii ON ii.id = p.inventory_item_id AND ii.dw_country_code = p.dw_country_code
-    LEFT JOIN inter.company cp ON cp.id = ii.company_id AND cp.dw_country_code = ii.dw_country_code
-    LEFT JOIN inter.tva_product tp ON tp.dw_country_code = p.dw_country_code AND tp.country_code = p.dw_country_code AND tp.category = CASE WHEN p.attr_tva_type IN ('alimentaire', 'hygienique') THEN p.attr_tva_type ELSE 'normal' END 
+    LEFT JOIN {{ ref('company') }} cp ON cp.id = ii.company_id AND cp.dw_country_code = ii.dw_country_code
+    LEFT JOIN {{ ref('tva_product') }} tp ON tp.dw_country_code = p.dw_country_code AND tp.country_code = p.dw_country_code AND tp.category = CASE WHEN p.attr_tva_type IN ('alimentaire', 'hygienique') THEN p.attr_tva_type ELSE 'normal' END 
 ) t
 GROUP BY t.dw_country_code, t.product_id, t.product_post_id, t.inventory_item_id, t.brand_id, t.sku, t.ean, t.brand_full_name, t.product_nice_name,
      t.sales_count, t.stock, t.stock_physique, t.tampon, t.product_codification_id, t.codification, t.full_codification, t.planning_category, t.planning_category_level,

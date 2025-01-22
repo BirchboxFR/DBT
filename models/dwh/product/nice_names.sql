@@ -13,5 +13,5 @@ SELECT p.dw_country_code,
 FROM {{ ref('products') }} p
 LEFT JOIN {{ ref('posts') }} p_product ON p_product.ID = p.post_id AND p.dw_country_code = p_product.dw_country_code
 LEFT JOIN {{ ref('posts') }} p_product_parent ON p_product_parent.ID = p.parent_post_id AND p_product_parent.dw_country_code = p.dw_country_code
-LEFT JOIN inter.brands b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
+LEFT JOIN {{ ref('brands') }} b ON p.brand_id = b.post_id AND p.dw_country_code = b.dw_country_code
 LEFT JOIN {{ ref('posts') }} g ON g.ID = b.attr_group_post_id AND g.dw_country_code = b.dw_country_code
