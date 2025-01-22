@@ -30,3 +30,6 @@ UNION ALL
 SELECT 'IT' AS dw_country_code, t.*except(valid_from,validity_date), 
 safe_cast(validity_date as date) as validity_date,
 safe_cast(valid_from as date) as valid_from FROM `bdd_prod_it.wp_jb_coupons` t
+
+
+
