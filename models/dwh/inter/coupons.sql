@@ -14,12 +14,19 @@
 
 
 
-SELECT 'FR' AS dw_country_code, * FROM `bdd_prod_fr.wp_jb_coupons` 
+SELECT 'FR' AS dw_country_code, t.*except(valid_from,validity_date), 
+safe_cast(validity_date as date) as validity_date,
+safe_cast(valid_from as date) as valid_from
+ FROM `bdd_prod_fr.wp_jb_coupons` t
 UNION ALL 
-SELECT 'DE' AS dw_country_code, * FROM `bdd_prod_de.wp_jb_coupons` 
+SELECT 'DE' AS dw_country_code, t.*except(valid_from,validity_date), 
+safe_cast(validity_date as date) as validity_date,
+safe_cast(valid_from as date) as valid_from FROM `bdd_prod_de.wp_jb_coupons` t
 UNION ALL 
-SELECT 'ES' AS dw_country_code, * FROM `bdd_prod_es.wp_jb_coupons` 
+SELECT 'ES' AS dw_country_code, t.*except(valid_from,validity_date), 
+safe_cast(validity_date as date) as validity_date,
+safe_cast(valid_from as date) as valid_from FROM `bdd_prod_es.wp_jb_coupons` t
 UNION ALL 
-SELECT 'IT' AS dw_country_code, * FROM `bdd_prod_it.wp_jb_coupons`
-
-
+SELECT 'IT' AS dw_country_code, t.*except(valid_from,validity_date), 
+safe_cast(validity_date as date) as validity_date,
+safe_cast(valid_from as date) as valid_from FROM `bdd_prod_it.wp_jb_coupons` t
