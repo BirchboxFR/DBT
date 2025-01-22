@@ -66,7 +66,7 @@ FROM
            SUM(shipping) AS shipping,
            SUM(vat_on_shipping) AS vat_on_shipping
     FROM accounting_box_sales bs
-    LEFT JOIN bdd_prod_fr.da_eu_countries eu ON bs.shipping_country = eu.country_code
+    LEFT JOIN bdd_prod_fr.da_eu_countries eu ON bs.shipping_country = eu.country_code and 
     GROUP BY report_year, report_month, payment_period, box, vat_rate, bs.gift, bs.self, bs.store_code, bs.shipping_country
 ) t
 WHERE payment_period  <> '03- future_payments'
