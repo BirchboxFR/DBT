@@ -13,10 +13,10 @@ SELECT
    cf.name as form_name,
    ch.choice_date,
   CASE WHEN MAX(ch.user_id) IS NOT NULL THEN 1 ELSE 0 END AS choose,
-  CASE WHEN DATE_DIFF(ch.choice_date,b.NME_start_date,DAY) = 0 THEN 1 ELSE NULL END as choose_live_1st_day,
-  CASE WHEN DATE_DIFF(ch.choice_date,b.NME_start_date,DAY) = 1 THEN 1 ELSE NULL END as choose_live_2nd_day,
-  CASE WHEN DATE_DIFF(ch.choice_date,b.NME_start_date,DAY) = 2 THEN 1 ELSE NULL END as choose_live_3rd_day,
-  CASE WHEN DATE_DIFF(ch.choice_date,b.NME_start_date,DAY) = 3 THEN 1 ELSE NULL END as choose_live_4th_day,
+  CASE WHEN DATE_DIFF(date(ch.choice_date),b.NME_start_date,DAY) = 0 THEN 1 ELSE NULL END as choose_live_1st_day,
+  CASE WHEN DATE_DIFF(date(ch.choice_date),b.NME_start_date,DAY) = 1 THEN 1 ELSE NULL END as choose_live_2nd_day,
+  CASE WHEN DATE_DIFF(date(ch.choice_date),b.NME_start_date,DAY) = 2 THEN 1 ELSE NULL END as choose_live_3rd_day,
+  CASE WHEN DATE_DIFF(date(ch.choice_date),b.NME_start_date,DAY) = 3 THEN 1 ELSE NULL END as choose_live_4th_day,
   b.nme_start_date,
 b.nme_end_date
   FROM {{ ref('box_sales') }} as bs
