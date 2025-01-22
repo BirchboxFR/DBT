@@ -64,7 +64,6 @@ days_in_stock AS (
       UNION ALL
       SELECT archive_date AS date, id AS product_id, stock > 0 AS in_stock
       FROM history_table.bdd_prod_fr__wp_jb_products
-      WHERE dw_country_code = 'FR'
     )
     WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 month)
     GROUP BY product_id, date
