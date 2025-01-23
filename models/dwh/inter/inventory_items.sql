@@ -1,18 +1,3 @@
-{{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
-    partition_by={
-      "field": "id",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 300000,
-        "interval": 75
-      }
-    },
-    cluster_by=['dw_country_code', 'company_id']
-) }}
-
 
 
 
