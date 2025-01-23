@@ -1,4 +1,6 @@
 
+
+--- test de la table invoices
 SELECT 'FR' AS dw_country_code,t.*except(invoice_date,order_date,payment_date), 
 safe_cast(invoice_date as date) as invoice_date,
 safe_cast(payment_date as date) as payment_date,
