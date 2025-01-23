@@ -5,7 +5,7 @@
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_invoices')) -%}
 
 --- test de la table invoices
-SELECT 'FR' AS dw_country_code,t.*except(invoice_date,order_date,payment_date²                                                                                                                                                    
+SELECT 'FR' AS dw_country_code,t.*except(invoice_date,order_date,payment_date                                                                                                                                                   
 {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
  {% if '__transaction_order' in fr_columns | map(attribute='name') %}__transaction_order,{% endif %}
