@@ -1,5 +1,6 @@
 {{ config(
     materialized='table',
+    on_schema_change='ignore' ,
     partition_by={
       "field": "form_id",
       "data_type": "int64",

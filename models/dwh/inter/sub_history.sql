@@ -1,6 +1,7 @@
 
 {{ config(
     materialized='table',
+    on_schema_change='ignore' ,
     partition_by={
       "field": "order_detail_id",
       "data_type": "int64",
