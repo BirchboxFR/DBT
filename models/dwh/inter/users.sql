@@ -14,7 +14,7 @@ SELECT 'FR' AS dw_country_code, u.*except(user_birthday,
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_fr.wp_users` u
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}u.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'DE' AS dw_country_code, u.*except(user_birthday,
@@ -26,7 +26,7 @@ SELECT 'DE' AS dw_country_code, u.*except(user_birthday,
  {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_de.wp_users` u
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}u.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'ES' AS dw_country_code, u.*except(user_birthday,
@@ -38,7 +38,7 @@ SELECT 'ES' AS dw_country_code, u.*except(user_birthday,
  {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_es.wp_users` u
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}u.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false)  {% else %}true{% endif %}
 
 UNION ALL 
 SELECT 'IT' AS dw_country_code, u.*except(user_birthday,
@@ -50,7 +50,7 @@ SELECT 'IT' AS dw_country_code, u.*except(user_birthday,
  {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_it.wp_users` u
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}u.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 
 
