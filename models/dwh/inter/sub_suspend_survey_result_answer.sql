@@ -1,19 +1,3 @@
-{{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
-    partition_by={
-      "field": "result_id",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 3000000,
-        "interval": 900
-      }
-    },
-    cluster_by=['dw_country_code','question_answer_id']
-) }}
-
-
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_sub_suspend_survey_result_answer')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_sub_suspend_survey_result_answer')) -%}

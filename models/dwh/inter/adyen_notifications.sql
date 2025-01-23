@@ -1,17 +1,3 @@
-{{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
-    partition_by={
-      "field": "success",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 2,
-        "interval": 1
-      }
-    },
-    cluster_by=['dw_country_code', 'eventCode']
-) }}
 
 
 

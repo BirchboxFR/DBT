@@ -1,17 +1,3 @@
-{{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
-    partition_by={
-      "field": "form_id",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 300,
-        "interval": 1
-      }
-    },
-    cluster_by=['dw_country_code']
-) }}
 
 
 

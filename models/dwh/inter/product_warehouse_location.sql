@@ -1,13 +1,3 @@
-{{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
-    partition_by={
-      "field": "created_at",
-      "data_type": "timestamp",
-      "granularity": "day"
-    }
-) }}
-
 
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_product_warehouse_location')) -%}
