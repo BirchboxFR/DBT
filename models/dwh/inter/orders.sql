@@ -1,3 +1,18 @@
+{{ config(
+    materialized='table',
+    on_schema_change='ignore' ,
+    partition_by={
+      "field": "id",
+      "data_type": "int64",
+      "range": {
+        "start": 0,
+        "end": 50000000,
+        "interval": 30000
+      }
+    },
+    cluster_by=['dw_country_code', 'billing_city']
+) }}
+
 
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_orders')) -%}
