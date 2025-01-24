@@ -1,3 +1,14 @@
+
+{{ config(
+   materialized='table',
+   partition_by={
+     "field": "order_date",
+     "data_type": "date",
+     "granularity": "month"
+   },
+   cluster_by=['dw_country_code']
+) }}
+
 WITH dates AS
 (
   SELECT dates

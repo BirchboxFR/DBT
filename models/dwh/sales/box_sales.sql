@@ -1,3 +1,20 @@
+{{ config(
+    materialized='table',
+    on_schema_change='ignore' ,
+    partition_by={
+      "field": "box_id",
+      "data_type": "int64",
+      "range": {
+        "start": 0,
+        "end": 3000,
+        "interval": 1
+      }
+    },
+    cluster_by=['dw_country_code', 'date','order_id']
+) }}
+
+
+
 WITH 
 sub_suspend_survey_reason AS
 (
