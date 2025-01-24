@@ -1,17 +1,13 @@
 
 {{ config(
-  materialized='table',
-  partition_by={
-    "field": "order_date",
-    "data_type": "date",
-    "granularity": "day",
-    "range": {
-      "start": "2022-01-01"
-    }
-  },
-  cluster_by=['dw_country_code']
+   materialized='table',
+   partition_by={
+     "field": "order_date",
+     "data_type": "date",
+     "granularity": "month"
+   },
+   cluster_by=['dw_country_code']
 ) }}
-
 
 WITH dates AS
 (
