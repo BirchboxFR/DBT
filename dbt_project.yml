@@ -51,6 +51,7 @@ models:
           refresh_4h:
             +materialized: materialized_view 
             +no_refresh: true
+            +refresh_interval_ms: 14400000
 
         
     schedule:
