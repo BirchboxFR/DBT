@@ -48,6 +48,9 @@ models:
             +materialized: table
           refresh_2h:
             +materialized: table
+          refresh_4h:
+            +materialized: materialized_view 
+            +no_refresh: true
 
         
     schedule:
