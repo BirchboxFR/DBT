@@ -1,3 +1,18 @@
+{{ config(
+    materialized='table',
+    on_schema_change='ignore' ,
+    partition_by={
+      "field": "id",
+      "data_type": "int64",
+      "range": {
+        "start": 0,
+        "end": 5000000,
+        "interval": 5000
+      }
+    },
+    cluster_by=['dw_country_code']
+) }}
+
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_users')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_users')) -%}

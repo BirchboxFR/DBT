@@ -1,3 +1,17 @@
+{{ config(
+    materialized='table',
+    on_schema_change='ignore' ,
+    partition_by={
+      "field": "id",
+      "data_type": "int64",
+      "range": {
+        "start": 0,
+        "end": 1000000000,
+        "interval": 400000
+      }
+    },
+    cluster_by=['dw_country_code', 'code','parent_offer_id','validity_date']
+) }}
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_sub_offers')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_sub_offers')) -%}
