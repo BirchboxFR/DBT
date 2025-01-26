@@ -50,9 +50,6 @@ models:
             +materialized: table
           refresh_4h:
             +materialized: materialized_view
-            +refresh_interval_minutes: 240
-            +max_staleness: '6:0:0'
-
 
         
     schedule:
