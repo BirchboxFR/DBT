@@ -1,12 +1,4 @@
-{{
-  config(
-    materialized='materialized_view',
-    enable_refresh=true,
-    refresh_interval_minutes=120,
-    max_staleness=INTERVAL '8:0:0' HOUR TO SECOND
-  )
-}}
-
+{{ config(materialized='materialized_view') }}
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='da_eu_countries')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='da_eu_countries')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='da_eu_countries')) -%}
@@ -69,3 +61,5 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_it.da_eu_countries` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+
+{{ set_materialized_view_settings() }}
