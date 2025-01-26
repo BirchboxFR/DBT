@@ -1,3 +1,12 @@
+{{
+  config(
+    materialized='materialized_view',
+    enable_refresh=true,
+    refresh_interval_minutes=120,
+    max_staleness='4:0:0'
+  )
+}}
+
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='da_eu_countries')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='da_eu_countries')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='da_eu_countries')) -%}
