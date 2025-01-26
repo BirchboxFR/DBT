@@ -3,7 +3,7 @@
     materialized='materialized_view',
     enable_refresh=true,
     refresh_interval_minutes=120,
-    max_staleness='8:0:0'
+    max_staleness=INTERVAL '8:0:0' HOUR TO SECOND
   )
 }}
 
