@@ -50,7 +50,7 @@ models:
             +materialized: table
           refresh_4h:
             +materialized: materialized_view
-            enable_refresh: true
+            enable_refresh: false
             max_staleness: 'INTERVAL "1:0:0" HOUR TO SECOND'
             
 
