@@ -52,6 +52,8 @@ models:
             +materialized: materialized_view
             enable_refresh: true
             max_staleness: 'INTERVAL "0:30:0" HOUR TO SECOND'
+            refresh_interval_minutes: 360
+            
             
 
         
