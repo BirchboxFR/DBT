@@ -20,5 +20,10 @@ FROM (
   )
   GROUP BY user_id
 )
+where user_id not in 
+
+(
+select user_id from {{ ref('today_whales') }}
+)
 qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 5 and 30
 order by gp_tot asc
