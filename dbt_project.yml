@@ -43,11 +43,6 @@ models:
         views:
           +materialized: table
         materialized_views:
-          +materialized: table
-          refresh_1h:
-            +materialized: table
-          refresh_2h:
-            +materialized: table
           refresh_4h:
             +materialized: materialized_view
             enable_refresh: true
