@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table',
+    materialized='materialized_view',
     on_schema_change='ignore' ,
     partition_by={
       "field": "id",
