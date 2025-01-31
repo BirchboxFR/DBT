@@ -1,5 +1,5 @@
 select user_id,status
-from ref('today_stars') }}
+from {{ref('today_stars') }}
 union all
 select user_id,status from {{ ref('today_whales') }}
 union all
