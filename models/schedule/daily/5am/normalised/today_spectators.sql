@@ -7,7 +7,7 @@ sum(case when date_diff(current_date(),order_date,month)<=12 then gross_profit e
 )
 
 
-select * from (
+select *,'SPECTATORS' as status from (
 select dw_country_code,user_id,last_consecutive_box_paid, registration_date,is_shopper,min(box_id) first_box,min(date) first_date,max(case when diff_current_box <=0 and payment_status='paid' then date end ) last_box_paid_date,last_order_date,
 date_diff(current_Date,min(date),month) nb_box_payable,
 count(distinct case when diff_current_box <=0 and payment_status='paid' then date end )nb_box_paid,
@@ -29,4 +29,6 @@ and user_id not in
 (select user_id from {{ ref('today_stars') }}
 union all
 select user_id from {{ ref('today_whales') }}
+union all
+select user_id from {{ ref('today_new') }}
 )

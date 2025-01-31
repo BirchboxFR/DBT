@@ -1,5 +1,5 @@
 SELECT user_id, 
-       gp_tot
+       gp_tot,'WHALES' as status
 FROM (
   SELECT user_id, 
          SUM(gp) AS gp_tot
@@ -19,6 +19,12 @@ FROM (
     GROUP BY user_id
   )
   GROUP BY user_id
+)
+where user_id not in 
+
+(
+
+select user_id from {{ ref('today_new') }}
 )
 qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 0 and 5
 order by gp_tot asc
