@@ -1,3 +1,9 @@
+
+{{ config(
+    materialized='view',
+    on_schema_change='ignore'
+) }}
+
 WITH all_box_sales AS (
   SELECT EXTRACT(YEAR FROM payment_date) AS year_payment_date, EXTRACT(MONTH FROM payment_date) AS month_payment_date, DATE(payment_date) AS payment_date, box_id, store_code, shipping_country, gift, vat_rate, payment_status, self, year, month, date, gross_revenue, vat_on_gross_revenue, discount, vat_on_discount, shipping, vat_on_shipping
   FROM {{ ref('box_sales') }}

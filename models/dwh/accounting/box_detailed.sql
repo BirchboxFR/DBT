@@ -1,3 +1,9 @@
+{{ config(
+    materialized='view',
+    on_schema_change='ignore'
+) }}
+
+
 WITH maybe_inverted_debit_credit AS (
     SELECT t1.report_year,
            t1.report_month,
