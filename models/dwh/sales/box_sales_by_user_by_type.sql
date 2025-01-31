@@ -1,3 +1,8 @@
+{{ config(
+    materialized='view',
+    on_schema_change='ignore'
+) }}
+
 WITH ranked_sub_history AS
 (
   SELECT o.dw_country_code, o.user_id, sh.box_id, FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S',sh.timestamp) AS d,
