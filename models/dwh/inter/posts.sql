@@ -1,19 +1,4 @@
 
-{{ config(
-    materialized='table',
-    partition_by={
-      "field": "id",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 1000000,
-        "interval": 250
-      }
-    },
-    cluster_by=['dw_country_code']
-) }}
-
-
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_posts')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_posts')) -%}
@@ -31,7 +16,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_fr.wp_posts` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -46,7 +31,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_de.wp_posts` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -61,7 +46,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_es.wp_posts` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -76,4 +61,4 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_it.wp_posts` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}

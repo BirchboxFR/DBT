@@ -24,6 +24,7 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 models:
   warehouse:
     dwh:
+      +query_tag: "no_cache"
       +materialized: table
       region: europe-west1
       +schema: dwh_schema
@@ -42,11 +43,13 @@ models:
         views:
           +materialized: table
         materialized_views:
-          +materialized: table
-          refresh_1h:
-            +materialized: table
-          refresh_2h:
-            +materialized: table
+          refresh_4h:
+            +materialized: materialized_view
+            enable_refresh: true
+            max_staleness: 'INTERVAL "0:30:0" HOUR TO SECOND'
+            refresh_interval_minutes: 360
+            
+            
 
         
     schedule:
@@ -59,6 +62,3 @@ models:
       hourly:
         30mn:
           teamdata:           
-          normalised:
-            +database: normalised-417010
-

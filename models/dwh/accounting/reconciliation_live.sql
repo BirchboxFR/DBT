@@ -1,3 +1,8 @@
+{{ config(
+    materialized='view',
+    on_schema_change='ignore'
+) }}
+
 with GIft as (
 SELECT date,
 case when store_code = 'FR' then 'BirchboxFR'

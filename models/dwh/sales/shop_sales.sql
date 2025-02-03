@@ -1,3 +1,14 @@
+
+{{ config(
+   materialized='table',
+   partition_by={
+     "field": "order_date",
+     "data_type": "date",
+     "granularity": "month"
+   },
+   cluster_by=['dw_country_code']
+) }}
+
 WITH dates AS
 (
   SELECT dates
@@ -301,7 +312,7 @@ SELECT sr.dw_country_code,
        vat_on_total_shipping,
        net_revenue,
        sell_out
-FROM sales.shop_refunds sr
+FROM {{ ref('shop_refunds') }}sr
 left join ( select dw_country_code, sku,product_id from {{ ref('catalog') }})c on c.product_id=sr.product_id and c.dw_country_code=sr.dw_country_code
 -- -----------------OTHER SHOP REFUNDS ------------------------------------------------
 
@@ -433,9 +444,9 @@ FROM
           )
           WHERE rn = 1) an
     INNER JOIN {{ ref('orders') }} o ON o.id = an.order_id AND o.dw_country_code = an.dw_country_code
-    LEFT JOIN sales.shop_refunds AS sr ON sr.order_id = an.order_id AND sr.dw_country_code = an.dw_country_code
-    LEFT JOIN sales.box_refunds AS br ON br.sub_id = an.sub_id AND br.dw_country_code = an.dw_country_code
-    LEFT JOIN sales.box_refunds AS br2 ON br2.order_id = an.order_id AND br2.dw_country_code = an.dw_country_code
+    LEFT JOIN {{ ref('shop_refunds') }} AS sr ON sr.order_id = an.order_id AND sr.dw_country_code = an.dw_country_code
+    LEFT JOIN {{ ref('box_refunds') }} AS br ON br.sub_id = an.sub_id AND br.dw_country_code = an.dw_country_code
+    LEFT JOIN {{ ref('box_refunds') }} AS br2 ON br2.order_id = an.order_id AND br2.dw_country_code = an.dw_country_code
     LEFT JOIN {{ ref('shipping_modes') }} sm ON sm.id = o.shipping_mode AND sm.dw_country_code = o.dw_country_code
     LEFT JOIN {{ ref('tva_product') }} tva ON tva.country_code = sm.country AND tva.category = 'normal' AND tva.dw_country_code = sm.dw_country_code
     LEFT JOIN {{ ref('da_eu_countries') }} eu ON sm.country = eu.country_code AND sm.dw_country_code = eu.dw_country_code

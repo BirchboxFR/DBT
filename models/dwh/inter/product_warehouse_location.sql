@@ -1,12 +1,3 @@
-{{ config(
-    materialized='table',
-    partition_by={
-      "field": "created_at",
-      "data_type": "timestamp",
-      "granularity": "day"
-    }
-) }}
-
 
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_product_warehouse_location')) -%}
@@ -25,7 +16,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_fr.wp_jb_product_warehouse_location` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -40,7 +31,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_de.wp_jb_product_warehouse_location` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -55,7 +46,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_es.wp_jb_product_warehouse_location` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -70,4 +61,4 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_it.wp_jb_product_warehouse_location` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}

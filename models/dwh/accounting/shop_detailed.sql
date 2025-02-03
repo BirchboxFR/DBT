@@ -1,3 +1,9 @@
+{{ config(
+    materialized='view',
+    on_schema_change='ignore'
+) }}
+
+
 WITH sales AS (
   SELECT 'SALES' AS type, product_codification, store_code, shipping_country, year, month, vat_rate, SUM(gross_revenue) AS value, MAX(LAST_DAY(order_date)) AS last_day
   FROM {{ ref('shop_sales') }}

@@ -1,16 +1,3 @@
-{{ config(
-    materialized='table',
-    partition_by={
-      "field": "form_id",
-      "data_type": "int64",
-      "range": {
-        "start": 0,
-        "end": 300,
-        "interval": 1
-      }
-    },
-    cluster_by=['dw_country_code']
-) }}
 
 
 
@@ -31,7 +18,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_fr.wp_jb_choose_users` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -46,7 +33,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_de.wp_jb_choose_users` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -61,7 +48,7 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_es.wp_jb_choose_users` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 UNION ALL
 
@@ -76,4 +63,4 @@ t.* EXCEPT(
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_it.wp_jb_choose_users` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}t.__deleted is null {% else %}true{% endif %}
+WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
