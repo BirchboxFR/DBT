@@ -18,7 +18,7 @@ select distinct user_id,'mega discount'
 from sales.box_sales bs
 where  date='2024-11-01' and dw_country_code='FR'
 and bs.acquis_status_lvl2 IN ('NEW NEW','REACTIVATION') AND ( safe_divide(bs.total_discount,total_product) > 0.3) 
-union all
+
 
 
 

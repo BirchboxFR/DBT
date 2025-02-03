@@ -1,5 +1,5 @@
 
-select *,'middle' as status from user.customers 
+select *,'middle' as status from teamdata-291012.user.customers 
 where user_id not in 
 
 (select user_id from {{ ref('today_stars') }}
