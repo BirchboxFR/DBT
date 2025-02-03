@@ -20,7 +20,7 @@ left join {{ ref('today_whales') }} w on w.user_id=c.user_id
 left join {{ ref('today_stars') }} stars on stars.user_id=c.user_id 
 where dw_country_code='FR' and n.user_id is null and w.user_id is null and stars.user_id is null
 group by all)
-where nb_box_paid >24
+where nb_box_paid >14
 and (
 safe_divide(nb_box_paid,nb_box_payable) >0.8 
 )
