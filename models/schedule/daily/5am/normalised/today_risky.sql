@@ -20,11 +20,10 @@ where  date='2024-11-01' and dw_country_code='FR'
 and bs.acquis_status_lvl2 IN ('NEW NEW','REACTIVATION') AND ( safe_divide(bs.total_discount,total_product) > 0.3) 
 union all
 
---churn M-1 ,M-2
-select distinct user_id,'churn m-1'
- from user.customers 
-where date_diff(current_date(),last_box_paid_date,month)between 0 and 2 
-and box_sub_status ='CHURN'
+
+
+-- react m-1 et m-2
+
 )
 where user_id not in 
 
