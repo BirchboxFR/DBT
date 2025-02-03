@@ -27,7 +27,7 @@ and box_sub_status='SUB'
 -- react m-1 et m-2
 
 )t
-left join {{ ref('today_propsects') }} p on p.user_id=t.user_id 
+left join {{ ref('today_prospects') }} p on p.user_id=t.user_id 
 left join {{ ref('today_spectators') }} sp on sp.user_id=t.user_id 
 left join {{ ref('today_new') }} n on n.user_id=t.user_id 
 left join {{ ref('today_whales') }} w on w.user_id=t.user_id 
