@@ -19,13 +19,10 @@ FROM (
     GROUP BY user_id
   )
   GROUP BY user_id
-)
-where user_id not in 
+)t
+left join `normalised-417010`.`user`.`today_new` n on n.user_id=t.user_id 
+left join `normalised-417010`.`user`.`today_whales` w on w.user_id=t.user_id 
 
-(
-select user_id from {{ ref('today_whales') }}
-union all
-select user_id from {{ ref('today_new') }}
-)
+where n.user_id is null and w.user_id is null
 qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 5 and 30
 order by gp_tot asc

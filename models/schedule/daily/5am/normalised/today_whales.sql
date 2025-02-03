@@ -19,12 +19,9 @@ FROM (
     GROUP BY user_id
   )
   GROUP BY user_id
-)
-where user_id not in 
+)t
+left join `normalised-417010`.`user`.`today_new` n on n.user_id=t.user_id 
+where n.user_id is null
 
-(
-
-select user_id from {{ ref('today_new') }}
-)
 qualify NTILE(100) OVER (ORDER BY gp_tot DESC) between 0 and 5
 order by gp_tot asc
