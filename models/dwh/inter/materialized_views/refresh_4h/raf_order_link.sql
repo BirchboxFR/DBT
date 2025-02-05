@@ -4,7 +4,7 @@
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_raf_order_link')) -%}
 
 SELECT 'FR' AS dw_country_code,
-t.* EXCEPT(
+raf_offer_id,order_id,created_at,updated_at,max(id) as id EXCEPT(
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
  {% if '__transaction_order' in fr_columns | map(attribute='name') %}__transaction_order,{% endif %}
@@ -15,11 +15,11 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_fr.wp_jb_raf_order_link` t
 WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-
+group by all
 UNION ALL
 
 SELECT 'DE' AS dw_country_code,
-t.* EXCEPT(
+raf_offer_id,order_id,created_at,updated_at,max(id) as id EXCEPT(
  {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
  {% if '__transaction_order' in de_columns | map(attribute='name') %}__transaction_order,{% endif %}
@@ -30,11 +30,11 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_de.wp_jb_raf_order_link` t
 WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-
+group by all
 UNION ALL
 
 SELECT 'ES' AS dw_country_code,
-t.* EXCEPT(
+raf_offer_id,order_id,created_at,updated_at,max(id) as id EXCEPT(
  {% if '__deleted' in es_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in es_columns | map(attribute='name') %}__ts_ms,{% endif %}
  {% if '__transaction_order' in es_columns | map(attribute='name') %}__transaction_order,{% endif %}
@@ -45,11 +45,11 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_es.wp_jb_raf_order_link` t
 WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-
+group by all
 UNION ALL
 
 SELECT 'IT' AS dw_country_code,
-t.* EXCEPT(
+raf_offer_id,order_id,created_at,updated_at,max(id) as id EXCEPT(
  {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in it_columns | map(attribute='name') %}__ts_ms,{% endif %}
  {% if '__transaction_order' in it_columns | map(attribute='name') %}__transaction_order,{% endif %}
@@ -60,3 +60,4 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_it.wp_jb_raf_order_link` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+group by all
