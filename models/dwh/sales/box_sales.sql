@@ -255,6 +255,7 @@ FROM
   
 d.sub_start_box,
 CASE WHEN o.raf_parent_id > 0 and rol.order_id is not null THEN 1 ELSE 0 END AS raffed,
+raf_parent_id,
   s.shipping_firstname,
   s.shipping_lastname,
   d.gift_card_id,
