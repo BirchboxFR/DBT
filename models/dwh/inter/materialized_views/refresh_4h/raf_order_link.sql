@@ -1,3 +1,7 @@
+{{ config(
+   materialized='view'
+) }}
+
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_raf_order_link')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_raf_order_link')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_raf_order_link')) -%}
