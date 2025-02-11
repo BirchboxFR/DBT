@@ -61,4 +61,6 @@ models:
             +database: normalised-417010
       hourly:
         30mn:
-          teamdata:           
+          teamdata:  
+      custom:
+                   
