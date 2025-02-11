@@ -1,6 +1,4 @@
-create or replace table user.customers 
 
-as
 WITH splio_data_dedup AS (
   SELECT * EXCEPT(rn)
   FROM (
