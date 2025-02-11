@@ -1,6 +1,14 @@
 
 WITH splio_data_dedup AS (
-  SELECT * from `teamdata-291012.crm.splio_events_latest`
+  SELECT * EXCEPT(rn)
+  FROM (
+    SELECT ContactID AS email,
+           Status AS status,
+           Event_date AS event_date,
+           ROW_NUMBER() OVER (PARTITION BY CampaignID, ContactID, Status ORDER BY Event_date) rn
+    FROM crm.splio_events where event_date is not null and event_Date>='2023-01-01'
+  )
+  WHERE rn = 1
 ),
 
 info_perso as (
