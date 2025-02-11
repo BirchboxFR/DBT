@@ -18,15 +18,14 @@ last_value(billing_zipcode) over ( partition by user_id order by date ROWS BETWE
 last_value(billing_phone) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_phone,
 last_value(billing_city) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_city,
 last_value(billing_adr1) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_adress,
- FROM `teamdata-291012.inter.orders`
+ FROM {{ ref('orders') }}
 
 ),
 gender as (
 SELECT dw_country_code,
 o.user_id, 
 CASE WHEN ARRAY_AGG(o.billing_civility ORDER BY o.date DESC LIMIT 1)[OFFSET(0)] = 'MISTER' THEN 'M' ELSE 'F' END AS gender
-FROM 
-inter.orders o
+FROM {{ ref('orders') }} o
 WHERE o.billing_civility IS NOT NULL
 AND o.billing_civility <> ''
 AND o.billing_civility <> 'NA'
@@ -522,7 +521,7 @@ first_order AS
   SELECT c.dw_country_code,c.user_id,count(distinct o.id)as nb_shop_orders, min(o.id) AS first_order, min(o.date) as first_order_date,min(bs.order_id) as first_box_order,
     c.initial_box_date
   FROM user.customers c
-  JOIN inter.orders o ON o.user_id = c.user_id AND o.dw_country_code = c.dw_country_code
+  JOIN {{ ref('orders') }} o ON o.user_id = c.user_id AND o.dw_country_code = c.dw_country_code
     LEFT JOIN sales.box_sales bs ON o.ID = bs.order_id AND o.dw_country_code = bs.dw_country_code
   LEFT JOIN sales.shop_sales as ss ON ss.order_id = o.id AND ss.dw_country_code = o.dw_country_code
   WHERE o.status_id = 1
@@ -571,7 +570,7 @@ gp_box AS
             WHEN bs.date <= DATE_ADD(DATE(c.initial_box_date), INTERVAL 4 YEAR) THEN bs.gross_profit 
             ELSE 0 END) AS gp_box_year4
   FROM first_order c
-  JOIN inter.orders o ON o.id = c.first_box_order AND o.dw_country_code = c.dw_country_code
+  JOIN {{ ref('orders') }}o ON o.id = c.first_box_order AND o.dw_country_code = c.dw_country_code
   JOIN sales.box_sales as bs ON bs.user_id = c.user_id AND  bs.dw_country_code = c.dw_country_code
   GROUP BY c.dw_country_code, c.user_id
 ),
@@ -599,7 +598,7 @@ gp_shop AS
             WHEN ss.order_date <= DATE_ADD(DATE(o.date), INTERVAL 4 YEAR) THEN ss.gross_profit 
             ELSE 0 END) AS gp_shop_year4
   FROM first_order c
-  JOIN inter.orders o ON o.id = c.first_order AND o.dw_country_code = c.dw_country_code
+  JOIN {{ ref('orders') }}o ON o.id = c.first_order AND o.dw_country_code = c.dw_country_code
   JOIN `sales.shop_orders_margin` as ss ON ss.user_id = c.user_id AND  ss.dw_country_code = c.dw_country_code
   GROUP BY c.dw_country_code, c.user_id
 )
