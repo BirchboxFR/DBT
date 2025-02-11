@@ -840,4 +840,4 @@ LEFT JOIN first_order_type fot ON fot.dw_country_code = ac.dw_country_code AND f
 LEFT JOIN first_order_source fos ON fos.dw_country_code = ac.dw_country_code AND fos.user_id = ac.user_id
 LEFT JOIN gp_box ON gp_box.dw_country_code = ac.dw_country_code AND gp_box.user_id = ac.user_id
 LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.user_id = ac.user_id
-LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR';
+LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
