@@ -16,6 +16,7 @@
     {%- set inter_view_tmp_tables = ['christmas_offer','b2c_order_notifications','cc_orders_status','boxes','boxes_by_day', 'brands', 'brands_correspondances', 'business_objectives', 'byob_product_link', 'choose_choices', 'choose_forms', 'company', 'da_box_acquisition_detail', 'da_box_shipped_detail', 'da_eu_countries', 'da_monthly_sub_baseline', 'expected_inbound_details', 'expected_inbounds', 'invoice_credit_notes', 'invoices', 'invoice_details', 'lte_kits', 'mini_byob_reexp', 'mini_lte_reexp', 'open_comment_posts', 'order_detail_sub_options', 'order_status', 'partial_box_paid', 'prepacked_products', 'product_codification', 'purchase_orders', 'purchase_order_items', 'raf_offer_details', 'raf_offers', 'raf_reward_moment', 'raf_reward_type', 'raf_sub_link', 'range_of_age', 'sample_product_link', 'shipping_modes', 'store_products', 'sub_payments_status', 'sub_suspend_survey_question', 'sub_suspend_survey_question_answer', 'sub_suspended_reasons', 'survey_answer_meanings', 'survey_question_categories', 'term_taxonomy', 'terms'] -%}  
     {%- set user_tmp_tables = ['customers','today_whales','today_stars','today_spectators','today_inactive','today_lost','today_middle','today_new','today_prospects','today_risky','today_spectators','today_segments'] -%}
     {%- set inter_materialized_view_tmp_tables = ['warehouse','user_consent','tva_product','shipup_tracking','survey_questions','survey_results','survey_Result_answers','consent','b2c_order_notifications','orders_status','consent_topic','gift_codes_generated','options','order_status','payments','postmeta','survey_answers','survey_questions','survey_result_answers','survey_results','user_consent_history','allocation_history','b2c_exported_orders','ga_transactions','mini_reexp','optin','payment_profiles','raf','raf_order_link','reception_details','reward_points_history','reward_points_history_uses','saved_cart','saved_cart_details','store_mouvements','term_relationships','trackings','user_campaign','user_mailing_list'] -%}
+    {%- set forecast_tmp_tables = ['classement_groupe_marque'] -%}
 
     {%- set inter_all_tables = inter_tmp_tables + inter_view_tmp_tables + inter_materialized_view_tmp_tables   -%}
 
@@ -44,6 +45,8 @@
         inter
     {%- elif node.name in sublissim_tmp_tables -%}
         bdd_prod_sublissim
+    {%- elif node.name in forecast_tmp_tables -%}
+        forecast
     {%- elif node.name in user_tmp_tables -%}
         user
     {%- else -%}
