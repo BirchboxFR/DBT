@@ -16,7 +16,7 @@ SELECT
     creation_time,
     sum(total_bytes_billed) as total_bytes_billed,
     (SUM(total_bytes_billed) / 1099511627776) * 6.5 as Go_billed
-FROM {{ source('region-europe-west1', 'INFORMATION_SCHEMA_JOBS') }}
+FROM region-europe-west1.INFORMATION_SCHEMA.JOBS
 WHERE 
     {% if is_incremental() %}
         -- Dans un run incrémental, prendre les données depuis le dernier run
