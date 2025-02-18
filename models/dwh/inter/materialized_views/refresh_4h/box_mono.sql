@@ -1,4 +1,8 @@
 
+  {{ config(
+    materialized = 'view'
+) }}
+  
   SELECT dw_country_code, box_id as mono_box_id, coffret_id as mono_coffret_id,max(component_brand_name) as mono_brand
   FROM
   (
