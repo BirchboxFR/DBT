@@ -143,6 +143,8 @@ GROUP BY p.dw_country_code, p.box_id, p.coffret_id
 )
 
 SELECT t.*,
+case case cm.cm.mono_box_id is null then false else true end as is_mono,
+cm.mono_brand as mono_brand,
 t.box_id+1 as next_month_id,
 lag(t.date) over (partition by t.user_id,t.dw_country_code order by t.box_id) last_box_received_date,
 case when  lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) -- next box by user is the next box
