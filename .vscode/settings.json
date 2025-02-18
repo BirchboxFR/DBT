@@ -1,3 +1,4 @@
 {
-    "dbt.executablePath": "/Users/mathieu.helie/Library/Python/3.9/bin/dbt"
+    "dbt.executablePath": "/Users/mathieu.helie/Library/Python/3.9/bin/dbt",
+    "dbt.perspectiveTheme": "Vintage"
 }

@@ -116,6 +116,20 @@ all_reasons_ranked AS
   FROM all_reasons
   LEFT JOIN sub_suspend_survey_reason ssr ON ssr.dw_country_code = all_reasons.dw_country_code AND ssr.user_id = all_reasons.user_id AND ssr.box_id = all_reasons.box_id
 ),
+compos_mono AS
+(
+  SELECT dw_country_code, box_id as mono_box_id, coffret_id as mono_coffret_id,component_brand_name as mono_brand
+  FROM
+  (
+  SELECT kd.dw_country_code, kd.box_id, kd.coffret_id, kd.box_date,  kd.component_brand_id, kd.component_brand_name, count(*) AS nb_distinct_brands
+  FROM product.kit_details kd
+  WHERE kd.component_brand_name NOT LIKE '%lissim%'
+  AND kd.box_year >= 2018
+  GROUP BY kd.box_id, kd.coffret_id, kd.box_date, kd.component_brand_id, kd.dw_country_code, kd.component_brand_name
+  HAVING nb_distinct_brands =5
+  ) t
+  GROUP BY dw_country_code, box_id, coffret_id,component_brand_name
+) ,
 self_churn_reason AS
 (
   SELECT * EXCEPT(row_num)
@@ -322,3 +336,4 @@ from`teamdata-291012.marketing.Marketing_cac_discount`
 group by 1,2) mcdso on mcdso.sub_offer_id=t.sub_offer_id and mcd.country=t.dw_country_code
 LEFT JOIN box_global_grades bgg ON bgg.dw_country_code = t.dw_country_code AND bgg.box_id = t.box_id AND bgg.coffret_id = t.coffret_id
 LEFT JOIN self_churn_reason scr ON scr.dw_country_code = t.dw_country_code AND scr.user_id = t.user_id AND scr.box_id = t.box_id+1
+LEFT JOIN compos_mono cm on t.dw_country_code=cm.dw_country_code and t.box_id=cm.mono_box_id and t.coffret_id=cm.mono_coffret_id
