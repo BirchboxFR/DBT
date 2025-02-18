@@ -35,7 +35,7 @@ raw_valid_products AS (
   AND rp.parent_product_id IS NULL
   AND p.sku IS NOT NULL
   AND po.post_status = 'publish'
-  AND p.special_type IS NULL
+  AND (p.special_type IS NULL or p.special_type='')
   AND p.dw_country_code = 'FR'
 ),
 valid_products AS (
