@@ -1,4 +1,7 @@
 
+{{ config(
+   materialized='view'
+) }}
 
 SELECT c.*,name 
 FROM {{ ref('user_consent') }} c
