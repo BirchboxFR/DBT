@@ -335,6 +335,7 @@ box_sales_one_line_user AS (
            discount,
            net_revenue,
            gross_profit,
+           coupon_type,
            ROW_NUMBER() OVER (PARTITION BY dw_country_code, user_id, box_id ORDER BY order_detail_id) rn
     FROM sales.box_sales
   )
@@ -353,6 +354,7 @@ initial_box_table AS (
            date AS initial_box_date,
            coupon_code AS initial_coupon_code,
            CASE WHEN coupon_code_id > 0 THEN coupon_code_id END AS initial_coupon_code_id,
+           bs.coupon_type AS initial_coupon_type,
            ROW_NUMBER() OVER (PARTITION BY dw_country_code, user_id ORDER BY box_id) rn
     FROM box_sales_one_line_user bs
   )
@@ -737,6 +739,7 @@ SELECT ac.dw_country_code,
        ibt.initial_box_date,
        ibt.initial_coupon_code,
        ibt.initial_coupon_code_id,
+       ibt.initial_coupon_type,
        cbt.current_coupon_code,
        cbt.current_coupon_code_id,
        cbt.current_sub_type,
