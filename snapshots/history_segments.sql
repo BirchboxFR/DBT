@@ -6,6 +6,7 @@
           strategy='timestamp',
           updated_at='snapshot_date',
           invalidate_hard_deletes=True,
+          unique_key='user_id',
         )
     }}
 
