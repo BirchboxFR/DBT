@@ -2,6 +2,7 @@
 
     {{
         config(
+          target_database='normalised-417010',  
           target_schema='user',
           strategy='timestamp',
           updated_at='snapshot_date',
