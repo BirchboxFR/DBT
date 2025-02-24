@@ -10,4 +10,4 @@ last_box_paid_date is null
  )
 and box_sub_status in ('CHURN','NEVERSUB')
 
-
+and dw_country_code='FR'
