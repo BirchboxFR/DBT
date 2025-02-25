@@ -11,7 +11,7 @@
       }
     },
     cluster_by=['dw_country_code', 'box_id'],
-    unique_key='id'
+    unique_key=['id', 'dw_country_code']
 ) }}
 
 
