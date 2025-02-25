@@ -12,8 +12,8 @@ and d>='2023-10-01'
 
 , acq as (
 select dw_country_code as country_code,date(payment_date) as d,cast(date  as string) as m,
-count(case when acquis_status_lvl2 ='REACTIVATION' then sub_id end ) as self,  
-count(case when acquis_status_lvl2 ='NEW NEW' then sub_id end ) as reactivations,
+count(case when acquis_status_lvl2 ='NEW NEW' then sub_id end ) as self,  
+count(case when acquis_status_lvl2 ='REACTIVATION' then sub_id end ) as reactivations,
 count(case when acquis_status_lvl2 ='GIFT' then sub_id end ) as gift,
 count(* ) as total_this_year,
 from sales.box_sales
