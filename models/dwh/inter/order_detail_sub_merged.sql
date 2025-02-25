@@ -43,7 +43,7 @@ WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is 
 {% if is_incremental() %}
 AND (
   {% if '__ts_ms' in fr_columns | map(attribute='name') %}
-  t.__ts_ms > (SELECT COALESCE(MAX(__ts_ms), '1970-01-01') FROM {{ this }} WHERE dw_country_code = 'FR')
+  t.__ts_ms > COALESCE((SELECT MAX(__ts_ms) FROM {{ this }} WHERE dw_country_code = 'FR'), 0)
   {% else %}
   FALSE -- Si pas de colonne ts_ms, sera géré par le chargement complet initial
   {% endif %}
@@ -71,7 +71,7 @@ WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is 
 {% if is_incremental() %}
 AND (
   {% if '__ts_ms' in de_columns | map(attribute='name') %}
-  t.__ts_ms > (SELECT COALESCE(MAX(__ts_ms), '1970-01-01') FROM {{ this }} WHERE dw_country_code = 'DE')
+  t.__ts_ms > COALESCE((SELECT MAX(__ts_ms) FROM {{ this }} WHERE dw_country_code = 'DE'), 0)
   {% else %}
   FALSE -- Si pas de colonne ts_ms, sera géré par le chargement complet initial
   {% endif %}
@@ -99,7 +99,7 @@ WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is 
 {% if is_incremental() %}
 AND (
   {% if '__ts_ms' in es_columns | map(attribute='name') %}
-  t.__ts_ms > (SELECT COALESCE(MAX(__ts_ms), '1970-01-01') FROM {{ this }} WHERE dw_country_code = 'ES')
+  t.__ts_ms > COALESCE((SELECT MAX(__ts_ms) FROM {{ this }} WHERE dw_country_code = 'ES'), 0)
   {% else %}
   FALSE -- Si pas de colonne ts_ms, sera géré par le chargement complet initial
   {% endif %}
@@ -127,7 +127,7 @@ WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is 
 {% if is_incremental() %}
 AND (
   {% if '__ts_ms' in it_columns | map(attribute='name') %}
-  t.__ts_ms > (SELECT COALESCE(MAX(__ts_ms), '1970-01-01') FROM {{ this }} WHERE dw_country_code = 'IT')
+  t.__ts_ms > COALESCE((SELECT MAX(__ts_ms) FROM {{ this }} WHERE dw_country_code = 'IT'), 0)
   {% else %}
   FALSE -- Si pas de colonne ts_ms, sera géré par le chargement complet initial
   {% endif %}
