@@ -20,7 +20,6 @@
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_order_detail_sub')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_order_detail_sub')) -%}
 
--- Approche simplifiée pour le modèle incrémental
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(next_payment_date,last_payment_date,
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
@@ -34,10 +33,6 @@ t.* EXCEPT(next_payment_date,last_payment_date,
 safe_cast(last_payment_date as date) as last_payment_date
 FROM `bdd_prod_fr.wp_jb_order_detail_sub` t
 WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
-{% if is_incremental() %}
--- Lors des exécutions incrémentielles, on se base sur la date de mise à jour plutôt que sur __ts_ms
-AND t.updated_at > (SELECT COALESCE(MAX(updated_at), TIMESTAMP('1970-01-01')) FROM {{ this }} WHERE dw_country_code = 'FR')
-{% endif %}
 
 UNION ALL
 
@@ -54,10 +49,6 @@ t.* EXCEPT(next_payment_date,last_payment_date,
 safe_cast(last_payment_date as date) as last_payment_date
 FROM `bdd_prod_de.wp_jb_order_detail_sub` t
 WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
-{% if is_incremental() %}
--- Lors des exécutions incrémentielles, on se base sur la date de mise à jour plutôt que sur __ts_ms
-AND t.updated_at > (SELECT COALESCE(MAX(updated_at), TIMESTAMP('1970-01-01')) FROM {{ this }} WHERE dw_country_code = 'DE')
-{% endif %}
 
 UNION ALL
 
@@ -74,10 +65,6 @@ t.* EXCEPT(next_payment_date,last_payment_date,
 safe_cast(last_payment_date as date) as last_payment_date
 FROM `bdd_prod_es.wp_jb_order_detail_sub` t
 WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
-{% if is_incremental() %}
--- Lors des exécutions incrémentielles, on se base sur la date de mise à jour plutôt que sur __ts_ms
-AND t.updated_at > (SELECT COALESCE(MAX(updated_at), TIMESTAMP('1970-01-01')) FROM {{ this }} WHERE dw_country_code = 'ES')
-{% endif %}
 
 UNION ALL
 
@@ -94,7 +81,3 @@ t.* EXCEPT(next_payment_date,last_payment_date,
 safe_cast(last_payment_date as date) as last_payment_date
 FROM `bdd_prod_it.wp_jb_order_detail_sub` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
-{% if is_incremental() %}
--- Lors des exécutions incrémentielles, on se base sur la date de mise à jour plutôt que sur __ts_ms
-AND t.updated_at > (SELECT COALESCE(MAX(updated_at), TIMESTAMP('1970-01-01')) FROM {{ this }} WHERE dw_country_code = 'IT')
-{% endif %}
