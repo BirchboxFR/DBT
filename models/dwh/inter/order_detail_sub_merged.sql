@@ -42,12 +42,9 @@ WHERE
   {% if is_incremental() %}
   (
     -- Données mises à jour récemment (dans les X dernières heures)
-    t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     -- OU données créées récemment
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-     {% if '__deleted' in fr_columns | map(attribute='name') %}
-      OR t.__deleted = true
-      {% endif %}
   )
   {% else %}
   -- Premier chargement: toutes les données
@@ -73,11 +70,8 @@ WHERE
   {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
   {% if is_incremental() %}
   (
-    t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    {% if '__deleted' in de_columns | map(attribute='name') %}
-    OR t.__deleted = true
-    {% endif %}
   )
   {% else %}
   TRUE
@@ -102,11 +96,8 @@ WHERE
   {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
   {% if is_incremental() %}
   (
-    t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    {% if '__deleted' in es_columns | map(attribute='name') %}
-    OR t.__deleted = true
-    {% endif %}
   )
   {% else %}
   TRUE
@@ -131,12 +122,8 @@ WHERE
   {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
   {% if is_incremental() %}
   (
-    t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    {% if '__deleted' in it_columns | map(attribute='name') %}
-    OR t.__deleted = true
-    {% endif %}
-
   )
   {% else %}
   TRUE
