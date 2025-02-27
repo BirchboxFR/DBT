@@ -45,6 +45,9 @@ WHERE
     t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     -- OU données créées récemment
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+     {% if '__deleted' in fr_columns | map(attribute='name') %}
+      OR t.__deleted = true
+      {% endif %}
   )
   {% else %}
   -- Premier chargement: toutes les données
@@ -72,6 +75,9 @@ WHERE
   (
     t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    {% if '__deleted' in de_columns | map(attribute='name') %}
+    OR t.__deleted = true
+    {% endif %}
   )
   {% else %}
   TRUE
@@ -98,6 +104,9 @@ WHERE
   (
     t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    {% if '__deleted' in es_columns | map(attribute='name') %}
+    OR t.__deleted = true
+    {% endif %}
   )
   {% else %}
   TRUE
@@ -124,6 +133,10 @@ WHERE
   (
     t.updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    {% if '__deleted' in it_columns | map(attribute='name') %}
+    OR t.__deleted = true
+    {% endif %}
+
   )
   {% else %}
   TRUE
