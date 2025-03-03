@@ -1,6 +1,4 @@
 {{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
     partition_by={
       "field": "id",
       "data_type": "int64",
