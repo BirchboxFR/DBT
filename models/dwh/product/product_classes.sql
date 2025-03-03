@@ -47,7 +47,8 @@ valid_products AS (
                     END AS product_id
     FROM raw_valid_products t
     LEFT JOIN all_bundles ab ON t.product_id = ab.bundle_product_id
-  )
+  )t INNER JOIN {{ ref('products') }}  p on p.id =t.product_id and p.dw_country_code= 'FR'
+  where  p.attr_not_sold_anymore =0
 ),
 valid_products_with_date AS (
   SELECT vp.product_id, adt.date
