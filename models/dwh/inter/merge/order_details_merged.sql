@@ -8,7 +8,7 @@
         "interval": 30000
       }
     },
-    cluster_by=['dw_country_code', 'box_id','id']
+    cluster_by=['dw_country_code','id']
 ) }}
 
 
