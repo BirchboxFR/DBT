@@ -21,7 +21,7 @@
 -- Le nombre d'heures en arrière pour lesquelles récupérer les données (4 heures par défaut)
 {%- set lookback_hours = 4 -%}
 
--- Sélection des données françaises (sans cette ligne ca bug)
+-- Sélection des données françaises (sans cette ligne ca bug - saut de ligne obligatoiresdl)
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
