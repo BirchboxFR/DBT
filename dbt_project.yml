@@ -48,7 +48,10 @@ models:
             enable_refresh: true
             max_staleness: 'INTERVAL "0:30:0" HOUR TO SECOND'
             refresh_interval_minutes: 360
-            
+        merge:
+          +materialized: incremental
+          +on_schema_change: sync_all_columns
+          +unique_key: ['id', 'dw_country_code']
             
 
         

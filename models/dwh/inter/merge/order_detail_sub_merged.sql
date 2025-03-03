@@ -1,6 +1,4 @@
 {{ config(
-    materialized='incremental',
-    on_schema_change='sync_all_columns',
     partition_by={
       "field": "order_detail_id",
       "data_type": "int64",
@@ -10,8 +8,7 @@
         "interval": 30000
       }
     },
-    cluster_by=['dw_country_code', 'box_id','id'],
-    unique_key=['id', 'dw_country_code']
+    cluster_by=['dw_country_code', 'box_id','id']
 ) }}
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_order_detail_sub')) -%}
