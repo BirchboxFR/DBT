@@ -310,7 +310,7 @@ raf_parent_id,
   LEFT JOIN {{ ref('partial_box_paid') }} pbp ON pbp.dw_country_code = s.dw_country_code AND pbp.sub_id = s.id
   WHERE -- o.status_id IN (1, 3) AND 
   (s.shipping_status_id IN (2, 3, 4, 5, 19, 22) OR (s.sub_payment_status_id = 3 AND s.box_id >= cbt.current_box_id)
-  
+  -------------------
   OR (o.dw_country_code = 'DE' and s.sub_payment_status_id = 3 and s.box_id=160)
   -- cas particuler allemagne avril 2025
   )
