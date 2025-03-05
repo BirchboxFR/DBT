@@ -1,6 +1,4 @@
 {{ config(
-    materialized='table',
-    on_schema_change='ignore' ,
     partition_by={
       "field": "id",
       "data_type": "int64",
@@ -18,7 +16,10 @@
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_users')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_users')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_users')) -%}
+-- Le nombre d'heures en arrière pour lesquelles récupérer les données (4 heures par défaut)
+{%- set lookback_hours = 4 -%}
 
+-- Sélection des données françaises
 SELECT 'FR' AS dw_country_code, t.*except(user_birthday,
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
@@ -29,9 +30,25 @@ SELECT 'FR' AS dw_country_code, t.*except(user_birthday,
  {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_fr.wp_users` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+WHERE 
+  -- Filtre sur les lignes non supprimées
+  {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
+  -- Filtre sur les données récentes uniquement
+  {% if is_incremental() %}
+  (
+    -- Données mises à jour récemment (dans les X dernières heures)
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    -- OU données créées récemment
+    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+  )
+  {% else %}
+  -- Premier chargement: toutes les données
+  TRUE
+  {% endif %}
+
 
 UNION ALL 
+
 SELECT 'DE' AS dw_country_code, t.*except(user_birthday,
  {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
@@ -41,7 +58,16 @@ SELECT 'DE' AS dw_country_code, t.*except(user_birthday,
  {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_de.wp_users` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+WHERE 
+  {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
+  {% if is_incremental() %}
+  (
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+  )
+  {% else %}
+  TRUE
+  {% endif %}
 
 UNION ALL 
 SELECT 'ES' AS dw_country_code, t.*except(user_birthday,
@@ -53,7 +79,16 @@ SELECT 'ES' AS dw_country_code, t.*except(user_birthday,
  {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_es.wp_users` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false)  {% else %}true{% endif %}
+WHERE 
+  {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
+  {% if is_incremental() %}
+  (
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+  )
+  {% else %}
+  TRUE
+  {% endif %}
 
 UNION ALL 
 SELECT 'IT' AS dw_country_code, t.*except(user_birthday,
@@ -65,7 +100,15 @@ SELECT 'IT' AS dw_country_code, t.*except(user_birthday,
  {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
  {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}),
 safe_cast(user_birthday as date) as user_birthday FROM `bdd_prod_it.wp_users` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
 
 
-
+WHERE 
+  {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
+  {% if is_incremental() %}
+  (
+    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+  )
+  {% else %}
+  TRUE
+  {% endif %}
