@@ -309,7 +309,11 @@ raf_parent_id,
   /*LEFT JOIN (select user_id,month,year,dw_country_code,box_id,max(sub_suspended_reason_lvl1)sub_suspended_reason_lvl1,max(sub_suspended_reason_lvl2)sub_suspended_reason_lvl2,max(sub_suspended_reason_lvl3)sub_suspended_reason_lvl3 from`teamdata-291012.sales.box_sales_by_user_by_type`  group by 1,2,3,4,5)bsbu ON o.dw_country_code = bsbu.dw_country_code AND bsbu.user_id=o.user_id and bsbu.box_id = s.box_id + 1*/
   LEFT JOIN {{ ref('partial_box_paid') }} pbp ON pbp.dw_country_code = s.dw_country_code AND pbp.sub_id = s.id
   WHERE -- o.status_id IN (1, 3) AND 
-  (s.shipping_status_id IN (2, 3, 4, 5, 19, 22) OR (s.sub_payment_status_id = 3 AND s.box_id >= cbt.current_box_id))
+  (s.shipping_status_id IN (2, 3, 4, 5, 19, 22) OR (s.sub_payment_status_id = 3 AND s.box_id >= cbt.current_box_id)
+  
+  OR (o.dw_country_code = 'DE' and s.sub_payment_status_id = 3 and s.box_id=160)
+  -- cas particuler allemagne avril 2025
+  )
   AND s.box_id <= cbt.current_box_id + 36
   
 
