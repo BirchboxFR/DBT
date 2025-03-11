@@ -35,5 +35,5 @@ o.products_cost + COALESCE(som.order_picking,0)*COALESCE(o.net_revenue_share,0) 
 o.net_revenue + COALESCE(order_total_shipping,0)*COALESCE(o.net_revenue_share,0) 
 - (o.products_cost + COALESCE(som.order_picking,0)*COALESCE(o.net_revenue_share,0) + COALESCE(som.packaging_cost,0)*COALESCE(o.net_revenue_share,0) + COALESCE(som.msg_perso,0)*COALESCE(o.net_revenue_share,0) + COALESCE(som.shipping_cost,0)*COALESCE(o.net_revenue_share,0)) AS gross_profit
 FROM orders_with_repartition o
-JOIN `teamdata-291012.sales.shop_orders_margin` som USING (dw_country_code, order_id)
+JOIN {{ ref('shop_orders_margin') }}  som USING (dw_country_code, order_id)
 
