@@ -25,7 +25,7 @@ SELECT sr.dw_country_code, sr.customer_id AS user_id, b.id AS box_id, sqa.title 
 FROM {{ ref('sub_suspend_survey_result') }} sr
 JOIN {{ ref('boxes') }} b ON b.dw_country_code = sr.dw_country_code AND b.id = sr.last_received_box_id + 1
 JOIN {{ ref('sub_suspend_survey_result_answer') }} sra ON sra.result_id = sr.result_id AND sr.dw_country_code = sra.dw_country_code
-JOIN {{ ref('sub_suspend_survey_question_answer') }} sqa ON sqa.question_answer_id = sra.question_answer_id 
+JOIN {{ ref('sub_suspend_survey_question_answer') }} sqa ON sqa.question_answer_id = sra.question_answer_id and sqa.dw_country_code=sra.dw_country_code
 WHERE sra.question_id = 1
 ) t
 WHERE row_num = 1
