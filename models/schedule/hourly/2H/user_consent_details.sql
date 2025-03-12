@@ -26,7 +26,7 @@ ConsentStatus AS (
     max(case when t.name='beauty_profile' and consent_status=1 then true else false end) AS consent_beauty_profile
   FROM {{ ref('user_consent') }} c
   LEFT JOIN {{ ref('consent_topic') }} t USING (consent_topic_id, dw_country_code)
-  WHERE user_id = 2327271 AND dw_country_code = 'DE'
+ 
   GROUP BY user_id, dw_country_code
 )
 
