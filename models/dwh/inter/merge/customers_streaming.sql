@@ -21,7 +21,7 @@ WITH all_users AS (
 )
 
 SELECT 
-    coalesce(au.user_id,cast(concat('999999',au.id) as int64 )) id,
+    coalesce(cast(au.user_id as string),concat('prosp_',au.id) ) id,
     au.dw_country_code,
     au.user_id,
     case when au.user_id is null then true else false end as is_prospect,
