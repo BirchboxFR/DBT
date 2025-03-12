@@ -1,16 +1,5 @@
 
-WITH splio_data_dedup AS (
-  SELECT * EXCEPT(rn)
-  FROM (
-    SELECT ContactID AS email,
-           Status AS status,
-           Event_date AS event_date,
-           ROW_NUMBER() OVER (PARTITION BY CampaignID, ContactID, Status ORDER BY Event_date) rn
-    FROM crm.splio_events where event_date is not null and event_Date>='2023-01-01'
-  )
-  WHERE rn = 1
-),
-
+WITH 
 info_perso as (
 SELECT distinct user_id ,dw_country_code,last_value(date) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ,
 last_value(billing_country) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_country,
