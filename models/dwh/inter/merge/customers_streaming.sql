@@ -1,5 +1,5 @@
 WITH all_users AS (
-    SELECT dw_country_code, email,
+    SELECT dw_country_code, email,id,
         MAX(user_id) AS user_id 
     FROM (   
         SELECT 
@@ -11,20 +11,24 @@ WITH all_users AS (
         UNION ALL
         
         SELECT 
-            dw_country_code, 0 as id,
+            dw_country_code, null as id,
             user_email AS email, 
             id AS user_id
         FROM {{ ref('users') }}
         WHERE user_login <> 'DELETED'
     ) combined_users
-    GROUP BY dw_country_code, email
+    GROUP BY dw_country_code, email,id
 )
 
 SELECT 
-    coalesce(user_id,cast(concat('999999',id) as int64 )) id,
+    coalesce(au.user_id,cast(concat('999999',au.id) as int64 )) id,
     au.dw_country_code,
-    user_id,
-    case when user_id is null then true else false end as is_prospect,
-    au.email
+    au.user_id,
+    case when au.user_id is null then true else false end as is_prospect,
+    u.user_email LIKE '%@blissim%' OR u.user_email LIKE '%@birchbox%' AS is_admin,
+    au.email,
+    u.user_firstname AS firstname,
+    u.user_lastname AS lastname,
 FROM all_users au
 left join {{ ref('users') }} u on u.id=au.user_id and u.dw_country_code=au.dw_country_code
+left join {{ ref('user_consent') }} uc on uc.user_id=u.id and uc.dw_country_code=u.dw_country_code
