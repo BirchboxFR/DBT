@@ -14,7 +14,7 @@ FROM (
     Status AS status,
     Event_date AS event_date,
     ROW_NUMBER() OVER (PARTITION BY CampaignID, ContactID, Status ORDER BY Event_date) rn
-  FROM {{ source('crm', 'splio_events') }}
+  FROM crm.splio_events
   WHERE event_date IS NOT NULL 
     AND Event_Date >= '2023-01-01'
     {% if is_incremental() %}
