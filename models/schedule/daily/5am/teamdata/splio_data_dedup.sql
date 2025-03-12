@@ -2,8 +2,8 @@
 {{
   config(
     materialized='incremental',
-    unique_key=['email', 'status'],
-    incremental_strategy='append'
+    unique_key=['email', 'status','event_date'],
+    incremental_strategy='merge'
   )
 }}
 
