@@ -31,5 +31,5 @@ SELECT
     u.user_lastname AS lastname,
 FROM all_users au
 left join {{ ref('users') }} u on u.id=au.user_id and u.dw_country_code=au.dw_country_code
-left join {{ ref('user_consent') }} uc on uc.user_id=u.id and uc.dw_country_code=u.dw_country_code
+left join {{ ref('user_consent_details') }} uc on uc.user_id=u.id and uc.dw_country_code=u.dw_country_code
 where au.user_id=2327271
