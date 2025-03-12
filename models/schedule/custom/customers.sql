@@ -31,7 +31,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT 'FR' AS dw_country_code, email, NULL AS user_id
-    FROM splio_data_dedup
+    FROM user.splio_data_dedup
     WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 36 MONTH)
     GROUP BY email
   )
@@ -95,7 +95,7 @@ crm_data AS (
          COUNTIF(status = 'Click' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_click_email,
          COUNTIF(status = 'Open' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
          COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
-  FROM splio_data_dedup
+  FROM user.splio_data_dedup
   GROUP BY email
 ),
 beauty_profile_table AS (
