@@ -1,4 +1,4 @@
-SELECT distinct user_id,user_email,
+SELECT distinct user_id,user_email,dw_country_code,
 max(case when t.name='email' and consent_status=1 then true else false end )consent_email ,
 max(case when t.name='sms' and consent_status=1 then true else false end) consent_sms,
 max(case when t.name='whatsapp' and consent_status=1 then true else false end) consent_whatsapp ,
