@@ -3,7 +3,7 @@ WITH all_users AS (
         MAX(user_id) AS user_id 
     FROM (   
         SELECT 
-            dw_country_code, 
+            dw_country_code, id,
             email, 
             NULL AS user_id
         FROM inter.optin
@@ -11,7 +11,7 @@ WITH all_users AS (
         UNION ALL
         
         SELECT 
-            dw_country_code, 
+            dw_country_code, 0 as id,
             user_email AS email, 
             id AS user_id
         FROM {{ ref('users') }}
@@ -21,6 +21,7 @@ WITH all_users AS (
 )
 
 SELECT 
+    coalesce(user_id,cast(concat('999999',id) as int64 )) id,
     au.dw_country_code,
     user_id,
     case when user_id is null then true else false end as is_prospect,
