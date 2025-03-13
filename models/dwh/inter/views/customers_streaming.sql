@@ -38,4 +38,4 @@ left join {{ ref('user_consent_details') }} uc on uc.user_id=u.id and uc.dw_coun
 
 */
 
-select 1 
+select 1 as test
