@@ -46,7 +46,7 @@ SELECT sq.dw_country_code,
               WHEN  sq.id = 46860  and sa.id is not  null THEN false ELSE null END)AS shop_brand_store,
          MAX(CASE WHEN sq.id = 46860 and sa.id = 114659 THEN true 
               WHEN  sq.id = 46860  and sa.id is not  null THEN false ELSE null END) AS shop_hairdressing,
-         MAX(CASE WHEN sq.id = 46860 and sa.id = 1146560 THEN true 
+         MAX(CASE WHEN sq.id = 46860 and sa.id = 114660 THEN true 
               WHEN  sq.id = 46860  and sa.id is not  null THEN false ELSE null END)AS shop_pharmacy,
          MAX(CASE WHEN sq.id = 46860 and sa.id = 114661 THEN true 
               WHEN  sq.id = 46860  and sa.id is not  null THEN false ELSE null END) AS shop_hypermarket,
@@ -80,7 +80,7 @@ SELECT sq.dw_country_code,
               WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END)AS skin_acne,
          MAX(CASE WHEN sq.id = 46258 and sa.id = 113182 THEN true 
               WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS skin_dilated_pores,
-          MAX(CASE WHEN sq.id = 46855 and sa.id = 113183 THEN true 
+          MAX(CASE WHEN sq.id = 46258 and sa.id = 113183 THEN true 
          WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS skin_dehydration,
          MAX(CASE WHEN sq.id = 46258 and sa.id = 113184 THEN true 
               WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END)AS skin_eye_bags,
@@ -94,20 +94,20 @@ SELECT sq.dw_country_code,
               WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS skin_wrinkles,
 ------------------------------------------BODY IssUES----------------------------------
 
-        MAX(CASE WHEN sq.id = 46258 and sa.id = 113187 THEN true 
-         WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS body_stretch_marks,
-         MAX(CASE WHEN sq.id = 46258 and sa.id = 113188 THEN true 
-              WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END)AS body_cellulite,
-         MAX(CASE WHEN sq.id = 46258 and sa.id = 113189 THEN true 
-              WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS body_lack_firmness,
-         MAX(CASE WHEN sq.id = 46258 and sa.id = 113190 THEN true 
-              WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END)AS body_dry_skin,
-         MAX(CASE WHEN sq.id = 46258 and sa.id = 113191 THEN true 
-              WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS body_water_retention,
-          MAX(CASE WHEN sq.id = 46855 and sa.id = 113192 THEN true 
-         WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS body_no_problem,
-         MAX(CASE WHEN sq.id = 46258 and sa.id = 193350 THEN true 
-         WHEN  sq.id = 46258  and sa.id is not  null THEN false ELSE null END) AS body_spots,
+        MAX(CASE WHEN sq.id = 46259 and sa.id = 113187 THEN true 
+         WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END) AS body_stretch_marks,
+         MAX(CASE WHEN sq.id = 46259 and sa.id = 113188 THEN true 
+              WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END)AS body_cellulite,
+         MAX(CASE WHEN sq.id = 46259 and sa.id = 113189 THEN true 
+              WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END) AS body_lack_firmness,
+         MAX(CASE WHEN sq.id = 46259 and sa.id = 113190 THEN true 
+              WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END)AS body_dry_skin,
+         MAX(CASE WHEN sq.id = 46259 and sa.id = 113191 THEN true 
+              WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END) AS body_water_retention,
+          MAX(CASE WHEN sq.id = 46259 and sa.id = 113192 THEN true 
+         WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END) AS body_no_problem,
+         MAX(CASE WHEN sq.id = 46259 and sa.id = 193350 THEN true 
+         WHEN  sq.id = 46259  and sa.id is not  null THEN false ELSE null END) AS body_spots,
 -------------------hair----------------------------------------------------------------------------------------------------
 
           MAX(ifnull(CASE WHEN sq.id = 46261 THEN sa.value END,CASE WHEN sq.id = 15422 THEN sa.value END)) AS hair_color,
