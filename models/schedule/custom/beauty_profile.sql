@@ -161,7 +161,7 @@ SELECT sq.dw_country_code,
          WHEN  sq.id = 46852  and sa.id is not  null THEN false ELSE null END) AS use_hair_straightener,
          MAX(CASE WHEN sq.id = 46852 and sa.id = 114614 THEN true 
          WHEN  sq.id = 46852  and sa.id is not  null THEN false ELSE null END) AS use_hair_no_device,
-
+          max(sra._rivery_last_update) last_update
 
   FROM inter.survey_questions sq
   INNER JOIN inter.survey_answers sa ON COALESCE(sq.parent_id, sq.id) = sa.question_id AND sa.dw_country_code = 'FR'
