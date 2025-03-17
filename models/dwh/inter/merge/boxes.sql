@@ -3,10 +3,11 @@
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_boxes')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_boxes')) -%}
 
---partition 
-{% set lookback_hours = 2 %}
---lookback 2h
 
+-- Le nombre d'heures en arrière pour lesquelles récupérer les données (4 heures par défaut)
+{%- set lookback_hours = 4 -%}
+
+-- Sélection des données françaises
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
@@ -26,8 +27,7 @@ WHERE
   (
     -- Données mises à jour récemment (dans les X dernières heures)
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    -- OU données créées récemment
-    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+
   )
   {% else %}
   -- Premier chargement: toutes les données
@@ -51,7 +51,7 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+
   )
   {% else %}
   TRUE
@@ -74,7 +74,7 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+
   )
   {% else %}
   TRUE
@@ -97,7 +97,7 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-    OR t.created_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+
   )
   {% else %}
   TRUE
