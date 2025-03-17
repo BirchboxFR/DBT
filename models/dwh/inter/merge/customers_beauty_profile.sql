@@ -1,5 +1,8 @@
-
-
+partition_by = {
+  "field": "last_update",
+  "data_type": "date"
+}
+--partition 
 {% set lookback_hours = 2 %}
 --lookback 2h
 
