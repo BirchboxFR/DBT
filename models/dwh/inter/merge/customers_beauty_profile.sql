@@ -1,4 +1,10 @@
-SELECT sq.dw_country_code,
+
+
+{% set lookback_hours = 2 %}
+--lookback 2h
+
+SELECT    concat(sq.dw_country_code,'_',cast(sr.user_id as string)) as ID,
+          sq.dw_country_code,
        sr.user_id,
          MAX(CASE WHEN sq.id = 46861 THEN sa.value END) AS beauty_budget,
          MAX(CASE WHEN sq.id = 62162 THEN sa.value END) AS skin_tone,
@@ -168,5 +174,8 @@ SELECT sq.dw_country_code,
   INNER JOIN inter.survey_results sr ON sq.dw_country_code = sr.dw_country_code AND sq.survey_id = sr.survey_id
   INNER JOIN inter.survey_result_answers sra ON sra.dw_country_code = sq.dw_country_code AND sra.question_id = sq.id AND sra.result_id = sr.id AND sra.answer_id = sa.id
   WHERE sq.survey_id = 2639 --and user_id=2622634 -- and sq.id=46259
+  {% if is_incremental() %}
+        AND sra._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+    {% endif %}
   group by all
  
