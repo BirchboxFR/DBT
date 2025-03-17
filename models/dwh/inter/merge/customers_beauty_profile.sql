@@ -1,7 +1,16 @@
-partition_by = {
-  "field": "last_update",
-  "data_type": "date"
-}
+
+
+{{ config(
+    partition_by={
+     "field": "last_update",
+     "data_type": "date"
+      }
+    },
+    cluster_by=['dw_country_code', 'skin_redness','bath_products','hair_products']
+)
+ }}
+
+
 --partition 
 {% set lookback_hours = 2 %}
 --lookback 2h
