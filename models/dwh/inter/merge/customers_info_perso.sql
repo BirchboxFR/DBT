@@ -5,4 +5,6 @@ last_value(billing_zipcode) over ( partition by user_id order by date ROWS BETWE
 last_value(billing_phone) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_phone,
 last_value(billing_city) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_city,
 last_value(billing_adr1) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_adress,
+ last_value(billing_civility) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_civility,
+case when last_value(billing_civility) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) = 'MISTER' then 'M' else 'F' end  gender,
  FROM {{ ref('orders') }}
