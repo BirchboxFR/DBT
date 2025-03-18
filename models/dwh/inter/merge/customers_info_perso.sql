@@ -1,6 +1,6 @@
 
 SELECT distinct 
-concat(sq.dw_country_code,'_',cast(sr.user_id as string)) as ID,
+concat(dw_country_code,'_',cast(user_id as string)) as ID,
 user_id ,dw_country_code,
 last_value(date) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) last_order_date,
 last_value(billing_country) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_country,
@@ -14,3 +14,6 @@ last_value(_rivery_last_update) over ( partition by user_id,dw_country_code orde
  
  FROM {{ ref('orders') }}
   where billing_zipcode<>'DELETED'
+  {% if is_incremental() %}
+    AND _rivery_last_update > (SELECT max(last_update) FROM {{ this }})
+{% endif %}
