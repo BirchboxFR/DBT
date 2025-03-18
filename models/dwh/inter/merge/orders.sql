@@ -31,7 +31,7 @@ t.* EXCEPT(
  {% if '__transaction_id' in fr_columns | map(attribute='name') %}__transaction_id,{% endif %}
  {% if '_rivery_river_id' in fr_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
  {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
+ --{% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_fr.wp_jb_orders` t
 wHERE
@@ -59,7 +59,7 @@ t.* EXCEPT(
  {% if '__transaction_id' in de_columns | map(attribute='name') %}__transaction_id,{% endif %}
  {% if '_rivery_river_id' in de_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
  {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
+ --{% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_de.wp_jb_orders` t
 WHERE 
@@ -83,7 +83,7 @@ t.* EXCEPT(
  {% if '__transaction_id' in es_columns | map(attribute='name') %}__transaction_id,{% endif %}
  {% if '_rivery_river_id' in es_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
  {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
+ --{% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_es.wp_jb_orders` t
 WHERE 
@@ -107,7 +107,7 @@ t.* EXCEPT(
  {% if '__transaction_id' in it_columns | map(attribute='name') %}__transaction_id,{% endif %}
  {% if '_rivery_river_id' in it_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
  {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
+ --{% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
 FROM `bdd_prod_it.wp_jb_orders` t
 WHERE 
