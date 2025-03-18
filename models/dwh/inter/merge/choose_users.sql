@@ -2,7 +2,8 @@
 {{ config(
     partition_by={
     "field": "_rivery_last_update",
-     "data_type": "date"
+      "data_type": "timestamp",
+      "granularity": "day"
     },
     cluster_by=['dw_country_code', 'form_id','choice_id']
 ) }}
