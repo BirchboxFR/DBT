@@ -1,25 +1,6 @@
 
 WITH 
-info_perso as (
-SELECT distinct user_id ,dw_country_code,last_value(date) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ,
-last_value(billing_country) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_country,
-last_value(billing_zipcode) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_zipcode,
-last_value(billing_phone) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_phone,
-last_value(billing_city) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_city,
-last_value(billing_adr1) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_adress,
- FROM {{ ref('orders') }}
 
-),
-gender as (
-SELECT dw_country_code,
-o.user_id, 
-CASE WHEN ARRAY_AGG(o.billing_civility ORDER BY o.date DESC LIMIT 1)[OFFSET(0)] = 'MISTER' THEN 'M' ELSE 'F' END AS gender
-FROM {{ ref('orders') }} o
-WHERE o.billing_civility IS NOT NULL
-AND o.billing_civility <> ''
-AND o.billing_civility <> 'NA'
-GROUP BY ALL 
-),
 all_customers AS (
   SELECT dw_country_code, email, MAX(user_id) AS user_id
   FROM (
@@ -404,7 +385,7 @@ SELECT ac.dw_country_code,
        ud.is_admin,
        ud.firstname,
        ud.lastname,
-       gender.gender,
+       ip.gender,
        ud.registration_date,
        ud.birth_date,
        ud.age,
@@ -618,8 +599,7 @@ LEFT JOIN current_box_table cbt ON ac.dw_country_code = cbt.dw_country_code AND 
 LEFT JOIN last_box_table lbt ON ac.dw_country_code = lbt.dw_country_code AND ac.user_id = lbt.user_id
 LEFT JOIN box_stats_table bst ON ac.dw_country_code = bst.dw_country_code AND ac.user_id = bst.user_id
 LEFT JOIN raffer_table rt ON ac.dw_country_code = rt.dw_country_code AND ac.user_id = rt.user_id
-left join info_perso ip on ip.user_id= ac.user_id and ip.dw_country_code=ac.dw_country_code
-LEFT JOIN gender ON gender.user_id = ac.user_id AND gender.dw_country_code = ac.dw_country_code
+left join {{ ref('customers_info_perso') }}  ip on ip.user_id= ac.user_id and ip.dw_country_code=ac.dw_country_code
 LEFT JOIN choose_table ct ON ac.dw_country_code = ct.dw_country_code AND ac.user_id = ct.user_id
 LEFT JOIN box_survey_answers bsa ON ac.dw_country_code = bsa.dw_country_code AND ac.user_id = bsa.user_id
 LEFT JOIN shop_table st ON ac.dw_country_code = st.dw_country_code AND ac.user_id = st.user_id
