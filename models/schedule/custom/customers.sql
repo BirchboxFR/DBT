@@ -1,25 +1,6 @@
 
 WITH 
-info_perso as (
-SELECT distinct user_id ,dw_country_code,last_value(date) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ,
-last_value(billing_country) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_country,
-last_value(billing_zipcode) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_zipcode,
-last_value(billing_phone) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_phone,
-last_value(billing_city) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_city,
-last_value(billing_adr1) over ( partition by user_id order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_adress,
- FROM {{ ref('orders') }}
 
-),
-gender as (
-SELECT dw_country_code,
-o.user_id, 
-CASE WHEN ARRAY_AGG(o.billing_civility ORDER BY o.date DESC LIMIT 1)[OFFSET(0)] = 'MISTER' THEN 'M' ELSE 'F' END AS gender
-FROM {{ ref('orders') }} o
-WHERE o.billing_civility IS NOT NULL
-AND o.billing_civility <> ''
-AND o.billing_civility <> 'NA'
-GROUP BY ALL 
-),
 all_customers AS (
   SELECT dw_country_code, email, MAX(user_id) AS user_id
   FROM (
@@ -31,8 +12,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT 'FR' AS dw_country_code, email, NULL AS user_id
-    FROM user.splio_data_dedup
-    WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 36 MONTH)
+    FROM user.crm_data
     GROUP BY email
   )
   GROUP BY dw_country_code, email
@@ -83,225 +63,6 @@ traffic_table AS (
     FROM inter.users
   )
   GROUP BY dw_country_code, user_id
-),
-crm_data AS (
-  SELECT email,
-         MAX(status = 'Open') AS open_email,
-         MAX(status = 'Click') AS click,
-         MAX(CASE WHEN status = 'Open' THEN event_date END) AS date_last_open_email,
-         MAX(CASE WHEN status = 'Click' THEN event_date END) AS date_last_click_email,
-         SAFE_DIVIDE(COUNTIF(status = 'Click' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)), COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) AS ltm_client_email_rate,
-         SAFE_DIVIDE(COUNTIF(status = 'Open' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)), COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) AS ltm_open_email_rate,
-         COUNTIF(status = 'Click' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_click_email,
-         COUNTIF(status = 'Open' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
-         COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
-  FROM user.splio_data_dedup
-  GROUP BY email
-),
-beauty_profile_table AS (
-   WITH ANSWER_CHECK AS (
-       SELECT dw_country_code, user_id, MAX(body_issues) as body_issues,max(skin_issues) as skin_issues, MAX( hair_issues) as hair_issues
-       , MAX (hair_dream ) as hair_dream,  MAX(hair_dryer_use) as hair_dryer_use, MAX (  fragrance_preference) as fragrance_preference, 
-       MAX(shop_location) as shop_location , MAX (makeup_discovery) as makeup_discovery
-       FROM 
-       (SELECT sq.dw_country_code,
-       sr.user_id,
-              CASE WHEN sq.id = 46259 THEN MAX(sa.id) END as body_issues,
-              CASE WHEN sq.id = 46258 THEN MAX(sa.id) END as skin_issues,
-              CASE WHEN sq.id = 46850 THEN MAX(sa.id) END as hair_issues, 
-              CASE WHEN sq.id = 46851 THEN MAX(sa.id) END as hair_dream,   
-              CASE WHEN sq.id = 46852 THEN MAX(sa.id) END as hair_dryer_use ,
-              CASE WHEN sq.id = 46855 THEN MAX(sa.id) END as fragrance_preference, 
-              CASE WHEN sq.id = 46860 THEN MAX(sa.id) END as shop_location, 
-              CASE WHEN sq.id = 79045 THEN MAX(sa.id) END as makeup_discovery
-
-  FROM inter.survey_questions sq
-  INNER JOIN inter.survey_answers sa ON COALESCE(sq.parent_id, sq.id) = sa.question_id AND sa.dw_country_code = 'FR'
-  INNER JOIN inter.survey_results sr ON sq.dw_country_code = sr.dw_country_code AND sq.survey_id = sr.survey_id
-  INNER JOIN inter.survey_result_answers sra ON sra.dw_country_code = sq.dw_country_code AND sra.question_id = sq.id AND sra.result_id = sr.id AND sra.answer_id = sa.id
-  WHERE sq.survey_id = 2639
-  GROUP BY sq.dw_country_code, sr.user_id, sq.id) t
-  GROUP BY user_id , dw_country_code
-
-  )
-  
-  
-  
-  SELECT sq.dw_country_code,
-         sr.user_id,
-         MAX(ifnull(CASE WHEN sq.id = 46256 THEN sa.value END,CASE WHEN sq.id = 15424 THEN sa.value END)) AS skin_complexion,
-         MAX(ifnull(CASE WHEN sq.id = 46257 THEN sa.value END,CASE WHEN sq.id = 15425 THEN sa.value END)) AS skin_type,
-
-        -- QUESTION ID =  > Les problemes de peau qui me concernent  SKIN ISSUES 
-        
-         MAX(CASE WHEN sa.id = 113178 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_redness,
-         MAX(CASE WHEN sa.id = 113179 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_sensitiveness,
-         MAX(CASE WHEN sa.id = 113180 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_aging,
-         MAX(CASE WHEN sa.id = 113181 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_acne,
-         MAX(CASE WHEN sa.id = 113182 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_dilated_pores,
-         MAX(CASE WHEN sa.id = 113183 THEN true ELSE
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_dehydration,
-         MAX(CASE WHEN sa.id = 113184 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_eye_bags,
-         MAX(CASE WHEN sa.id = 113185 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_dullness,
-         MAX(CASE WHEN sa.id = 113186 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_no_problem,
-         MAX(CASE WHEN sa.id = 153850 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_spots,
-         MAX(CASE WHEN sa.id = 153851 THEN true ELSE 
-              CASE WHEN ac.skin_issues is null THEN NULL ELSE false END END) AS skin_wrinkles,
-
-        -- QUESTION ID = > Au niveau de mon corps je me sens concernée par  BODY ISSUES 
-
-        
-         MAX(CASE WHEN sa.id = 113187 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END)  AS body_stretch_marks,
-         MAX(CASE WHEN sa.id = 113188 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END)  AS body_cellulite,
-         MAX(CASE WHEN sa.id = 113189 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END)  AS body_lack_firmness,
-         MAX(CASE WHEN sa.id = 113190 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END) AS body_dry_skin,
-         MAX(CASE WHEN sa.id = 113191 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END)  AS body_water_retention,
-         MAX(CASE WHEN sa.id = 113192 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END) AS body_no_problem,
-          MAX(CASE WHEN sa.id = 193350 THEN true ELSE 
-              CASE WHEN ac.body_issues is null THEN NULL ELSE false END END) AS body_spots,
-
-          MAX(ifnull(CASE WHEN sq.id = 46261 THEN sa.value END,CASE WHEN sq.id = 15422 THEN sa.value END)) AS hair_color,
-
-         MAX(CASE WHEN sq.id = 46845 THEN sa.value END) AS hair_dye,
-         MAX(CASE WHEN sq.id = 46846 THEN sa.value END) AS hair_thickness,
-         MAX(CASE WHEN sq.id = 46847 THEN sa.value END) AS hair_type,
-         MAX(CASE WHEN sq.id = 46848 THEN sa.value END) AS hair_scalp,
-         MAX(CASE WHEN sq.id = 46849 THEN sa.value END) AS hair_style,
-
---- HAIR ISSUES : "Au quotidien mes cheveux sont" 
-         MAX(CASE WHEN sa.id = 114597 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END) AS hair_damaged,
-         MAX(CASE WHEN sa.id = 114598 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END)AS hair_split_end,
-         MAX(CASE WHEN sa.id = 114599 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END) AS hair_greasy,
-         MAX(CASE WHEN sa.id = 114600 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END)  AS hair_dried,
-         MAX(CASE WHEN sa.id = 114601 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END)  AS hair_dandruff,
-         MAX(CASE WHEN sa.id = 114603 THEN true ELSE 
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END)  AS hair_no_problem,
-         MAX(CASE WHEN sa.id = 153858 THEN true ELSE
-              CASE WHEN ac.hair_issues is null THEN NULL ELSE false END END)  AS hair_falls,
-
-       -- HAIR DREAM : "Mon rêve serait d'avoir les cheveux "
-         MAX(CASE WHEN sa.id = 114604 THEN true ELSE
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_straight,
-         MAX(CASE WHEN sa.id = 114605 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_frizz_free,
-         MAX(CASE WHEN sa.id = 114606 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_volume,
-         MAX(CASE WHEN sa.id = 114607 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_shine,
-         MAX(CASE WHEN sa.id = 114608 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_soft,
-         MAX(CASE WHEN sa.id = 114609 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_less_thinning,
-         MAX(CASE WHEN sa.id = 114610 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_curly,
-         MAX(CASE WHEN sa.id = 114611 THEN true ELSE 
-              CASE WHEN ac.hair_dream is null THEN NULL ELSE false END END) AS want_hair_grow,
-
-     
-       -- HAIR DRYER USER : "De manière fréquente j'utilise "
-         MAX(CASE WHEN sa.id = 114612 THEN true ELSE 
-              CASE WHEN ac.hair_dryer_use is null THEN NULL ELSE false END END)AS use_hair_dryer,
-         MAX(CASE WHEN sa.id = 114613 THEN true ELSE 
-              CASE WHEN ac.hair_dryer_use is null THEN NULL ELSE false END END) AS use_hair_straightener,
-         MAX(CASE WHEN sa.id = 114614 THEN true ELSE 
-              CASE WHEN ac.hair_dryer_use is null THEN NULL ELSE false END END) AS use_hair_no_device,
-
-         MAX(CASE WHEN sq.id = 46853 THEN sa.value END) AS beauty_routine,
-
-       -- FRANGRANCE PREFERENCE : " Les parfums que j'apprécie le plus sont"
-         MAX(CASE WHEN sa.id = 114623 THEN true ELSE 
-              CASE WHEN ac.fragrance_preference is null THEN NULL ELSE false END END) AS fragrance_sweet,
-         MAX(CASE WHEN sa.id = 114624 THEN true ELSE 
-              CASE WHEN ac.fragrance_preference is null THEN NULL ELSE false END END)  AS fragrance_floral,
-         MAX(CASE WHEN sa.id = 114625 THEN true ELSE 
-              CASE WHEN ac.fragrance_preference is null THEN NULL ELSE false END END)  AS fragrance_spicy,
-         MAX(CASE WHEN sa.id = 114626 THEN true ELSE 
-              CASE WHEN ac.fragrance_preference is null THEN NULL ELSE false END END)  AS fragrance_fruity,
-         MAX(CASE WHEN sa.id = 114627 THEN true ELSE 
-              CASE WHEN ac.fragrance_preference is null THEN NULL ELSE false END END)  AS fragrance_woody,
-
-       -- SHOP LOCATION AS "Le lieu où j'achète mes produits de beauté"
-         MAX(CASE WHEN sa.id = 114657 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END) AS shop_perfumery,
-         MAX(CASE WHEN sa.id = 114658 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END)AS shop_brand_store,
-         MAX(CASE WHEN sa.id = 114659 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END) AS shop_hairdressing,
-         MAX(CASE WHEN sa.id = 114660 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END)AS shop_pharmacy,
-         MAX(CASE WHEN sa.id = 114661 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END) AS shop_hypermarket,
-         MAX(CASE WHEN sa.id = 114662 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END)AS shop_bio_store,
-         MAX(CASE WHEN sa.id = 114663 THEN true ELSE 
-              CASE WHEN ac.shop_location is null THEN NULL ELSE false END END) AS shop_internet,
-
-
-          -- En termes de maquillage, je serais curieuse de recevoir
-          MAX(CASE WHEN sa.id = 193360 THEN true ELSE 
-              CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END) AS discovery_glitter,
-          MAX(CASE WHEN sa.id = 193361 THEN true ELSE 
-              CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END)AS discovery_liners_mascaras,
-          MAX(CASE WHEN sa.id =193362  THEN true ELSE 
-              CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END) AS discovery_colored_lipstick,
-          MAX(CASE WHEN sa.id =193363  THEN true ELSE 
-           CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END) AS discovery_colored_nail_varnish,
-             MAX(CASE WHEN sa.id =193364  THEN true ELSE 
-           CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END) AS discovery_colored_nude_makeup,
-          MAX(CASE WHEN sa.id =193365  THEN true ELSE 
-          CASE WHEN ac.makeup_discovery is null THEN NULL ELSE false END END) AS discovery_makeup,
-
-         MAX(CASE WHEN sq.id = 46861 THEN sa.value END) AS beauty_budget,
-         MAX(CASE WHEN sq.id = 62162 THEN sa.value END) AS skin_tone,
-         MAX(CASE WHEN sq.id = 62163 THEN sa.value END) AS eyebrows,
-         MAX(CASE WHEN sq.id = 62165 THEN sa.value END) AS face_care,
-         MAX(CASE WHEN sq.id = 62166 THEN sa.value END) AS body_care,
-         MAX(CASE WHEN sq.id = 62167 THEN sa.value END) AS bath_products,
-         MAX(CASE WHEN sq.id = 62168 THEN sa.value END) AS makeup_general,
-         MAX(CASE WHEN sq.id = 62169 THEN sa.value END) AS makeup_eyes,
-         MAX(CASE WHEN sq.id = 62170 THEN sa.value END) AS makeup_lips,
-         MAX(CASE WHEN sq.id = 62171 THEN sa.value END) AS makeup_eyebrows,
-         MAX(CASE WHEN sq.id = 62172 THEN sa.value END) AS makeup_complexion,
-         MAX(CASE WHEN sq.id = 62173 THEN sa.value END) AS makeup_nails,
-         MAX(CASE WHEN sq.id = 62174 THEN sa.value END) AS hair_shampoo,
-         MAX(CASE WHEN sq.id = 62175 THEN sa.value END) AS hair_conditioner,
-         MAX(CASE WHEN sq.id = 62176 THEN sa.value END) AS hair_mask,
-         MAX(CASE WHEN sq.id = 62177 THEN sa.value END) AS hair_styling,
-         MAX(CASE WHEN sq.id = 62178 THEN sa.value END) AS accessories,
-         MAX(CASE WHEN sq.id = 62179 THEN sa.value END) AS food_supplements,
-         MAX(CASE WHEN sq.id = 62180 THEN sa.value END) AS green_natural_products,
-         MAX(CASE WHEN sq.id = 62181 THEN sa.value END) AS slimming_products, 
-         MAX(CASE WHEN sq.id = 66856 THEN sa.value END ) AS perfumes,
-         MAX(CASE WHEN sq.id = 79039 THEN sa.value END) AS self_taining, 
-         MAX(CASE WHEN sq.id = 79043 THEN sa.value END) AS solid_cosmetics,
-         MAX(CASE WHEN sq.id = 79040 THEN sa.value END) AS hair_products
-  FROM inter.survey_questions sq
-  INNER JOIN inter.survey_answers sa ON COALESCE(sq.parent_id, sq.id) = sa.question_id AND sa.dw_country_code = 'FR'
-  INNER JOIN inter.survey_results sr ON sq.dw_country_code = sr.dw_country_code AND sq.survey_id = sr.survey_id
-  INNER JOIN inter.survey_result_answers sra ON sra.dw_country_code = sq.dw_country_code AND sra.question_id = sq.id AND sra.result_id = sr.id AND sra.answer_id = sa.id
-  LEFT JOIN ANSWER_CHECK ac on ac.dw_country_code = sr.dw_country_code and ac.user_id = sr.user_id
-  WHERE sq.survey_id = 2639
-  GROUP BY sq.dw_country_code, sr.user_id
 ),
 box_sales_one_line_user AS (
   SELECT * EXCEPT(rn)
@@ -609,7 +370,7 @@ SELECT ac.dw_country_code,
        ud.is_admin,
        ud.firstname,
        ud.lastname,
-       gender.gender,
+       ip.gender,
        ud.registration_date,
        ud.birth_date,
        ud.age,
@@ -814,8 +575,8 @@ FROM all_customers ac
 LEFT JOIN user_data ud ON ac.dw_country_code = ud.dw_country_code AND ac.user_id = ud.user_id
 LEFT JOIN range_of_age_table roa ON ac.dw_country_code = roa.dw_country_code AND ac.user_id = roa.user_id
 LEFT JOIN traffic_table tt ON ac.dw_country_code = tt.dw_country_code AND ac.user_id = tt.user_id
-LEFT JOIN crm_data cd ON ac.dw_country_code = 'FR' AND ac.email = cd.email
-LEFT JOIN beauty_profile_table  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
+LEFT JOIN {{ ref('crm_data') }}  cd ON ac.dw_country_code = 'FR' AND ac.email = cd.email
+LEFT JOIN {{ ref('customers_beauty_profile') }}  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
 LEFT JOIN sub_status_table sst ON ac.dw_country_code = sst.dw_country_code AND ac.email = sst.email
 LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_code AND ac.email = sstb.email
 LEFT JOIN initial_box_table ibt ON ac.dw_country_code = ibt.dw_country_code AND ac.user_id = ibt.user_id
@@ -823,8 +584,7 @@ LEFT JOIN current_box_table cbt ON ac.dw_country_code = cbt.dw_country_code AND 
 LEFT JOIN last_box_table lbt ON ac.dw_country_code = lbt.dw_country_code AND ac.user_id = lbt.user_id
 LEFT JOIN box_stats_table bst ON ac.dw_country_code = bst.dw_country_code AND ac.user_id = bst.user_id
 LEFT JOIN raffer_table rt ON ac.dw_country_code = rt.dw_country_code AND ac.user_id = rt.user_id
-left join info_perso ip on ip.user_id= ac.user_id and ip.dw_country_code=ac.dw_country_code
-LEFT JOIN gender ON gender.user_id = ac.user_id AND gender.dw_country_code = ac.dw_country_code
+left join {{ ref('customers_info_perso') }}  ip on ip.user_id= ac.user_id and ip.dw_country_code=ac.dw_country_code
 LEFT JOIN choose_table ct ON ac.dw_country_code = ct.dw_country_code AND ac.user_id = ct.user_id
 LEFT JOIN box_survey_answers bsa ON ac.dw_country_code = bsa.dw_country_code AND ac.user_id = bsa.user_id
 LEFT JOIN shop_table st ON ac.dw_country_code = st.dw_country_code AND ac.user_id = st.user_id
