@@ -12,7 +12,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT 'FR' AS dw_country_code, email, NULL AS user_id
-    FROM user.crm_prospects_only
+    FROM user.crm_data
     GROUP BY email
   )
   GROUP BY dw_country_code, email
@@ -63,20 +63,6 @@ traffic_table AS (
     FROM inter.users
   )
   GROUP BY dw_country_code, user_id
-),
-crm_data AS (
- SELECT email,
-         MAX(status  = 'Open') AS open_email,
-         MAX(status = 'Click') AS click,
-         MAX(CASE WHEN status = 'Open' THEN event_date END) AS date_last_open_email,
-         MAX(CASE WHEN status = 'Click' THEN event_date END) AS date_last_click_email,
-         SAFE_DIVIDE(COUNTIF(status = 'Click' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)), COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) AS ltm_client_email_rate,
-         SAFE_DIVIDE(COUNTIF(status = 'Open' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)), COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) AS ltm_open_email_rate,
-         COUNTIF(status = 'Click' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_click_email,
-         COUNTIF(status = 'Open' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
-         COUNTIF(status = 'Done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
-  FROM user.splio_data_dedup
-  GROUP BY email
 ),
 box_sales_one_line_user AS (
   SELECT * EXCEPT(rn)
@@ -589,7 +575,7 @@ FROM all_customers ac
 LEFT JOIN user_data ud ON ac.dw_country_code = ud.dw_country_code AND ac.user_id = ud.user_id
 LEFT JOIN range_of_age_table roa ON ac.dw_country_code = roa.dw_country_code AND ac.user_id = roa.user_id
 LEFT JOIN traffic_table tt ON ac.dw_country_code = tt.dw_country_code AND ac.user_id = tt.user_id
-LEFT JOIN crm_data cd ON ac.dw_country_code = 'FR' AND ac.email = cd.email
+LEFT JOIN {{ ref('crm_data') }}  cd ON ac.dw_country_code = 'FR' AND ac.email = cd.email
 LEFT JOIN {{ ref('customers_beauty_profile') }}  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
 LEFT JOIN sub_status_table sst ON ac.dw_country_code = sst.dw_country_code AND ac.email = sst.email
 LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_code AND ac.email = sstb.email
