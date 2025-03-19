@@ -40,7 +40,7 @@ models:
       inter:
         +schema: inter
         +materialized: table
-        views:
+        table:
           +materialized: table
         materialized_views:
           refresh_4h:
