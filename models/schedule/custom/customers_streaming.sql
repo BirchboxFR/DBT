@@ -12,7 +12,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT 'FR' AS dw_country_code, email, NULL AS user_id
-    FROM crm_prospects_only
+    FROM user.crm_prospects_only
     WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 36 MONTH)
     GROUP BY email
   )
