@@ -12,7 +12,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT 'FR' AS dw_country_code, email, NULL AS user_id
-    FROM user.splio_data_dedup
+    FROM crm_prospects_only
     WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 36 MONTH)
     GROUP BY email
   )
@@ -66,8 +66,8 @@ traffic_table AS (
   GROUP BY dw_country_code, user_id
 ),
 crm_data AS (
-  SELECT email,
-         MAX(status = 'Open') AS open_email,
+ SELECT email,
+         MAX(status  = 'Open') AS open_email,
          MAX(status = 'Click') AS click,
          MAX(CASE WHEN status = 'Open' THEN event_date END) AS date_last_open_email,
          MAX(CASE WHEN status = 'Click' THEN event_date END) AS date_last_click_email,
