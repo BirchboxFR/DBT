@@ -36,7 +36,8 @@ WHERE
   (
     -- Données mises à jour récemment (dans les X dernières heures)
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
+       AND 
+    t.date >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
   )
   {% else %}
   -- Premier chargement: toutes les données
@@ -60,6 +61,8 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+           AND 
+    t.date >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
 
   )
   {% else %}
@@ -83,6 +86,8 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+           AND 
+    t.date >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
 
   )
   {% else %}
@@ -106,6 +111,8 @@ WHERE
   {% if is_incremental() %}
   (
     t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+           AND 
+    t.date >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
 
   )
   {% else %}
