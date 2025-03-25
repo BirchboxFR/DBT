@@ -60,7 +60,7 @@ left join `teamdata-291012.bdd_prod_sublissim.review_item` rimini on rimini.id=r
 left join `teamdata-291012.bdd_prod_sublissim.review_item` rifz on rifz.id=full_size_review_item_id
 inner join `teamdata-291012.bdd_prod_sublissim.inventory_item` ii on ii.id=rimini.inventory_item_id
 inner join `teamdata-291012.bdd_prod_sublissim.inventory_item` iifz on iifz.id=rifz.inventory_item_id
-inner join `normalised-417010.product.brands_enriched` b on b.brand_id=ii.brand_id and b.dw_country_code=r.original_language
+inner join `normalised-417010.product.brands_enriched_table` b on b.brand_id=ii.brand_id and b.dw_country_code=r.original_language
 left join `normalised-417010.box.sku_by_user_by_box` s on s.user_id=ra.external_id and s.box_id>=10 and component_sku=ii.sku and component_codification_lvl2 = 'Product' and s.dw_country_code=r.original_language
 left join `teamdata-291012.inter.boxes` bo on bo.id=r.box_id and bo.dw_country_code=r.original_language
 left join (select user_id,email,firstname,lastname,dw_country_code from `teamdata-291012.user.customers`)c on c.user_id=ra.external_id and r.original_language=c.dw_country_code
