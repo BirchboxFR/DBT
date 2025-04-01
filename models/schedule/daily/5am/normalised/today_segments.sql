@@ -20,4 +20,4 @@ select user_id,status from {{ ref('today_risky') }}
 union all
 select user_id,status from {{ ref('today_spectators') }}
 )
-where user_id=2342637
+
