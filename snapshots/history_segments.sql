@@ -4,8 +4,8 @@
         config(
           target_database='normalised-417010',  
           target_schema='user',
-          strategy='timestamp',
-          updated_at='snapshot_date',
+          strategy='check',
+          check_cols=['status'],
           invalidate_hard_deletes=True,
           unique_key='user_id',
         )
