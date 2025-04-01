@@ -1,4 +1,4 @@
-{% snapshot history_segments_full %}
+{% snapshot history_segments %}
 
     {{
         config(
