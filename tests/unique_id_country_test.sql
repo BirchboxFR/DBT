@@ -1,3 +1,4 @@
+
 {% set models_to_test = [
     'users',
     'tags'
