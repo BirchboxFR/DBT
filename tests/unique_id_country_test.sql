@@ -1,7 +1,7 @@
 
 {% set models_to_test = [
     'users',
-    'tags'
+    'tags','boxes','choose_users'
 ] %}
 
 {% for model_name in models_to_test %}
