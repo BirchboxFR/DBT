@@ -5,7 +5,7 @@
 
 -- Le nombre d'heures en arrière pour lesquelles récupérer les données (4 heures par défaut)
 {%- set lookback_hours = 4 -%}
-
+--donnees DE
 WITH merged_data AS (
     -- Sélection des données françaises
     SELECT 
