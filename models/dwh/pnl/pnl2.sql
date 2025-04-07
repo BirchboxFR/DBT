@@ -432,7 +432,7 @@ UNION ALL
 SELECT dw_country_code, extract(year from date) as year, extract(month from date) as month,NULL, 'REFUND BOX - Products cost','BOX', SUM(euro_purchase_price) AS box_cost
 FROM (
 SELECT bon.dw_country_code,s.id, b.date,  MAX(iic.euro_purchase_price) AS euro_purchase_price
-FROM `teamdata-291012.{{ ref('b2c_order_notifications') }}` bon
+FROM {{ ref('b2c_order_notifications') }} bon
 JOIN {{ ref('order_detail_sub') }} s ON s.id = bon.sub_id AND s.dw_country_code = bon.dw_country_code
 JOIN {{ ref('products') }} p ON p.box_id = s.box_id AND p.coffret_id = s.coffret_id AND p.dw_country_code = s.dw_country_code
 JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = p.sku 
@@ -652,7 +652,7 @@ CONCAT('box-', CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logi
 SAFE_DIVIDE(SUM(iic.euro_purchase_price), COUNT(DISTINCT bs.sub_id)) as value
 FROM {{ ref('kit_details') }} kd
 JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = kd.component_sku
-JOIN teamdata-291012.{{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
+JOIN {{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
 WHERE 1=1
 AND bs.box_id >= 112
 GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
@@ -741,8 +741,8 @@ group by country,year,month,store,center
 'ONLINE', 'GIFT_CARDS_EXPIRED',
   'BOX', 
 SUM(gc.amount/(1+COALESCE(vat.taux,20)/100)) AS amount_ht
-FROM `{{ ref('gift_cards') }}` gc
-JOIN `{{ ref('order_details') }}` d ON d.id = gc.order_detail_id AND d.dw_country_code = gc.dw_country_code
+FROM {{ ref('gift_cards') }} gc
+JOIN {{ ref('order_details') }} d ON d.id = gc.order_detail_id AND d.dw_country_code = gc.dw_country_code
 JOIN {{ ref('orders') }} o ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
 LEFT JOIN {{ ref('box_sales') }} as bs ON bs.dw_country_code = gc.dw_country_code AND bs.gift_card_id = gc.id
 LEFT JOIN bdd_prod_fr.wp_jb_tva_product vat ON vat.country_code = o.shipping_country  AND vat.category = 'normal'
