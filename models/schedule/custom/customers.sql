@@ -359,7 +359,7 @@ SELECT ac.dw_country_code,
        ac.email,
        ac.user_id,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
-       else  concat(ac.dw_country_code,'_',ac.email) end as user_key,
+       else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
        uuid,
        ud.optin,
        case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
