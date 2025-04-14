@@ -179,7 +179,7 @@ FROM (
         catalog.sku,
         CASE WHEN d.product_id IN(-1, -2, -3) THEN 'Reward Coupon LOYALTY' ELSE pnn.product_nice_name END AS product_name,
         CASE
-            WHEN o.store_id = 0 OR o.shipping_mode = 32 THEN o.dw_country_code
+            WHEN o.store_id IN (0,3) OR o.shipping_mode = 32 THEN o.dw_country_code
             WHEN o.store_id > 0 THEN 'Store'
         END AS store_code,
         o.store_id,
