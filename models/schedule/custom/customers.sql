@@ -550,6 +550,8 @@ SELECT ac.dw_country_code,
        fos.support AS first_order_support,
        fos.device AS first_order_device,
        nb_shop_orders,
+       cpb.balance,
+       cpb.points_soon_to_expire,
        case when nb_shop_orders = 1 then '1'
        when nb_shop_orders between 2 and 5 then '2-5'
        when nb_shop_orders between 6 and 10 then '6-10'
@@ -595,3 +597,4 @@ LEFT JOIN first_order_source fos ON fos.dw_country_code = ac.dw_country_code AND
 LEFT JOIN gp_box ON gp_box.dw_country_code = ac.dw_country_code AND gp_box.user_id = ac.user_id
 LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.user_id = ac.user_id
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
+LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
