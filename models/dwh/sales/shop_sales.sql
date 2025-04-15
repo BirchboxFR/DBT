@@ -388,7 +388,7 @@ FROM
     '0' as sku,
     CAST(NULL AS STRING) AS product_name,
     CASE
-        WHEN o.store_id = (0,3) OR o.shipping_mode = 32 THEN an.dw_country_code
+        WHEN o.store_id (0,3) OR o.shipping_mode = 32 THEN an.dw_country_code
         WHEN o.store_id > 0 THEN 'Store'
     END AS store_code,
     o.store_id,
