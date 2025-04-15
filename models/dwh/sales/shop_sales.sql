@@ -55,7 +55,7 @@ group by all
 
 
 
-SELECT  t.*, 
+SELECT  concat(t.dw_country_code,'_',t.user_id)as user_key,t.*, 
         EXTRACT(YEAR FROM order_date) AS year,
         EXTRACT(MONTH FROM order_date) AS month,
         unit_price * quantity / (1 + vat_rate / 100) AS gross_revenue,
@@ -257,7 +257,8 @@ LEFT JOIN {{ ref('tva_product') }} tva ON tva.country_code = t.shipping_country 
 
 UNION ALL
 
-SELECT sr.dw_country_code,
+SELECT concat(sr.dw_country_code,'_',user_id)as user_key,
+    sr.dw_country_code,
        order_id,
        user_id,
        order_status,
@@ -318,7 +319,9 @@ left join ( select dw_country_code, sku,product_id from {{ ref('catalog') }})c o
 
 UNION ALL
 
-SELECT t.dw_country_code,
+SELECT 
+concat(t.dw_country_code,'_',t.user_id)as user_key,
+t.dw_country_code,
 t.order_id,
 t.user_id,
 t.order_status,

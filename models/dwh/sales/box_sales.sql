@@ -142,7 +142,7 @@ JOIN {{ ref('products') }} p ON p.sku = c.sku_compo
 GROUP BY p.dw_country_code, p.box_id, p.coffret_id
 )
 
-SELECT t.*,
+SELECT concat(t.dw_country_code,'_',t.user_id)as user_key,t.*,
 case when cm.mono_box_id is null then false else true end as is_mono,
 cm.mono_brand as mono_brand,
 t.box_id+1 as next_month_id,
