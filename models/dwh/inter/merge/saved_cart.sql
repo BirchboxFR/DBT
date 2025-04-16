@@ -3,6 +3,9 @@
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_saved_cart')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_saved_cart')) -%}
 --données FR
+--partition 
+{% set lookback_hours = 2 %}
+--lookback 2h
 
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(
