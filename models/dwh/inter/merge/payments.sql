@@ -1,3 +1,16 @@
+{{
+  config(
+    materialized = 'table',
+    partition_by = {
+      "field": "date",
+      "data_type": "date",
+      "granularity": "month"
+    },
+    cluster_by = ['dw_country_code'] 
+  )
+}}
+
+
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_payments')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_payments')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_payments')) -%}
