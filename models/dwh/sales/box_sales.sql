@@ -150,6 +150,12 @@ lag(t.date) over (partition by t.user_id,t.dw_country_code order by t.box_id) la
 case when  lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) -- next box by user is the next box
 OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1  -- next box in the subscription (by order_detail)
 then 'LIVE' else'CHURN'end as next_month_status,
+case when (lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) -- next box by user is the next box
+OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1) 
+AND cannot_suspend =1 
+  -- next box in the subscription (by order_detail)
+then 1 else 0 end as next_month_committment,
+
 
 CASE 
   WHEN lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1 THEN NULL
