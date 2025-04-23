@@ -8,7 +8,7 @@
         "interval": 400000
       }
     },
-    cluster_by=['dw_country_code', 'code','parent_offer_id','validity_date']
+    cluster_by=['dw_country_code']
 ) }}
 
 {%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_coupons')) -%}
