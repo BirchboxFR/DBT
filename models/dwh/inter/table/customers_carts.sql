@@ -8,7 +8,7 @@ left join inter.saved_cart_details cd on c.id=cd.cart_id and c.dw_country_code=c
 left join product.catalog p on p.product_id=cd.product_id and p.dw_country_code=cd.dw_country_code
 left join inter.products pro on pro.id=cd.product_id and pro.dw_country_code=cd.dw_country_code
 where 1=1
-and user_id=2622634
+--and user_id=2622634
 group by all
 --having cart_age_hours < 1000
 order by date desc
