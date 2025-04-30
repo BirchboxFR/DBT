@@ -1,4 +1,5 @@
 {
     "dbt.executablePath": "/Users/mathieu.helie/Library/Python/3.9/bin/dbt",
-    "dbt.perspectiveTheme": "Vintage"
+    "dbt.perspectiveTheme": "Vintage",
+    "dbt.enableNewLineagePanel": true
 }
