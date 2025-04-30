@@ -19,6 +19,7 @@
     {%- set forecast_tmp_tables = ['classement_groupe_marque'] -%}
     {%- set alerting_tmp_tables = ['surveillance_incremental'] -%}
      {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
+     {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set pnl_tmp_tables = ['pnl2'] -%}
     
 
@@ -55,6 +56,8 @@
         forecast
     {%- elif node.name in user_tmp_tables -%}
         user
+    {%- elif node.name in mailjet_tmp_tables -%}
+        mailjet
     {%- elif node.name in reviews_tmp_tables -%}
         reviews
     {%- elif node.name in pnl_tmp_tables -%}
