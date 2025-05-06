@@ -72,16 +72,7 @@ SELECT
   TIMESTAMP_DIFF(sp.bounce_date, sp.sent_date, HOUR) as hours_to_bounce,
   TIMESTAMP_DIFF(sp.blocked_date, sp.sent_date, HOUR) as hours_to_block,
   TIMESTAMP_DIFF(sp.spam_date, sp.sent_date, HOUR) as hours_to_spam,
-  TIMESTAMP_DIFF(sp.unsub_date, sp.sent_date, HOUR) as hours_to_unsub,
-  
-  -- Indicateurs (true/false) si l'événement s'est produit
-  CASE WHEN sp.sent_date IS NOT NULL THEN TRUE ELSE FALSE END as was_sent,
-  CASE WHEN sp.opened_date IS NOT NULL THEN TRUE ELSE FALSE END as was_opened,
-  CASE WHEN sp.clicked_date IS NOT NULL THEN TRUE ELSE FALSE END as was_clicked,
-  CASE WHEN sp.bounce_date IS NOT NULL THEN TRUE ELSE FALSE END as was_bounced,
-  CASE WHEN sp.blocked_date IS NOT NULL THEN TRUE ELSE FALSE END as was_blocked,
-  CASE WHEN sp.spam_date IS NOT NULL THEN TRUE ELSE FALSE END as was_spam,
-  CASE WHEN sp.unsub_date IS NOT NULL THEN TRUE ELSE FALSE END as was_unsub
+  TIMESTAMP_DIFF(sp.unsub_date, sp.sent_date, HOUR) as hours_to_unsub
 FROM 
   status_pivoted sp
 LEFT JOIN 
