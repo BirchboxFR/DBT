@@ -22,6 +22,7 @@ safe_cast(attr_free_shipping_end as date) as attr_free_shipping_end,
 safe_cast(attr_shipping_delayed_to as date) as attr_shipping_delayed_to
  FROM `bdd_prod_fr.wp_jb_products` t
  WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
+ and type <>'DELETED'
 
 UNION ALL 
 SELECT 'DE' AS dw_country_code,  t.*except(sku,attr_special_price_start,attr_special_price_end,attr_free_shipping_start,attr_free_shipping_end, attr_shipping_delayed_to,
@@ -40,6 +41,7 @@ safe_cast(attr_free_shipping_end as date) as attr_free_shipping_end,
 safe_cast(attr_shipping_delayed_to as date) as attr_shipping_delayed_to
  FROM `bdd_prod_de.wp_jb_products` t
  WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false){% else %}true{% endif %}
+ and type <>'DELETED'
 
 UNION ALL 
 SELECT 'ES' AS dw_country_code,  t.*except(sku,attr_special_price_start,attr_special_price_end,attr_free_shipping_start,attr_free_shipping_end, attr_shipping_delayed_to,
@@ -58,7 +60,7 @@ safe_cast(attr_free_shipping_end as date) as attr_free_shipping_end,
 safe_cast(attr_shipping_delayed_to as date) as attr_shipping_delayed_to
  FROM `bdd_prod_es.wp_jb_products` t
  WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-
+ and type <>'DELETED'
 UNION ALL 
 SELECT 'IT' AS dw_country_code,  t.*except(sku,attr_special_price_start,attr_special_price_end,attr_free_shipping_start,attr_free_shipping_end, attr_shipping_delayed_to,
 {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
@@ -77,3 +79,4 @@ safe_cast(attr_shipping_delayed_to as date) as attr_shipping_delayed_to
 FROM `bdd_prod_it.wp_jb_products` t
 
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+ and type <>'DELETED'
