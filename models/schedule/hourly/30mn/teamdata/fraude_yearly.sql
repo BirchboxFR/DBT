@@ -9,9 +9,10 @@
 
 with histo as (
   select
-    min(lastname) as lastname,
+    concat (string_agg(lastname ),' _ ', string_agg(firstname)) as lastname,
     max(order_id) as fraud_order,
     billing_zipcode,
+    string_agg(email)histo_email,
     count(distinct sub_id) as nb,
     lower(regexp_replace(billing_adress, r'[^a-zA-Z0-9]', '')) as billing_adress
   from {{ ref('box_sales') }} bs
@@ -29,6 +30,7 @@ main as (
     fraud_order,
     histo.lastname as fraud_lastname,
     c.lastname,
+    email,
     c.billing_zipcode,
     c.billing_city,
     bs.payment_date,
