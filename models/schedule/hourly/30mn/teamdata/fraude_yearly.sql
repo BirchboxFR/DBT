@@ -91,8 +91,8 @@ select
   lastname,
   billing_city,
   payment_date,
-  nb,
-  histo_fraude,
+  max(similarity_rank) nb,
+   histo_fraude,
   clean_adress,
   clean_histo_adress,
   suspicion,
@@ -100,4 +100,5 @@ select
   order_url
 from suspicious_orders
 where similarity_rank = 1
+group by all
 order by payment_date desc
