@@ -61,6 +61,8 @@ suspicious_orders as (
     max(fraud_order) as fraud_order,
     fraud_lastname,
     lastname,
+    email,
+    histo_email,
     billing_city,
     payment_date,
     sum(nb) as nb,
