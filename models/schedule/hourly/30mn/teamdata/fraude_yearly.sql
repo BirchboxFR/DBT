@@ -86,6 +86,7 @@ suspicious_orders as (
 -- Sélectionner uniquement la ligne avec le meilleur score de similarité pour chaque commande
 select
   order_id,
+  current_Datetime() date,
   fraud_order,
   fraud_lastname,
   lastname,
