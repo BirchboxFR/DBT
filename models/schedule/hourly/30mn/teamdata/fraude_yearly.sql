@@ -9,7 +9,7 @@
 
 with histo as (
   select
-    min(lastname) as lastname,
+    min(lastname) as lastname,max(order_id)fraud_order,
     billing_zipcode,
     count(distinct sub_id) as nb,
     lower(regexp_replace(billing_adress, r'[^a-zA-Z0-9]', '')) as billing_adress
@@ -25,6 +25,7 @@ main as (
   select 
     bs.dw_country_code,
     bs.order_id,
+    fraud_order,
     histo.lastname as fraud_lastname,
     c.lastname,
     c.billing_zipcode,
@@ -53,6 +54,7 @@ main as (
 
 select 
   order_id,
+  fraud_order,
   fraud_lastname,
   lastname,
   billing_city,
