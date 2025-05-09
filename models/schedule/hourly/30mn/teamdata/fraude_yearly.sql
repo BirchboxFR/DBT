@@ -95,6 +95,8 @@ select
   fraud_order,
   fraud_lastname,
   lastname,
+  email,
+  histo_email,
   billing_city,
   payment_date,
   max(similarity_rank) nb,
