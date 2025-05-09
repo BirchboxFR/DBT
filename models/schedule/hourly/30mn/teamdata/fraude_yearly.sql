@@ -9,10 +9,10 @@
 
 with histo as (
   select
-    concat (string_agg(lastname ),' _ ', string_agg(firstname)) as lastname,
+    concat (string_agg( distinct lastname limit 5),' _ ', string_agg( distinct firstname limit 5)) as lastname,
     max(order_id) as fraud_order,
     billing_zipcode,
-    string_agg(email) as histo_email,
+    string_agg(email limit 5) as histo_email,
     count(distinct sub_id) as nb,
     lower(regexp_replace(billing_adress, r'[^a-zA-Z0-9]', '')) as billing_adress
   from {{ ref('box_sales') }} bs
