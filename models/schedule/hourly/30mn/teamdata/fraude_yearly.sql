@@ -41,23 +41,14 @@ main as (
   left join histo using(billing_zipcode)
   where coupon = 'YEARLY'
     {% if is_incremental() %}
-    -- Dans le mode incrémental, ne traiter que les nouvelles commandes depuis la dernière exécution
-    and bs.payment_date > (select max(payment_date) from {{ this }})
+    -- Dans le mode incrémental, traiter les commandes des 2 derniers jours
+    and date_diff(current_date, bs.payment_date, day) <= 2
+    and (bs.payment_date > (select max(payment_date) from {{ this }}) or bs.order_id not in (select order_id from {{ this }}))
     {% else %}
-    -- Dans le mode full refresh, ne prendre que les données récentes
-    and date_diff(current_date, payment_date, day) < 1
+    -- Dans le mode full refresh, ne prendre que les données des 2 derniers jours
+    and date_diff(current_date, payment_date, day) <= 2
     {% endif %}
-  group by 
-    bs.dw_country_code,
-    bs.order_id,
-    histo.lastname,
-    c.lastname,
-    c.billing_zipcode,
-    c.billing_city,
-    bs.payment_date,
-    histo.nb,
-    histo.billing_adress,
-    c.billing_adress
+  group by ALL
 )
 
 select 
@@ -80,8 +71,8 @@ select
   functions.trigram_similarity(clean_adress, clean_histo_adress) as similarity_score,
   CONCAT('https://back.blissim.', LOWER(main.dw_country_code), '/wp-admin/admin.php?page=jb-orders&order_id=', order_id) as order_url
 from main
-where main.histo_fraude > 1 
+where 1=1 --and  order_id=10050660
 group by all
-having suspicion = 'SUSPECT_ADRESS_SIMILAR' 
-   or functions.trigram_similarity(clean_adress, clean_histo_adress) > 0.6
+having suspicion = 'SUSPECT_ADRESS_SIMILAR' or 
+   functions.trigram_similarity(clean_adress, clean_histo_adress) > 0.6
 order by payment_date desc
