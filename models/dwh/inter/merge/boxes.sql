@@ -9,6 +9,7 @@
 
 -- Sélection des données françaises
 SELECT 'FR' AS dw_country_code,
+DATE_SUB(LEAD(shipping_date) OVER (ORDER BY date), INTERVAL 1 DAY) AS closing_date,
 t.* EXCEPT(
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
@@ -36,6 +37,7 @@ WHERE
 UNION ALL
 
 SELECT 'DE' AS dw_country_code,
+DATE_SUB(LEAD(shipping_date) OVER (ORDER BY date), INTERVAL 1 DAY) AS closing_date,
 t.* EXCEPT(
  {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
@@ -59,6 +61,7 @@ WHERE
 UNION ALL
 
 SELECT 'ES' AS dw_country_code,
+DATE_SUB(LEAD(shipping_date) OVER (ORDER BY date), INTERVAL 1 DAY) AS closing_date,
 t.* EXCEPT(
  {% if '__deleted' in es_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in es_columns | map(attribute='name') %}__ts_ms,{% endif %}
@@ -82,6 +85,7 @@ WHERE
 UNION ALL
 
 SELECT 'IT' AS dw_country_code,
+DATE_SUB(LEAD(shipping_date) OVER (ORDER BY date), INTERVAL 1 DAY) AS closing_date,
 t.* EXCEPT(
  {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
  {% if '__ts_ms' in it_columns | map(attribute='name') %}__ts_ms,{% endif %}
