@@ -133,7 +133,7 @@ WHEN COALESCE(gct.nb_gws,0) = 0 THEN picking_daily_mono.price ELSE picking_daily
 bs.shipping_country,
 COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost
 
-FROM {{ ref('box_sales') }} as bs
+FROM sales.box_sales as bs
 LEFT JOIN first_shipping_mode sm1 ON sm1.sub_id = bs.sub_id AND sm1.dw_country_code = bs.dw_country_code
 LEFT JOIN pot_box_shipments pbs ON pbs.sub_id = bs.sub_id AND pbs.dw_country_code = bs.dw_country_code
 JOIN `inter.shipping_modes` sm ON sm.id = COALESCE(sm1.id,bs.shipping_mode) AND sm.dw_country_code = bs.dw_country_code
@@ -178,7 +178,7 @@ NULL AS order_id,
 NULL as detail_id,
 s.id AS sub_id,
 b.date as box_date,
-COALESCE(pot_box_reexp_shipments.shipping_date,DATE(t.timestamp)) AS shipping_date,
+SAFE_CAST(COALESCE(pot_box_reexp_shipments.shipping_date,DATE(t.timestamp)) AS DATE) AS shipping_date,
 extract(year from COALESCE(pot_box_reexp_shipments.shipping_date,DATE(t.timestamp))) AS year,
 extract(month from COALESCE(pot_box_reexp_shipments.shipping_date,DATE(t.timestamp))) AS month,
 0 AS gross_revenue,
@@ -252,7 +252,7 @@ NULL AS order_id,
 NULL AS detail_id,
 bs.sub_id,
 bs.date AS box_date,
-COALESCE(mr.reexp_date, mr.date) AS shipping_date,
+SAFE_CAST(COALESCE(mr.reexp_date, mr.date) AS DATE) AS shipping_date,
 extract(year from COALESCE(mr.reexp_date, mr.date)) AS year,
 extract(month from COALESCE(mr.reexp_date, mr.date)) AS month,
 0 AS gross_revenue,
@@ -289,6 +289,6 @@ WHERE /*mr.dw_country_code = 'FR'
 AND */
 mr.status_id = 1
 ) orders
-LEFT JOIN ops.shipping_costs sc ON orders.shipping_date >= sc.date_start AND (sc.date_end IS NULL OR orders.shipping_date <= sc.date_end) AND orders.order_weight >= sc.min_weight AND (sc.max_weight IS NULL OR orders.order_weight < sc.max_weight) AND sc.shipping_mode_id = orders.shipping_mode_id
+LEFT JOIN ops.shipping_costs sc ON DATE(orders.shipping_date) >= sc.date_start AND (sc.date_end IS NULL OR DATE(orders.shipping_date) <= sc.date_end) AND orders.order_weight >= sc.min_weight AND (sc.max_weight IS NULL OR orders.order_weight < sc.max_weight) AND sc.shipping_mode_id = orders.shipping_mode_id
 LEFT JOIN ops.shipping_mode_nicenames smn ON smn.shipping_mode_id = orders.shipping_mode_id
-WHERE orders.shipping_date <= CURRENT_DATE
+WHERE DATE(orders.shipping_date) <= CURRENT_DATE
