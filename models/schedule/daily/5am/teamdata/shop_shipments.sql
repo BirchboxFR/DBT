@@ -15,17 +15,29 @@ pot_shop_shipments AS
   SELECT bon.dw_country_code,bon.reference, bon.order_id, DATE(min(bon.event_date)) AS shipping_date
   FROM `inter.b2c_order_notifications` bon
   WHERE bon.type = 5
-  AND bon.order_detail_id IS NULL
-  AND bon.sub_id IS NULL
+  AND (bon.order_detail_id IS NULL OR bon.order_detail_id = 0)
+  AND (bon.sub_id IS NULL OR bon.sub_id = 0)
   AND bon.reference NOT LIKE '%REEXP%'
+  GROUP BY bon.dw_country_code,bon.reference, bon.order_id
+),
+pot_shop_integration AS 
+(
+  SELECT bon.dw_country_code,bon.reference, bon.order_id, min(bon.event_date) AS integration_date
+  FROM `inter.b2c_order_notifications` bon
+  LEFT JOIN inter.b2c_order_notifications bon1 ON bon1.reference = bon.reference AND bon1.dw_country_code = bon.dw_country_code AND bon1.type = 99 -- commande annulée
+  WHERE bon.type = 50
+  AND (bon.order_detail_id IS NULL OR bon.order_detail_id = 0)
+  AND (bon.sub_id IS NULL OR bon.sub_id = 0)
+  AND bon.reference NOT LIKE '%REEXP%'
+  AND bon1.reference IS NULL
   GROUP BY bon.dw_country_code,bon.reference, bon.order_id
 ),
 pot_shop_reexp_shipments AS 
 (
-  SELECT bon.dw_country_code,bon.reference, bon.order_id, bon.order_detail_id, DATE(min(bon.event_date)) AS shipping_date
+  SELECT bon.dw_country_code,bon.reference, bon.order_id, CASE WHEN bon.order_detail_id = 0 THEN NULL ELSE bon.order_detail_id END AS order_detail_id, DATE(min(bon.event_date)) AS shipping_date
   FROM `inter.b2c_order_notifications` bon
   WHERE bon.type = 5
-  AND bon.sub_id IS NULL
+  AND (bon.sub_id IS NULL OR bon.sub_id = 0)
   AND bon.reference  LIKE '%REEXP%'
   GROUP BY bon.dw_country_code,bon.reference, bon.order_id, bon.order_detail_id
 )
@@ -37,6 +49,7 @@ som.order_id,
 NULL as order_detail_id,
 -- NULL AS sub_id,
 som.order_date,
+COALESCE(psi.integration_date, som.order_date) as integration_date,
 COALESCE(psc.shipping_date, som.order_date) as shipping_date,
 extract(year from COALESCE(psc.shipping_date, som.order_date)) AS year,
 extract(month from COALESCE(psc.shipping_date, som.order_date)) AS month,
@@ -80,6 +93,7 @@ FROM `sales.shop_orders_margin` som
 LEFT JOIN first_shipping_mode sm1 ON sm1.order_id = som.order_id AND sm1.dw_country_code = som.dw_country_code
 JOIN `inter.shipping_modes` sm ON sm.id = COALESCE(sm1.id,som.shipping_mode_id) AND sm.dw_country_code = som.dw_country_code
 LEFT JOIN pot_shop_shipments psc ON psc.order_id = som.order_id AND psc.dw_country_code = som.dw_country_code
+LEFT JOIN pot_shop_integration psi ON psi.order_id = som.order_id AND psi.dw_country_code = som.dw_country_code
 LEFT JOIN ops.shipping_costs sc ON COALESCE(psc.shipping_date, som.order_date) >= sc.date_start AND (sc.date_end IS NULL OR COALESCE(psc.shipping_date, som.order_date) <= sc.date_end) AND som.order_weight >= sc.min_weight AND (sc.max_weight IS NULL OR som.order_weight < sc.max_weight) AND sc.shipping_mode_id = som.shipping_mode_id
 LEFT JOIN ops.shipping_mode_nicenames smn ON smn.shipping_mode_id = som.shipping_mode_id
 
@@ -92,6 +106,7 @@ som.order_id,
 NULL as order_detail_id,
 -- NULL AS sub_id,
 DATE(t.timestamp) AS order_date,
+NULL AS integration_date,
 COALESCE(psc.shipping_date, DATE(t.timestamp)) as shipping_date,
 extract(year from COALESCE(psc.shipping_date, DATE(t.timestamp))) AS year,
 extract(month from COALESCE(psc.shipping_date, DATE(t.timestamp))) AS month,
@@ -148,6 +163,7 @@ som.order_id,
 NULL as order_detail_id,
 -- NULL AS sub_id,
 DATE(t.timestamp) AS order_date,
+NULL AS integration_date,
 COALESCE(psc.shipping_date, DATE(t.timestamp)) as shipping_date,
 som.year,
 som.month,
