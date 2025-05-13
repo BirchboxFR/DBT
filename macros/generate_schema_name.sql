@@ -21,6 +21,7 @@
      {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
      {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set pnl_tmp_tables = ['pnl2'] -%}
+    {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
     
 
     {%- set inter_all_tables = inter_tmp_tables + inter_view_tmp_tables + inter_materialized_view_tmp_tables   -%}
@@ -62,6 +63,8 @@
         reviews
     {%- elif node.name in pnl_tmp_tables -%}
         pnl
+    {%- elif node.name in history_table_tmp_tables -%}
+        history_table
     {%- else -%}
         {{ default_schema }}
     {%- endif -%}
