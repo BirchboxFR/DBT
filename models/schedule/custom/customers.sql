@@ -73,6 +73,7 @@ box_sales_one_line_user AS (
            sub_id,
            box_id,
            self,
+           acquis_status_lvl1,
            gift,
            coupon_engagement,
            year,
@@ -150,6 +151,24 @@ last_box_table AS (
   )
   WHERE rn = 1
 ),
+last_box_acquis AS (
+  SELECT * EXCEPT(rn)
+  FROM (
+    SELECT dw_country_code,
+           user_id,
+           order_detail_id,
+           box_id,
+           year AS last_box_acquis_year,
+           month AS last_box_acquis_month,
+           date AS last_box_acquis_date,
+           ROW_NUMBER() OVER (PARTITION BY dw_country_code, user_id ORDER BY box_id DESC) rn
+    FROM box_sales_one_line_user
+    WHERE acquis_status_lvl1='ACQUISITION'
+  )
+  WHERE rn = 1
+),
+
+
 box_stats_table AS (
   SELECT bs.dw_country_code,
          bs.user_id,
@@ -587,6 +606,7 @@ LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_c
 LEFT JOIN initial_box_table ibt ON ac.dw_country_code = ibt.dw_country_code AND ac.user_id = ibt.user_id
 LEFT JOIN current_box_table cbt ON ac.dw_country_code = cbt.dw_country_code AND ac.user_id = cbt.user_id
 LEFT JOIN last_box_table lbt ON ac.dw_country_code = lbt.dw_country_code AND ac.user_id = lbt.user_id
+LEFT JOIN last_box_acquis lba ON ac.dw_country_code = lba.dw_country_code AND ac.user_id = lba.user_id
 LEFT JOIN box_stats_table bst ON ac.dw_country_code = bst.dw_country_code AND ac.user_id = bst.user_id
 LEFT JOIN raffer_table rt ON ac.dw_country_code = rt.dw_country_code AND ac.user_id = rt.user_id
 left join {{ ref('customers_info_perso') }}  ip on ip.user_id= ac.user_id and ip.dw_country_code=ac.dw_country_code
