@@ -141,7 +141,12 @@ FROM `teamdata-291012.Spreadsheet_synchro.raw_doc_compo` c
 JOIN {{ ref('products') }} p ON p.sku = c.sku_compo
 GROUP BY p.dw_country_code, p.box_id, p.coffret_id
 )
+SELECT FT.*,
+ROW_NUMBER() OVER(PARTITION BY user_id, sequence_group ORDER BY box_id) AS consecutive_boxes from (
+select full_table.*,
+    SUM(is_new_sequence) OVER(PARTITION BY user_id ORDER BY box_id ROWS UNBOUNDED PRECEDING) AS sequence_group
 
+ from (
 SELECT concat(t.dw_country_code,'_',t.user_id)as user_key,t.*,
 case when cm.mono_box_id is null then false else true end as is_mono,
 cm.mono_brand as mono_brand,
@@ -155,7 +160,13 @@ OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order b
 AND cannot_suspend =1 
   -- next box in the subscription (by order_detail)
 then 1 else 0 end as next_month_committment,
-
+cASE
+      WHEN LAG(t.box_id) OVER(PARTITION BY t.user_id ORDER BY t.box_id) IS NULL THEN 1  -- Première box
+      WHEN t.box_id - LAG(t.box_id) OVER(PARTITION BY t.user_id ORDER BY t.box_id) > 1 THEN 1  -- Trou détecté
+      ELSE 0  -- Box consécutive
+    END AS is_new_sequence,
+    -- Compte cumulatif des box pour l'utilisateur
+    ROW_NUMBER() OVER(PARTITION BY t.user_id ORDER BY t.box_id) AS total_boxes_so_far,
 
 CASE 
   WHEN lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1 THEN NULL
@@ -335,4 +346,8 @@ from`teamdata-291012.marketing.Marketing_cac_discount`
 group by 1,2) mcdso on mcdso.sub_offer_id=t.sub_offer_id and mcd.country=t.dw_country_code
 LEFT JOIN box_global_grades bgg ON bgg.dw_country_code = t.dw_country_code AND bgg.box_id = t.box_id AND bgg.coffret_id = t.coffret_id
 LEFT JOIN self_churn_reason scr ON scr.dw_country_code = t.dw_country_code AND scr.user_id = t.user_id AND scr.box_id = t.box_id+1
-LEFT JOIN {{ ref('box_mono') }}  cm on t.dw_country_code=cm.dw_country_code and t.box_id=cm.mono_box_id and t.coffret_id=cm.mono_coffret_id
+LEFT JOIN {{ ref('box_mono') }}  cm on t.dw_country_code=cm.dw_country_code and t.box_id=cm.mono_box_id and t.coffret_id=cm.mono_coffret_id) full_table
+
+group by all) FT
+
+group by all
