@@ -25,7 +25,7 @@ WITH catalog_filtered AS (
 select ifnull(s.dw_country_code,original_language) as dw_country_code,FORMAT_DATE('%Y-%m',bo.date) AS box_month,
 r.box_id as box_id,bo.date as box_date,date(r.created_at) review_date,r.id as review_id,ifnull(s.component_sku,ii.sku)as sku,iifz.sku as fz_sku,
 ifnull(s.component_brand_name,b.name) as brand_name,ri.inventory_item_id,component_codification_lvl2,brand_lvl1,brand_lvl2,brand_lvl3,
-b.id as brand_id,
+b.id as brand_id,r.ip,
 category_lvl_1,category_lvl_2,category_lvl_3,
 rimini.priority,
 ifnull(s.ean,ii.ean)ean,
