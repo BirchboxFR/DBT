@@ -23,6 +23,7 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 # Configuration des modèles
 models:
   warehouse:
+    +store_failures: true
     dwh:
       +query_tag: "no_cache"
       +materialized: table
