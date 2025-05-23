@@ -20,7 +20,7 @@
 {%- set lookback_hours = 4 -%}
 
 -- Sélection des données françaises
-SELECT dw_country_code,
+SELECT 'FR' as dw_country_code,
       id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,
       auto,status_id, payment_method_id,data,date(date) AS date,created_at,updated_at
 FROM `bdd_prod_fr.wp_jb_payments` t
@@ -40,7 +40,7 @@ WHERE
   {% endif %}
 UNION ALL
 
-SELECT dw_country_code,
+SELECT 'DE' as dw_country_code,,
       id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,
       auto,status_id, payment_method_id,data,date(date) AS date,created_at,updated_at
 FROM `bdd_prod_de.wp_jb_payments` t
@@ -56,7 +56,7 @@ WHERE
   {% endif %}
 UNION ALL
 
-SELECT dw_country_code,
+SELECT 'ES' as dw_country_code,
       id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,
       auto,status_id, payment_method_id,data,date(date) AS date,created_at,updated_at
 FROM `bdd_prod_es.wp_jb_payments` t
@@ -72,7 +72,7 @@ WHERE
   {% endif %}
 UNION ALL
 
-SELECT dw_country_code,
+SELECT 'IT' as dw_country_code,
       id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,
       auto,status_id, payment_method_id,data,date(date) AS date,created_at,updated_at
 FROM `bdd_prod_it.wp_jb_payments` t
