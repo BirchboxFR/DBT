@@ -31,7 +31,7 @@ GROUP BY merchantAccountCode,date
 ),
 tktk as (
 
-select 'BirchboxFR' as merchantAccountCode, date_trunc(order_date,month) as date, sum(net_revenue)*1.2 as net_revenue
+select 'BirchboxFR' as merchantAccountCode, date_trunc(order_date,month) as date, sum(net_revenue)*1.2 as net
 from sales.shop_sales 
 where dw_country_code='FR'
 and store_id = 3
