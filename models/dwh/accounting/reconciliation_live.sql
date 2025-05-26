@@ -28,10 +28,17 @@ GROUP BY merchantAccountCode,date
 
 
 
+),
+tktk as (
+
+select 'BirchboxFR' as merchantAccountCode, date_trunc(order_date,month) as date, sum(net_revenue)*1.2 as net_revenue
+from sales.shop_sales 
+where dw_country_code='FR'
+and store_id = 3
+group by all
+
 )
 ,Adyen as (
-
-
 select merchantAccountCode,date(date_trunc(eventDate, month)) as date,
 ifnull(sum(case when eventcode IN('AUTHORISATION','REFUND_FAILED') then value/100 end ),0) as adyen_authorisation,
 ifnull(sum(case when eventcode in ('REFUND','CANCEL_OR_REFUND') then value/100 end ),0) as adyen_refund,
@@ -76,13 +83,15 @@ GROUP BY ALL
 
 )
 
-select *, cash_box+cash_shop+Cash_GIft as Query_total,
+select  merchantaccountcode,date,adyen_authorisation,adyen_refund,Adyen_total, cash_gift,cash_shop,cash_box ,
+ cash_box+cash_shop+Cash_GIft as Query_total,
  (cash_box+cash_shop+Cash_GIft) -Adyen_total as ecart
 
  from (
 
-select  merchantaccountcode,date,ifnull(adyen_authorisation,0)adyen_authorisation,ifnull(adyen_refund,0)adyen_refund,Adyen_total,ifnull(cash_gift,0) cash_gift,ifnull(cash_shop,0)cash_shop,ifnull(cash_box,0)cash_box from adyen 
+select  merchantaccountcode,date,ifnull(adyen_authorisation,0)adyen_authorisation,ifnull(adyen_refund,0)adyen_refund,Adyen_total,ifnull(cash_gift,0) cash_gift,ifnull(cash_shop,0)cash_shop,ifnull(cash_box,0)cash_box,net from adyen 
 left join GIft using(merchantaccountcode,date)
 left join shop using(merchantaccountcode,date)
 left join box using(merchantaccountcode,date)
+left join tktk using(merchantaccountcode,date)
 )
