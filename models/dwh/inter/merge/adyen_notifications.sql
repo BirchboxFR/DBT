@@ -20,6 +20,7 @@
 {%- set lookback_hours = 4 -%}
 
 -- Sélection des données françaises
+with unioned_data as (
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(eventdate,
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
@@ -114,3 +115,28 @@ WHERE
   {% else %}
   TRUE
   {% endif %}
+),
+
+deduplicated as (
+  select *
+  from (
+    select *,
+      row_number() over (
+        partition by dw_country_code, id
+        order by _rivery_last_update desc
+      ) as row_num
+    from unioned_data
+  )
+  where row_num = 1
+)
+select * except(row_num)
+from deduplicated
+
+
+
+
+
+
+
+
+
