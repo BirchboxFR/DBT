@@ -40,7 +40,7 @@ WHERE
   {% endif %}
 UNION ALL
 
-SELECT 'DE' as dw_country_code,,
+SELECT 'DE' as dw_country_code,
       id,user_id,order_id,sub_id,payment_gateway_id,transaction_id,amount,payment_profile_id,
       auto,status_id, payment_method_id,data,date(date) AS date,created_at,updated_at
 FROM `bdd_prod_de.wp_jb_payments` t
