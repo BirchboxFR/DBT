@@ -1,3 +1,5 @@
+/*
+
 SELECT o.dw_country_code, o.user_id, s.box_id, b.date
 FROM {{ ref('orders') }} o
 INNER JOIN {{ ref('order_details') }} d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
@@ -10,3 +12,6 @@ AND s.cannot_suspend = 1
 AND bs.user_id IS NULL
 AND bp.user_id IS NULL
 GROUP BY ALL
+
+*/
+select 1

@@ -1,4 +1,4 @@
-
+/*
 WITH 
 box_paused AS (
     SELECT o.dw_country_code, o.user_id, s.box_id, b.date
@@ -56,4 +56,5 @@ SELECT
 FROM sequence_start
 
 
-
+*/
+select 1
