@@ -84,8 +84,8 @@ GROUP BY ALL
 )
 
 select  merchantaccountcode,date,adyen_authorisation,adyen_refund,Adyen_total, cash_gift,cash_shop,cash_box ,
- cash_box+cash_shop+Cash_GIft-net as Query_total,
- (cash_box+cash_shop+Cash_GIft-net) -Adyen_total as ecart
+ cash_box+cash_shop+Cash_GIft-ifnull(net,0) as Query_total,
+ (cash_box+cash_shop+Cash_GIft-ifnull(net,0)) -Adyen_total as ecart
 
  from (
 
