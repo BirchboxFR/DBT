@@ -20,44 +20,24 @@
 {%- set lookback_hours = 4 -%}
 
 -- Sélection des données françaises
-with unioned_data as (
 SELECT 'FR' AS dw_country_code,
-t.* EXCEPT(eventdate,
- {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in fr_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in fr_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in fr_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-), safe_cast(eventdate as date)  as eventdate
+id,merchantaccountcode,value,pspreference,eventcode,success,reason,merchantreference,
+originalreference,order_id,detail_id,sub_id,transaction_time,created_at,updated_at,
+safe_cast(eventdate as date) as eventdate
 FROM `bdd_prod_fr.wp_jb_adyen_notifications` t
 WHERE 
-  -- Filtre sur les lignes non supprimées
-  {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
+  -- Filtre sur les lignes non supprimées (CDC)
+  t._ab_cdc_deleted_at IS NULL 
   -- Filtre sur les données récentes uniquement
   {% if is_incremental() %}
-  (
-    -- Données mises à jour récemment (dans les X dernières heures)
-    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
-  )
-  {% else %}
-  -- Premier chargement: toutes les données
-  TRUE
+  AND t._ab_cdc_updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
   {% endif %}
 UNION ALL
 
 SELECT 'DE' AS dw_country_code,
-t.* EXCEPT(eventdate,
- {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in de_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in de_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in de_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) , safe_cast(eventdate as date)  as eventdate
+id,merchantaccountcode,value,pspreference,eventcode,success,reason,merchantreference,
+originalreference,order_id,detail_id,sub_id,transaction_time,created_at,updated_at,
+safe_cast(eventdate as date) as eventdate
 FROM `bdd_prod_de.wp_jb_adyen_notifications` t
 WHERE 
   {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
@@ -72,15 +52,9 @@ WHERE
 UNION ALL
 
 SELECT 'ES' AS dw_country_code,
-t.* EXCEPT(eventdate,
- {% if '__deleted' in es_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in es_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in es_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in es_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in es_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id{% endif %}
--- {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) , safe_cast(eventdate as date)  as eventdate
+id,merchantaccountcode,value,pspreference,eventcode,success,reason,merchantreference,
+originalreference,order_id,detail_id,sub_id,transaction_time,created_at,updated_at,
+safe_cast(eventdate as date) as eventdate
 FROM `bdd_prod_es.wp_jb_adyen_notifications` t
 WHERE 
   {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
@@ -95,15 +69,9 @@ WHERE
 UNION ALL
 
 SELECT 'IT' AS dw_country_code,
-t.* EXCEPT(eventdate,
- {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in it_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in it_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in it_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in it_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) , safe_cast(eventdate as date) as eventdate
+id,merchantaccountcode,value,pspreference,eventcode,success,reason,merchantreference,
+originalreference,order_id,detail_id,sub_id,transaction_time,created_at,updated_at,
+safe_cast(eventdate as date) as eventdate
 FROM `bdd_prod_it.wp_jb_adyen_notifications` t
 WHERE 
   {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
@@ -115,28 +83,3 @@ WHERE
   {% else %}
   TRUE
   {% endif %}
-),
-
-deduplicated as (
-  select *
-  from (
-    select *,
-      row_number() over (
-        partition by dw_country_code, id
-        order by _rivery_last_update desc
-      ) as row_num
-    from unioned_data
-  )
-  where row_num = 1
-)
-select * except(row_num)
-from deduplicated
-
-
-
-
-
-
-
-
-
