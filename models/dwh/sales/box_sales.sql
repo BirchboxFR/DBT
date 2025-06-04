@@ -296,12 +296,12 @@ raf_parent_id,
   CASE 
   WHEN  s.cannot_suspend = 1 
         AND (
-            lead(s.cannot_suspend) over (partition by s.order_detail_id,s.dw_country_code order by s.box_id) = 0 
-            OR bn.user_id IS NULL
+            lead(s.cannot_suspend) over (partition by s.order_detail_id,s.dw_country_code order by s.box_id) = 1 
+            OR bn.user_id IS NOT NULL
             )
 
-    THEN 1 
-    ELSE 0 END AS last_committed_box
+    THEN 0 
+    ELSE 1 END AS last_committed_box
   -- sub_suspended_reason_lvl1,sub_suspended_reason_lvl2,sub_suspended_reason_lvl3
   FROM {{ ref('orders') }} o
   INNER JOIN {{ ref('order_details') }} d ON o.id = d.order_id AND o.dw_country_code = d.dw_country_code
