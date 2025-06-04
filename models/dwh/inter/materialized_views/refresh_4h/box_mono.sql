@@ -11,6 +11,6 @@
   WHERE kd.component_brand_name NOT LIKE '%lissim%'
   AND kd.box_year >= 2018
   GROUP BY kd.box_id, kd.coffret_id, kd.box_date, kd.component_brand_id, kd.dw_country_code, kd.component_brand_name
-  HAVING nb_distinct_brands =5
+  HAVING nb_distinct_brands >3
   ) t
   GROUP BY dw_country_code, box_id, coffret_id
