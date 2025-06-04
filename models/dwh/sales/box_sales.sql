@@ -294,6 +294,7 @@ raf_parent_id,
   s.next_payment_date,
   s.last_payment_date,
   CASE 
+  WHEN s.cannot_suspend = 0 THEN 0
   WHEN  s.cannot_suspend = 1 
         AND (
             lead(s.cannot_suspend) over (partition by s.order_detail_id,s.dw_country_code order by s.box_id) = 1 
