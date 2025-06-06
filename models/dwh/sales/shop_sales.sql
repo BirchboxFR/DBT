@@ -386,7 +386,7 @@ FROM
     o.is_active_sub,
     o.is_first_order,
     o.is_first_shop_order,
-    DATE(TIMESTAMP(an.created_at), "Europe/Paris") AS order_date,    
+    date(an.created_at) AS order_date,    
     0 AS product_id,
     '0' as sku,
     CAST(NULL AS STRING) AS product_name,
