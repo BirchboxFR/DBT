@@ -48,7 +48,7 @@ FROM (
         COALESCE(o.is_active_sub, 0) AS is_active_sub,
         o.is_first_order,
         o.is_first_shop_order,
-        DATE(an.created_at) AS order_date,    
+        DATE(TIMESTAMP(an.created_at), "Europe/Paris") AS order_date, 
         d.product_id,
         CASE WHEN d.product_id IN(-1, -2, -3) THEN 'Reward Coupon LOYALTY' ELSE pnn.product_nice_name END AS product_name,
         CASE
@@ -142,7 +142,7 @@ FROM (
         o.is_active_sub,
         o.is_first_order,
         o.is_first_shop_order,
-        DATE(an.created_at) AS order_date,    
+       DATE(TIMESTAMP(an.created_at), "Europe/Paris") AS order_date,    
         d.product_id,
         CASE WHEN d.product_id IN (-1, -2, -3) THEN 'Reward Coupon LOYALTY' ELSE pnn.product_nice_name END AS product_name,
         CASE
@@ -227,7 +227,7 @@ FROM (
         o.is_active_sub,
         o.is_first_order,
         o.is_first_shop_order,
-        DATE(d.date) AS order_date,    
+        DATE(TIMESTAMP(d.date), "Europe/Paris") AS order_date,        
         d.product_id,
         CASE WHEN d.product_id IN (-1, -2, -3) THEN 'Reward Coupon LOYALTY' ELSE pnn.product_nice_name END AS product_name,
         CASE
