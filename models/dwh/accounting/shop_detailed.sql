@@ -25,10 +25,10 @@ discount_loyalty AS (
 shipping_shop AS (
   SELECT 'SHIPPING' as type, 'ESHOP' AS product_codification, store_code, shipping_country, year, month, vat_rate, SUM(order_total_shipping) AS total_shipping, last_day
   FROM (
-    SELECT store_code, order_id, ss.shipping_country, ss.year, ss.month, MAX(order_total_shipping) AS order_total_shipping, COALESCE(tva.taux, 0) AS vat_rate, MAX(last_day(order_date)) AS last_day
+    SELECT store_code, order_id, ss.shipping_country, ss.year, ss.month, order_total_shipping AS order_total_shipping, COALESCE(tva.taux, 0) AS vat_rate, MAX(last_day(order_date)) AS last_day
     FROM {{ ref('shop_sales') }} ss
     LEFT JOIN {{ ref('tva_product') }} tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
-    GROUP BY store_code, order_id, shipping_country, year, month, tva.taux
+    GROUP BY store_code, order_id, shipping_country, year, month, tva.taux,order_total_shipping
   ) t
   GROUP BY store_code, vat_rate, last_day, shipping_country, year, month
 ),
@@ -50,11 +50,11 @@ total_vat AS (
       SELECT ss.order_id, 'VAT' as type, 'ALL' AS product_cod, store_code, year, month,
       ss.shipping_country,
       COALESCE(tva.taux, 0.0) AS vat_rate_,
-      MAX(vat_on_total_shipping) AS vat,
+      vat_on_total_shipping AS vat,
       MAX(LAST_DAY(order_date)) AS last_day
       FROM {{ ref('shop_sales') }} ss
       LEFT JOIN {{ ref('tva_product') }} tva ON ss.dw_country_code = tva.dw_country_code AND tva.country_code = ss.shipping_country AND tva.category = 'normal'
-      GROUP BY ss.order_id, product_cod, store_code, shipping_country, year, month, tva.taux
+      GROUP BY ss.order_id, product_cod, store_code, shipping_country, year, month, tva.taux,vat_on_total_shipping
   ) t
   GROUP BY t.type, product_codification, t.store_code, t.shipping_country, year, month, t.vat_rate_, last_day
 ),
