@@ -227,7 +227,7 @@ FROM (
         o.is_active_sub,
         o.is_first_order,
         o.is_first_shop_order,
-        DATE(TIMESTAMP(d.date), "Europe/Paris") AS order_date,        
+        DATE(d.date) AS order_date,        
         d.product_id,
         CASE WHEN d.product_id IN (-1, -2, -3) THEN 'Reward Coupon LOYALTY' ELSE pnn.product_nice_name END AS product_name,
         CASE
