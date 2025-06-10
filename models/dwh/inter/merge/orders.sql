@@ -39,7 +39,7 @@ WHERE
   t._ab_cdc_deleted_at IS NULL 
   -- Filtre sur les données récentes uniquement
   {% if is_incremental() %}
-  AND t._ab_cdc_updated_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
+  AND timestamp(t._ab_cdc_updated_at) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
   {% endif %}
 UNION ALL
 
