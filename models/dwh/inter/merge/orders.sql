@@ -13,7 +13,7 @@
 
 
 
-{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='prod_fr', identifier='wp_jb_orders')) -%}
+{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_orders')) -%}
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_orders')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_orders')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_orders')) -%}
@@ -33,7 +33,7 @@ t.* EXCEPT(
  {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id{% endif %}
  --{% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
 ) 
-FROM `prod_fr.wp_jb_orders` t
+FROM `bdd_prod_fr.wp_jb_orders` t
 wHERE
  -- Filtre sur les lignes non supprimées
   {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
