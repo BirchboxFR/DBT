@@ -397,6 +397,8 @@ SELECT ac.dw_country_code,
        ud.age,
        ip.billing_phone,
        functions.standardize_phone(billing_phone, ac.dw_country_code) AS billing_phone_standardized,
+       case when billing_country='FR' then functions.get_region_from_zipcode(billing_zipcode, billing_country)
+        else null end as billing_region,
        ip.billing_country,
        ip.billing_zipcode,
        ip.billing_city,
