@@ -17,7 +17,7 @@ FROM
     p.sku,
     p.EAN,
     pnn.brand_full_name,
-    pnn.product_nice_name,
+    coalesce(pnn.product_nice_name, p.name) AS product_nice_name,
     p.price as sale_price,
     p.sales_count,
     p.stock,
