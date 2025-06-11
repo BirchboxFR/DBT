@@ -17,7 +17,7 @@ FROM
     p.sku,
     p.EAN,
     pnn.brand_full_name,
-    coalesce(pnn.product_nice_name, p.name) AS product_nice_name,
+        case when pnn.product_nice_name is null or pnn.product_nice_name='' then p.name else pnn.product_nice_name end  AS product_nice_name,
     p.price as sale_price,
     p.sales_count,
     p.stock,
