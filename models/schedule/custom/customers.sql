@@ -2,18 +2,18 @@
 WITH 
 
 all_customers AS (
-  SELECT dw_country_code, email, MAX(user_id) AS user_id
+  SELECT dw_country_code, mail as email, MAX(user_id) AS user_id
   FROM (
-    SELECT dw_country_code, email, NULL AS user_id
+    SELECT dw_country_code, lower(email) as mail, NULL AS user_id
     FROM inter.optin
     UNION ALL
-    SELECT dw_country_code, user_email AS email, id AS user_id
+    SELECT dw_country_code, lower(user_email) AS mail, id AS user_id
     FROM inter.users
     WHERE user_login <> 'DELETED'
     UNION ALL
-    SELECT 'FR' AS dw_country_code, email, NULL AS user_id
+    SELECT 'FR' AS dw_country_code, lower(email) as mail, NULL AS user_id
     FROM user.crm_data
-    GROUP BY email
+    GROUP BY mail
   )
   GROUP BY dw_country_code, email
 ),
