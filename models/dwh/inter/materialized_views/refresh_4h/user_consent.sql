@@ -15,10 +15,7 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_fr.wp_jb_user_consent` t
 WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-QUALIFY ROW_NUMBER() OVER (
-  PARTITION BY dw_country_code,user_id, consent_topic_id 
-  ORDER BY updated_at DESC, created_at DESC, id DESC
-) = 1
+
 UNION ALL
 
 SELECT 'DE' AS dw_country_code,
@@ -33,10 +30,7 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_de.wp_jb_user_consent` t
 WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-QUALIFY ROW_NUMBER() OVER (
-  PARTITION BY dw_country_code,user_id, consent_topic_id 
-  ORDER BY updated_at DESC, created_at DESC, id DESC
-) = 1
+
 UNION ALL
 
 SELECT 'ES' AS dw_country_code,
@@ -51,10 +45,7 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_es.wp_jb_user_consent` t
 WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-QUALIFY ROW_NUMBER() OVER (
-  PARTITION BY dw_country_code,user_id, consent_topic_id 
-  ORDER BY updated_at DESC, created_at DESC, id DESC
-) = 1
+
 UNION ALL
 
 SELECT 'IT' AS dw_country_code,
@@ -69,7 +60,3 @@ t.* EXCEPT(
 ) 
 FROM `bdd_prod_it.wp_jb_user_consent` t
 WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
-QUALIFY ROW_NUMBER() OVER (
-  PARTITION BY dw_country_code,user_id, consent_topic_id 
-  ORDER BY updated_at DESC, created_at DESC, id DESC
-) = 1
