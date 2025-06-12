@@ -380,6 +380,7 @@ SELECT ac.dw_country_code,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
        else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
        uuid,
+        case when ucs.consent_status=1 then true else false end as user_consent_optin_email,
        ud.optin,
        case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
        ud.optin_email,
@@ -624,3 +625,4 @@ LEFT JOIN gp_box ON gp_box.dw_country_code = ac.dw_country_code AND gp_box.user_
 LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.user_id = ac.user_id
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
+LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
