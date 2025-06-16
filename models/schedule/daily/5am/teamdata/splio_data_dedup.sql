@@ -13,7 +13,7 @@ SELECT
   Event_date AS event_date,
   CampaignID AS campaignid
 FROM (
-  SELECT 
+  SELECT 'FR' as dw_country_code,
     ContactID,
     Status,
     Event_date,
