@@ -1,6 +1,6 @@
     
     
-    SELECT distinct 'FR' AS dw_country_code, email, NULL AS user_id,
+    SELECT distinct dw_country_code, email, NULL AS user_id,
             MAX(status  = 'Open') AS open_email,
          MAX(status = 'Click') AS click,
          MAX(CASE WHEN status = 'Open' THEN event_date END) AS date_last_open_email,
