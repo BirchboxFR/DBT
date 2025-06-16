@@ -7,7 +7,7 @@
   )
 }}
 
-SELECT 
+SELECT dw_country_code,
   ContactID AS email,
   Status AS status,
   Event_date AS event_date,
