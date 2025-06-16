@@ -34,14 +34,14 @@ SELECT
 )
 
 SELECT 
-  --dw_country_code,
+  dw_country_code,
   ContactID AS email,
   Status AS status,
   Event_date AS event_date,
   CampaignID AS campaignid
 FROM (
   SELECT 
-    --dw_country_code,
+    dw_country_code,
     ContactID,
     Status,
     Event_date,
