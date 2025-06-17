@@ -12,7 +12,7 @@ with all_events as (
 select distinct 
     dw_country_code,
     ContactID,
-    Status,
+    lower(Status) as status,
     Event_date,
     CampaignID from (
 SELECT 
