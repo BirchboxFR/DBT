@@ -204,6 +204,9 @@ when lag(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box
 when lag(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) is null then 'NEW NEW'
 else'Unknown'end as acquis_status_lvl2,   
 CASE WHEN cannot_suspend = 1 THEN 'committed' ELSE 'not committed' END AS committed,
+Case when last_committed_box = 1 then 'End of committment'
+    when last_committed_box = 0 and cannot_suspend=1 then 'Middle of committment'
+end as committment_status,
 g.gws_costs,
 t.total_product / (1+vat_rate/100) AS gross_revenue,
 t.total_product - t.total_product/(1+vat_rate/100) AS vat_on_gross_revenue,
