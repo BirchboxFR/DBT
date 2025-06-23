@@ -28,7 +28,7 @@ SELECT
     Contact_ID,
     case when Status ='sent' then 'done' else lower(Status) end as Status,
     safe_cast(Event_date as date),
-    CampaignID from `teamdata-291012.backup_splio.EU_splio_events`
+    Campaign_ID from `teamdata-291012.backup_splio.EU_splio_events_DE`
     where  Event_Date >= '2023-01-01')
 
 )
