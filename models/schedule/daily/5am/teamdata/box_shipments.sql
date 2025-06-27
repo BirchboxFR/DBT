@@ -52,8 +52,9 @@ gws_costs_table AS (
 ),
 box_weight AS 
 (
-  SELECT p.dw_country_code, p.box_id, p.coffret_id, COALESCE(max(CASE WHEN p.weight = 0 THEN NULL ELSE p.weight END ),382) AS weight
+  SELECT p.dw_country_code, p.box_id, p.coffret_id, COALESCE(max(CASE WHEN p.weight = 0 THEN NULL ELSE p.weight END ),CASE WHEN b.box_quantity = 1 THEN 382 WHEN b.box_quantity = 2 THEN 800 END) AS weight
   FROM inter.products p
+  JOIN inter.boxes b ON b.id = p.box_id AND b.dw_country_code = p.dw_country_code
   WHERE p.product_codification_id = 29
   AND p.box_id > 0
   AND p.coffret_id > 0
