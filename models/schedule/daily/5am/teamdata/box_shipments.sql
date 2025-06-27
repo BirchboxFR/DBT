@@ -58,7 +58,7 @@ box_weight AS
   WHERE p.product_codification_id = 29
   AND p.box_id > 0
   AND p.coffret_id > 0
-  GROUP BY p.dw_country_code, p.box_id, p.coffret_id
+  GROUP BY p.dw_country_code, p.box_id, p.coffret_id, b.box_quantity
   ORDER BY p.dw_country_code, p.box_id, p.coffret_id
 ),
 box_cat AS
