@@ -44,7 +44,7 @@ SELECT
     field_slug,
     product_id,
     updated_at,
-    country_code,
+    dw_country_code,
     source_updated_at,
     CURRENT_TIMESTAMP() as dbt_processed_at
 FROM source_data
