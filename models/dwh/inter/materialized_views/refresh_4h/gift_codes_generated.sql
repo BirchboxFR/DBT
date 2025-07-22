@@ -2,7 +2,20 @@
 {%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_gift_codes_generated')) -%}
 {%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_gift_codes_generated')) -%}
 {%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_gift_codes_generated')) -%}
+-----données françaises
+{{
+  config(
+    partition_by={
+      "field": "_rivery_last_update",
+      "data_type": "timestamp",
+      "granularity": "day"
+    },
+    cluster_by=['dw_country_code', 'gift_code_id']
+  )
+}}
 
+
+-----données françaises
 SELECT 'FR' AS dw_country_code,
 t.* EXCEPT(
  {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
