@@ -5,15 +5,7 @@
 {# Debug pour voir si les colonnes sont détectées #}
 -- DEBUG FR: {{ fr_columns | map(attribute='name') | list }}
 -- DEBUG __deleted existe: {{ '__deleted' in fr_columns | map(attribute='name') }}
-{{
-  config(
-    partition_by={
-      "field": "_rivery_last_update",
-      "data_type": "timestamp",
-      "granularity": "day"
-    },
-    cluster_by=['dw_country_code', 'gift_code_id']
-  )
+
 }}
 
 
