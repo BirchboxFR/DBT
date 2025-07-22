@@ -58,9 +58,8 @@ models:
           +materialized: incremental
           +on_schema_change: sync_all_columns
           +unique_key: ['id', 'dw_country_code']
-          +incremental_strategy: 'delete+insert'
-          +delete_condition: 'is_deleted = true'   
-
+          +incremental_strategy: 'merge'
+          +post_hook: "DELETE FROM {{ this }} WHERE is_deleted = true"
         
     schedule:
       +materialized: table  # Configuration pour le namespace schedule
