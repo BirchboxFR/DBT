@@ -6,7 +6,7 @@
 -- DEBUG FR: {{ fr_columns | map(attribute='name') | list }}
 -- DEBUG __deleted existe: {{ '__deleted' in fr_columns | map(attribute='name') }}
 
-}}
+
 
 
 -----données françaises
