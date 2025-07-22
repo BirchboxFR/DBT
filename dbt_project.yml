@@ -54,7 +54,12 @@ models:
           +materialized: incremental
           +on_schema_change: sync_all_columns
           +unique_key: ['id', 'dw_country_code']
-            
+        merge_with_deletes:
+          +materialized: incremental
+          +on_schema_change: sync_all_columns
+          +unique_key: ['id', 'dw_country_code']
+          +incremental_strategy: 'delete+insert'
+          +delete_condition: 'is_deleted = true'   
 
         
     schedule:
