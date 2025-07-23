@@ -273,27 +273,48 @@ UNION ALL
 SELECT dw_country_code, year, month, 'METRIC',
 concat('acquis-new-new-',LOWER(dw_country_code)) as cat,
 'BOX',
-acquis_new_new
-FROM {{ ref('kpi_box') }}
-WHERE acquis_new_new IS NOT NULL
+count(*)
+FROM {{ ref('box_sales') }}
+WHERE acquis_status_lvl1 = 'ACQUISITION'
+AND acquis_status_lvl2 = 'NEW NEW'
+AND diff_current_box <= 0
+GROUP BY ALL
 
 UNION ALL
 
 SELECT dw_country_code, year, month, 'METRIC',
 concat('acquis-reactivation-',LOWER(dw_country_code)) as cat,
 'BOX',
-acquis_reactivation
-FROM {{ ref('kpi_box') }}
-WHERE acquis_reactivation IS NOT NULL
+count(*)
+FROM {{ ref('box_sales') }}
+WHERE acquis_status_lvl1 = 'ACQUISITION'
+AND acquis_status_lvl2 = 'REACTIVATION'
+AND diff_current_box <= 0
+GROUP BY ALL
+
 
 UNION ALL
 
 SELECT dw_country_code, year, month, 'METRIC',
 concat('acquis-gift-',LOWER(dw_country_code)) as cat,
 'BOX',
-acquis_gift
-FROM {{ ref('kpi_box') }}
-WHERE acquis_gift IS NOT NULL
+count(*)
+FROM {{ ref('box_sales') }}
+WHERE acquis_status_lvl1 = 'ACQUISITION'
+AND acquis_status_lvl2 = 'GIFT'
+AND diff_current_box <= 0
+GROUP BY ALL
+
+UNION ALL
+
+SELECT dw_country_code, year, month, 'METRIC',
+concat('acquisition-box-',LOWER(dw_country_code)) as cat,
+'BOX',
+count(*)
+FROM {{ ref('box_sales') }}
+WHERE acquis_status_lvl1 = 'ACQUISITION'
+AND diff_current_box <= 0
+GROUP BY ALL
 
 UNION ALL
 
