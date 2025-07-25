@@ -17,7 +17,8 @@ WITH new_campaigns AS (
     custom_categorie_de_campagne,
     custom_nouveaux_segments,  -- Virgule manquante ajoutée
     status,
-    created,  -- Champ manquant pour le filtre incrémental
+    created,
+    startDate as send_date,  -- Champ manquant pour le filtre incrémental
     'NEW' as zapier_status,
     CURRENT_TIMESTAMP() as processed_at
   FROM `teamdata-291012.cdpimagino.imaginoReplicatedCampaign`
