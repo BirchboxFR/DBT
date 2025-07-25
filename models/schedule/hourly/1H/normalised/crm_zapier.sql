@@ -23,9 +23,11 @@ WITH new_campaigns AS (
     CURRENT_TIMESTAMP() as processed_at
   FROM `teamdata-291012.cdpimagino.imaginoReplicatedCampaign`
   
+
   {% if is_incremental() %}
-    WHERE created > (SELECT MAX(created) FROM {{ this }})
+    WHERE startdate >= (SELECT MAX(startdate) FROM {{ this }})
   {% endif %}
+  and startDate is not null
 ),
 
 campaign_stats AS (
