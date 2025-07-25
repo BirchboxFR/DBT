@@ -23,7 +23,7 @@ WITH new_campaigns AS (
   FROM `teamdata-291012.cdpimagino.imaginoReplicatedCampaign`
   
   {% if is_incremental() %}
-    WHERE created_date > (SELECT MAX(created_date) FROM {{ this }})
+    WHERE created > (SELECT MAX(created) FROM {{ this }})
   {% endif %}
 ),
 
