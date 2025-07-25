@@ -21,6 +21,7 @@
      {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
      {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set pnl_tmp_tables = ['pnl2'] -%}
+    {%- set crm_tmp_tables = ['crm_zapier'] -%}
     {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
     
 
@@ -49,6 +50,8 @@
         blissim_analytics
     {%- elif node.name in inter_all_tables -%}
         inter
+    {%- elif node.name in crm_tmp_tables -%}
+        crm
     {%- elif node.name in sublissim_tmp_tables -%}
         bdd_prod_sublissim
     {%- elif node.name in alerting_tmp_tables -%}
