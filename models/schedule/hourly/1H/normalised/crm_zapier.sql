@@ -18,6 +18,7 @@ WITH new_campaigns AS (
     custom_nouveaux_segments,  -- Virgule manquante ajoutée
     status,
     created,
+    url,
     startDate as send_date,  -- Champ manquant pour le filtre incrémental
     'NEW' as zapier_status,
     CURRENT_TIMESTAMP() as processed_at
