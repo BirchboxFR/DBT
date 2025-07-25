@@ -18,7 +18,7 @@ WITH new_campaigns AS (
     custom_nouveaux_segments,  -- Virgule manquante ajoutée
     status,
     created,
-    url,
+    'https://r.crm.blissim.com/tr/mr/fiRnTMX8D0CQWF4znjnHk_HElgODi-p6N2EI2eeqiYDICBc4uGw2U[…]kB9js7OzblMRTdCBqO0NOTA178XkmBgBEz2olhkbLmlQ-e1FQ9PvIpnn0o2w' as url,
     startDate as send_date,  -- Champ manquant pour le filtre incrémental
     'NEW' as zapier_status,
     CURRENT_TIMESTAMP() as processed_at
