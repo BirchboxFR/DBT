@@ -25,9 +25,9 @@ WITH new_campaigns AS (
   
 
   {% if is_incremental() %}
-    WHERE startdate >= (SELECT MAX(startdate) FROM {{ this }})
+    WHERE startdate >= (SELECT MAX(startdate) FROM {{ this }}) and startDate is not null
   {% endif %}
-  and startDate is not null
+ 
 ),
 
 campaign_stats AS (
