@@ -18,8 +18,8 @@
 ] %}
 
 WITH 
--- Données qui existent ENCORE dans la source (non supprimées)
-current_data AS (
+-- Nouvelles données (mises à jour récentes)
+new_data AS (
   {% for country in countries %}
   SELECT 
     '{{ country.code }}' AS dw_country_code,
@@ -33,8 +33,10 @@ current_data AS (
   FROM `{{ country.schema }}.wp_jb_tags` t
   WHERE 
     {% if is_incremental() %}
+    -- En incrémental : seulement les données récentes
     t._airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
     {% else %}
+    -- Premier run : toute la table
     TRUE
     {% endif %}
   {% if not loop.last %}UNION ALL{% endif %}
@@ -42,7 +44,7 @@ current_data AS (
 ),
 
 {% if is_incremental() %}
--- IDs qui ont été SUPPRIMÉS récemment (détectés dans la table raw)
+-- IDs supprimés récemment
 deleted_ids AS (
   {% for country in countries %}
   SELECT DISTINCT
@@ -57,12 +59,12 @@ deleted_ids AS (
 ),
 
 final_data AS (
-  -- 1. Données nouvelles/modifiées (qui existent encore)
-  SELECT * FROM current_data
+  -- 1. Nouvelles données
+  SELECT * FROM new_data
   
   UNION ALL
   
-  -- 2. Données anciennes qui ne sont NI supprimées NI mises à jour
+  -- 2. Données existantes qui ne sont NI supprimées NI mises à jour
   SELECT 
     existing.dw_country_code,
     existing.id,
@@ -74,13 +76,13 @@ final_data AS (
     existing._airbyte_extracted_at
   FROM {{ this }} existing
   LEFT JOIN deleted_ids del ON existing.id = del.id AND existing.dw_country_code = del.dw_country_code
-  LEFT JOIN current_data curr ON existing.id = curr.id AND existing.dw_country_code = curr.dw_country_code
-  WHERE del.id IS NULL      -- Pas supprimé
-    AND curr.id IS NULL     -- Pas mis à jour
+  LEFT JOIN new_data new ON existing.id = new.id AND existing.dw_country_code = new.dw_country_code
+  WHERE del.id IS NULL      -- Pas supprimé récemment
+    AND new.id IS NULL      -- Pas mis à jour récemment
 )
 {% else %}
 final_data AS (
-  SELECT * FROM current_data
+  SELECT * FROM new_data
 )
 {% endif %}
 
