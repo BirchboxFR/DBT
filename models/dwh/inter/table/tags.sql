@@ -13,7 +13,7 @@
 ) }}
 
 {% set countries = [
-  {'code': 'FR', 'schema': 'prod_fr'},
+  {'code': 'FR', 'schema': 'bdd_prod_fr'},
   {'code': 'DE', 'schema': 'bdd_prod_de'},
   {'code': 'ES', 'schema': 'bdd_prod_es'},
   {'code': 'IT', 'schema': 'bdd_prod_it'}
