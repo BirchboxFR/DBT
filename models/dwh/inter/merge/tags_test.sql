@@ -15,7 +15,6 @@
 {% set lookback_hours = 2 %}
 {% set countries = [
   {'code': 'FR', 'schema': 'prod_fr', 'raw_table': 'prod_fr_raw__stream_wp_jb_tags'}
-  -- {'code': 'DE', 'schema': 'prod_de', 'raw_table': 'prod_de_raw__stream_wp_jb_tags'}
 ] %}
 
 WITH 
