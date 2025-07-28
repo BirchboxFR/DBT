@@ -76,9 +76,9 @@ final_data AS (
     existing._airbyte_extracted_at
   FROM {{ this }} existing
   LEFT JOIN deleted_ids del ON existing.id = del.id AND existing.dw_country_code = del.dw_country_code
-  LEFT JOIN new_data new ON existing.id = new.id AND existing.dw_country_code = new.dw_country_code
+  LEFT JOIN new_data newd ON existing.id = newd.id AND existing.dw_country_code = newd.dw_country_code
   WHERE del.id IS NULL      -- Pas supprimé récemment
-    AND new.id IS NULL      -- Pas mis à jour récemment
+    AND newd.id IS NULL      -- Pas mis à jour récemment
 )
 {% else %}
 final_data AS (
