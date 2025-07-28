@@ -3,21 +3,7 @@
   {% if is_incremental() %}
     {{ log("🗑️ DEBUT POST-HOOK: Suppression des IDs détectés", info=true) }}
     
-    -- Test direct: compter les suppressions trouvées
-    CREATE TEMP TABLE delete_count AS (
-      SELECT COUNT(*) as nb_deletes
-      FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_tags`
-      WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') IS NOT NULL
-        AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
-        AND JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
-    );
-    
-    -- Forcer l'affichage du nombre
-    DECLARE delete_count_var INT64;
-    SET delete_count_var = (SELECT nb_deletes FROM delete_count LIMIT 1);
-    
-    -- Faire la suppression simple
-    DELETE FROM {{ this }}
+    DELETE FROM `teamdata-291012.prod_fr.tags_test`
     WHERE id IN (
       SELECT DISTINCT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
       FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_tags`
