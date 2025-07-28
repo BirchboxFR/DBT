@@ -1,3 +1,4 @@
+-- Configuration pour table complète (pas incrémental)
 {{ config(
     partition_by={
       "field": "link_id",
@@ -11,12 +12,14 @@
     cluster_by=['dw_country_code']
 ) }}
 
-{% set lookback_hours = 2 %}
 {% set countries = [
-  {'code': 'FR', 'schema': 'prod_fr', 'raw_table': 'prod_fr_raw__stream_wp_jb_tags'}
+  {'code': 'FR', 'schema': 'prod_fr'},
+  {'code': 'DE', 'schema': 'bdd_prod_de'},
+  {'code': 'ES', 'schema': 'bdd_prod_es'},
+  {'code': 'IT', 'schema': 'bdd_prod_it'}
 ] %}
 
--- Simple SELECT des données actuelles (sans post-hook)
+-- Union de tous les pays
 {% for country in countries %}
 SELECT 
   '{{ country.code }}' AS dw_country_code,
@@ -28,11 +31,7 @@ SELECT
   t.user_id,
   t._airbyte_extracted_at
 FROM `{{ country.schema }}.wp_jb_tags` t
-WHERE 
-  {% if is_incremental() %}
-  t._airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-  {% else %}
-  TRUE
-  {% endif %}
-{% if not loop.last %}UNION ALL{% endif %}
+{% if not loop.last %}
+UNION ALL
+{% endif %}
 {% endfor %}
