@@ -3,34 +3,28 @@
   {% if is_incremental() %}
     {{ log("🗑️ DEBUT POST-HOOK: Suppression des IDs détectés", info=true) }}
     
-    -- Étape 1: Identifier les IDs à supprimer
-    CREATE TEMP TABLE ids_to_delete AS (
-      SELECT DISTINCT 
-        'FR' AS dw_country_code,
-        CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64) AS id
+    -- Test direct: compter les suppressions trouvées
+    CREATE TEMP TABLE delete_count AS (
+      SELECT COUNT(*) as nb_deletes
       FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_tags`
       WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') IS NOT NULL
         AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
         AND JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
     );
     
-    -- Étape 2: Logger les IDs qui vont être supprimés
-    CREATE TEMP TABLE actual_deletes AS (
-      SELECT target.id, target.dw_country_code 
-      FROM {{ this }} target
-      INNER JOIN ids_to_delete del ON target.id = del.id AND target.dw_country_code = del.dw_country_code
-    );
+    -- Forcer l'affichage du nombre
+    DECLARE delete_count_var INT64;
+    SET delete_count_var = (SELECT nb_deletes FROM delete_count LIMIT 1);
     
-    -- Cette ligne va afficher dans les logs DBT
-    SELECT CONCAT('🗑️ SUPPRESSION: ', STRING_AGG(CAST(id AS STRING), ', ')) as deleted_ids
-    FROM actual_deletes;
-    
-    -- Étape 3: Faire le DELETE
+    -- Faire la suppression simple
     DELETE FROM {{ this }}
-    WHERE EXISTS (
-      SELECT 1 FROM ids_to_delete del 
-      WHERE del.id = {{ this }}.id AND del.dw_country_code = {{ this }}.dw_country_code
-    );
+    WHERE id IN (
+      SELECT DISTINCT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
+      FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_tags`
+      WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') IS NOT NULL
+        AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
+        AND JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
+    ) AND dw_country_code = 'FR';
     
     {{ log("🗑️ FIN POST-HOOK: Suppressions terminées", info=true) }}
   {% else %}
