@@ -85,5 +85,5 @@ SELECT
   type,
   timestamp,
   user_id,
-  t._airbyte_extracted_at
+  _airbyte_extracted_at
 FROM final_data
