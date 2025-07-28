@@ -15,10 +15,11 @@
 {% set lookback_hours = 2 %}
 {% set countries = [
   {'code': 'FR', 'schema': 'prod_fr', 'raw_table': 'prod_fr_raw__stream_wp_jb_tags'}
+  -- {'code': 'DE', 'schema': 'prod_de', 'raw_table': 'prod_de_raw__stream_wp_jb_tags'}
 ] %}
 
 WITH 
--- Données actuelles pour tous les pays
+-- Données qui existent ENCORE dans la source (non supprimées)
 current_data AS (
   {% for country in countries %}
   SELECT 
@@ -42,7 +43,7 @@ current_data AS (
 ),
 
 {% if is_incremental() %}
--- IDs supprimés pour tous les pays
+-- IDs qui ont été SUPPRIMÉS récemment (détectés dans la table raw)
 deleted_ids AS (
   {% for country in countries %}
   SELECT DISTINCT
@@ -57,12 +58,12 @@ deleted_ids AS (
 ),
 
 final_data AS (
-  -- Nouvelles données
+  -- 1. Données nouvelles/modifiées (qui existent encore)
   SELECT * FROM current_data
   
   UNION ALL
   
-  -- Données existantes non supprimées
+  -- 2. Données anciennes qui ne sont NI supprimées NI mises à jour
   SELECT 
     existing.dw_country_code,
     existing.id,
@@ -75,7 +76,8 @@ final_data AS (
   FROM {{ this }} existing
   LEFT JOIN deleted_ids del ON existing.id = del.id AND existing.dw_country_code = del.dw_country_code
   LEFT JOIN current_data curr ON existing.id = curr.id AND existing.dw_country_code = curr.dw_country_code
-  WHERE del.id IS NULL AND curr.id IS NULL
+  WHERE del.id IS NULL      -- Pas supprimé
+    AND curr.id IS NULL     -- Pas mis à jour
 )
 {% else %}
 final_data AS (
