@@ -85,5 +85,5 @@ SELECT
   type,
   timestamp,
   user_id,
-  _rivery_last_update
+  t._airbyte_extracted_at
 FROM final_data
