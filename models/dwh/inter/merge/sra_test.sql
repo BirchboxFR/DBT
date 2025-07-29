@@ -1,11 +1,9 @@
-{%- set countries = [
-    {'code': 'FR', 'dataset': 'prod_fr'}
-] -%}
+{%- set countries = var('survey_countries') -%}
 
 {%- set delete_hooks = [] -%}
 {%- for country in countries -%}
   {%- set delete_sql -%}
-DELETE FROM `teamdata-291012.prod_fr.sra_test`
+DELETE FROM `teamdata-291012.prod_fr.sra_test` 
 WHERE dw_country_code = '{{ country.code }}' AND (id) IN (
   SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
   FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_survey_result_answers`

@@ -20,6 +20,13 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
   - "target"
   - "dbt_packages"
 
+# Variables globales
+vars:
+  survey_countries:
+    - code: 'FR'
+      dataset: 'prod_fr'
+
+
 # Configuration des modèles
 models:
   warehouse:
