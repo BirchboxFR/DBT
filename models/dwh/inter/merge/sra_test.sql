@@ -14,6 +14,7 @@
 }}
 
 SELECT 
+'FR' as dw_country_code,
   id,
   date,
   ranking,
