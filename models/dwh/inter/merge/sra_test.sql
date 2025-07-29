@@ -2,18 +2,22 @@
     {'code': 'FR', 'dataset': 'prod_fr'}
 ] -%}
 
-{{ config(
-    post_hook=[
-        {%- for country in countries %}
-        "DELETE FROM `teamdata-291012.prod_fr.sra_test`
+{%- set delete_hooks = [] -%}
+{%- for country in countries -%}
+  {%- set delete_sql -%}
+DELETE FROM `teamdata-291012.prod_fr.sra_test`
 WHERE dw_country_code = '{{ country.code }}' AND (id) IN (
   SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
   FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_survey_result_answers`
   WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
     AND TIMESTAMP(_airbyte_extracted_at) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
-)"{{ "," if not loop.last }}
-        {%- endfor %}
-    ]
+)
+  {%- endset -%}
+  {%- do delete_hooks.append(delete_sql) -%}
+{%- endfor -%}
+
+{{ config(
+    post_hook=delete_hooks
 ) }}
 
 {%- for country in countries %}
