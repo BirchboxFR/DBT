@@ -1,7 +1,3 @@
-{% if is_incremental() %}
-  -- Post-hook seulement en mode incrémental
-  {{ config(post_hook="DELETE FROM `teamdata-291012.prod_fr.wp_jb_survey_result_answers` WHERE id IN (SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64) FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_survey_result_answers` WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL AND TIMESTAMP(JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at')) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR))") }}
-{% endif %}
 
 SELECT 
   'FR' as dw_country_code,
