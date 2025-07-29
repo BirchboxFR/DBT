@@ -3,8 +3,6 @@
 ] -%}
 
 {{ config(
-    materialized='incremental',
-    unique_key=['dw_country_code', 'id'],
     post_hook=[
         {%- for country in countries %}
         "DELETE FROM `teamdata-291012.prod_fr.sra_test`
