@@ -9,8 +9,7 @@
       where id in (
         select cast(json_extract_scalar(_airbyte_data, '$.id') as int64) as id
         from teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_survey_result_answers
-        where _ab_cdc_deleted_at is not null
-          and _airbyte_extracted_at >= timestamp_sub(current_timestamp(), interval 2 hour)
+        where json_extract_scalar(_airbyte_data, '$._ab_cdc_deleted_at')  >= cast(timestamp_sub(current_timestamp(), interval 2 hour) as string)
       )
     "
   )
