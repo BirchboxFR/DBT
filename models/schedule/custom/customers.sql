@@ -7,6 +7,9 @@ all_customers AS (
     SELECT dw_country_code, lower(email) as mail, NULL AS user_id
     FROM inter.optin
     UNION ALL
+    SELECT dw_country_code, lower(user_email) as mail, NULL AS user_id
+    FROM inter.user_consent
+    union all
     SELECT dw_country_code, lower(user_email) AS mail, id AS user_id
     FROM inter.users
     WHERE user_login <> 'DELETED'
