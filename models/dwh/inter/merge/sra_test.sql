@@ -1,7 +1,7 @@
 {{ config(
     post_hook=[
         "{{ log('=== DEBUT POST-HOOK ===', info=true) }}",
-        "DELETE FROM `teamdata-291012.prod_fr.wp_jb_survey_result_answers`
+        "DELETE FROM `teamdata-291012.prod_fr.sra_test`
 WHERE (id) IN (
   SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
   FROM `teamdata-291012.airbyte_internal.prod_fr_raw__stream_wp_jb_survey_result_answers`
