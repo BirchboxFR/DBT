@@ -23,7 +23,6 @@ SELECT
   created_at,
   updated_at,
   question_id
-  pays
 FROM teamdata-291012.prod_fr.wp_jb_survey_result_answers
 WHERE `_ab_cdc_deleted_at` IS NULL
 
