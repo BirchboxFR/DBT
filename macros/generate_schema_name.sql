@@ -22,6 +22,7 @@
      {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set pnl_tmp_tables = ['pnl2'] -%}
     {%- set crm_tmp_tables = ['crm_zapier'] -%}
+    {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
     {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
     
 
@@ -60,6 +61,8 @@
         forecast
     {%- elif node.name in user_tmp_tables -%}
         user
+    {%- elif node.name in catalog_tmp_tables -%}
+        catalog
     {%- elif node.name in mailjet_tmp_tables -%}
         mailjet
     {%- elif node.name in reviews_tmp_tables -%}
