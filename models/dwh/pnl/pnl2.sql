@@ -34,8 +34,8 @@ box_produced as
   p.project_type as product_codification,
   CASE WHEN p.project_type = 'BOX' THEN CAST(start_date AS STRING) ELSE wo.kit_sku END as sku,
     SUM(wo.produced_quantity) AS produced_quantity
-  FROM catalog.work_orders wo
-  JOIN catalog.projects p ON p.project_full_name = wo.project_full_name
+  FROM catalog.work_orders_materialized wo
+  JOIN catalog.projects_materialized p ON p.project_full_name = wo.project_full_name
   GROUP BY p.start_date, p.project_type, sku
 ),
 repart_qty AS
