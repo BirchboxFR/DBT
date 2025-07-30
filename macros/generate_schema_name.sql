@@ -20,7 +20,7 @@
     {%- set alerting_tmp_tables = ['surveillance_incremental'] -%}
      {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
      {%- set mailjet_tmp_tables = ['mailjet'] -%}
-    {%- set pnl_tmp_tables = ['pnl2'] -%}
+    {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
     {%- set crm_tmp_tables = ['crm_zapier'] -%}
     {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
     {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
