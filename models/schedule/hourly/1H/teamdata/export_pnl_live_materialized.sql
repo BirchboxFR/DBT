@@ -1,1 +1,1 @@
-SELECT * FROM `teamdata-291012.pnl.export_pnl_live` 
+SELECT * FROM `teamdata-291012.pnl.export_pnl_live` where period is not null
