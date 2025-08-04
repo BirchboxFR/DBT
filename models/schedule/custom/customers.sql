@@ -16,6 +16,7 @@ all_customers AS (
     UNION ALL
     SELECT 'FR' AS dw_country_code, lower(email) as mail, NULL AS user_id
     FROM user.crm_data
+    where dw_country_code='FR'
     GROUP BY mail
   )
   GROUP BY dw_country_code, email
