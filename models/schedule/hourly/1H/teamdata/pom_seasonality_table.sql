@@ -1,0 +1,1 @@
+SELECT * FROM `teamdata-291012.ops.pom_seasonality` 
