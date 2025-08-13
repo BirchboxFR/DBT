@@ -1,22 +1,14 @@
 {%- set countries = var('survey_countries') -%}
 
-{%- set delete_hooks = [] -%}
-{%- for country in countries -%}
-  {%- set delete_sql -%}
-DELETE FROM `teamdata-291012.prod_fr.sra_test` 
-WHERE dw_country_code = '{{ country.code }}' AND (id) IN (
-  SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
-  FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_survey_result_answers`
-  WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
-    AND TIMESTAMP(_airbyte_extracted_at) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
-)
-  {%- endset -%}
-  {%- do delete_hooks.append(delete_sql) -%}
-{%- endfor -%}
+--- partie pays
 
-{{ config(
-    post_hook=delete_hooks
-) }}
+
+
+{{ log('TARGET => ' ~ target, true) }}
+{{ log('THIS => ' ~ this, true) }}
+{{ log('COUNTRIES => ' ~ countries | tojson, true) }}
+
+-- debug
 
 {%- for country in countries %}
 SELECT 

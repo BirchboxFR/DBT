@@ -24,7 +24,7 @@ clean-targets:         # Dossiers supprimés par la commande `dbt clean`
 vars:
   survey_countries:
     - code: 'FR'
-      dataset: 'prod_fr'
+      dataset: 'bdd_prod_fr'
 
 
 # Configuration des modèles
