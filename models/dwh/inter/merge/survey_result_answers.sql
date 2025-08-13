@@ -20,7 +20,8 @@ SELECT
   result_id,
   created_at,
   updated_at,
-  question_id
+  question_id,
+  _airbyte_extracted_at
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_survey_result_answers`
 WHERE `_ab_cdc_deleted_at` IS NULL
 {% if is_incremental() %}
