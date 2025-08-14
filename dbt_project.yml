@@ -25,6 +25,12 @@ vars:
   survey_countries:
     - code: 'FR'
       dataset: 'bdd_prod_fr'
+    - code: 'DE'
+      dataset: 'bdd_prod_de'
+    - code: 'ES'
+      dataset: 'bdd_prod_es'
+    - code: 'IT'
+      dataset: 'bdd_prod_it'
 
 
 # Configuration des modèles
