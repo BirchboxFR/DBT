@@ -6,7 +6,7 @@
 {%- for country in countries -%}
   {%- set delete_sql -%}
 DELETE FROM `teamdata-291012.{{ country.dataset }}.wp_jb_survey_result_answers` 
-WHERE dw_country_code = '{{ country.code }}' AND (id) IN (
+WHERE (id) IN (
   SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
   FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_survey_result_answers`
   WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
