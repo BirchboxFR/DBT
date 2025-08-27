@@ -60,6 +60,8 @@
         alerting
     {%- elif node.name in forecast_tmp_tables -%}
         forecast
+    {%- elif node.name in survey_tmp_tables -%}
+        survey
     {%- elif node.name in user_tmp_tables -%}
         user
     {%- elif node.name in catalog_tmp_tables -%}
