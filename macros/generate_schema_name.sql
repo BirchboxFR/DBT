@@ -18,8 +18,9 @@
     {%- set inter_materialized_view_tmp_tables = ['yearly_check','products_detailed_rating','warehouse','user_consent','tva_product','shipup_tracking','survey_questions','survey_results','survey_Result_answers','consent','b2c_order_notifications','orders_status','consent_topic','gift_codes_generated','options','order_status','payments','postmeta','survey_answers','survey_questions','survey_result_answers','survey_results','user_consent_history','allocation_history','b2c_exported_orders','ga_transactions','mini_reexp','optin','payment_profiles','raf','raf_order_link','reception_details','reward_points_history','reward_points_history_uses','saved_cart','saved_cart_details','store_mouvements','term_relationships','trackings','user_campaign','user_mailing_list'] -%}
     {%- set forecast_tmp_tables = ['classement_groupe_marque'] -%}
     {%- set alerting_tmp_tables = ['surveillance_incremental'] -%}
-     {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
-     {%- set mailjet_tmp_tables = ['mailjet'] -%}
+    {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
+    {%- set mailjet_tmp_tables = ['mailjet'] -%}
+    {%- set survey_tmp_tables = ['archives_survey_answers.sql'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
     {%- set crm_tmp_tables = ['crm_zapier'] -%}
     {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
