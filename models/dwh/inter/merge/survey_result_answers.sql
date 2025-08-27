@@ -1,3 +1,12 @@
+{{ config(
+    partition_by={
+      "field": "_airbyte_extracted_at", 
+      "data_type": "timestamp",
+      "granularity": "day"
+    },
+    cluster_by=["dw_country_code", "id"]
+) }}
+
 {%- set countries = var('survey_countries') -%}
 
 --- partie pays
