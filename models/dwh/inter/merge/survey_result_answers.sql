@@ -51,7 +51,8 @@ WHERE `_ab_cdc_deleted_at` IS NULL
 {%- endfor %}
 
 
+{% if not is_incremental() %}
 UNION ALL
-
--- Archives
+-- Archives (seulement en full refresh)
 SELECT * FROM {{ ref('archives_survey_answers') }}
+{% endif %}
