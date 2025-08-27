@@ -33,14 +33,19 @@ WHERE (id) IN (
 {%- for country in countries %}
 SELECT 
   '{{ country.code }}' as dw_country_code,
-  id,
-  date,
-  ranking,
-  answer_id,
-  result_id,
-  created_at,
-  updated_at,
-  question_id,
+ id,
+type,
+items,
+sub_id,
+message,
+order_id,
+tracking,
+processed,
+reference,
+type_text,
+created_at,
+event_date,
+updated_at,
   _airbyte_extracted_at
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_b2c_order_notifications`
 WHERE `_ab_cdc_deleted_at` IS NULL
