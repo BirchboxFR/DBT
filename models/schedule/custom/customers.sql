@@ -26,18 +26,18 @@ user_data AS (
          u.user_email AS email,
          uuid,
          CASE
-          WHEN uml.list_box = 1 OR uml.list_sms = 1 OR uml.list_news = 1 OR uml.list_splendist = 1 OR uml.list_deals = 1 THEN TRUE
+          WHEN uc_email.consent_status = 1  OR uc_sms.consent_status = 1  THEN TRUE
           ELSE FALSE
           END  AS optin,
           CASE
-          WHEN uml.list_box = 1  OR uml.list_news = 1 OR uml.list_splendist = 1 OR uml.list_deals = 1 THEN TRUE
+          WHEN uc_email.consent_status = 1 THEN TRUE
           ELSE FALSE
           END  AS optin_email,
-         COALESCE(uml.list_box = 1, false) AS optin_box,
-         COALESCE(uml.list_sms = 1, false) AS optin_sms,
-         COALESCE(uml.list_news = 1, false) AS optin_news,
-         COALESCE(uml.list_splendist = 1, false) AS optin_spl,
-         COALESCE(uml.list_deals = 1, false) AS optin_deals,
+          CASE
+          WHEN uc_email.consent_status = 1 THEN TRUE
+          ELSE FALSE
+          END   AS optin_partner,
+         COALESCE(uc_sms.consent_status= 1, false) AS optin_sms,
          u.id AS user_id,
          u.user_email LIKE '%@blissim%' OR u.user_email LIKE '%@birchbox%' AS is_admin,
          u.user_firstname AS firstname,
@@ -46,7 +46,9 @@ user_data AS (
          CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN u.user_birthday END AS birth_date,
          CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) END AS age
   FROM inter.users u
-  LEFT JOIN inter.user_mailing_list uml ON u.dw_country_code = uml.dw_country_code AND u.id = uml.user_id
+  LEFT JOIN inter.user_consent uc_email ON u.dw_country_code = uc_email.dw_country_code AND u.id = uc_email.user_id and uc_email.consent_topic_id=3
+  LEFT JOIN inter.user_consent uc_sms ON u.dw_country_code = uc_sms.dw_country_code AND u.id = uc_sms.user_id and uc_sms.consent_topic_id=4
+  LEFT JOIN inter.user_consent uc_partner ON u.dw_country_code = uc_partner.dw_country_code AND u.id = uc_partner.user_id and uc_partner.consent_topic_id=1
 ),
 range_of_age_table AS (
   SELECT ud.dw_country_code,
@@ -388,10 +390,7 @@ SELECT ac.dw_country_code,
        ud.optin,
        case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
         case when ucs.consent_status=1 then true else false end as optin_email,
-       ud.optin_box,
-       ud.optin_news,
-       ud.optin_spl,
-       ud.optin_deals,
+       ud.optin_partner,
        ud.optin_sms,
        ud.is_admin,
        ud.firstname,
