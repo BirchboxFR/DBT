@@ -46,9 +46,9 @@ user_data AS (
          CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN u.user_birthday END AS birth_date,
          CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) END AS age
   FROM inter.users u
-  LEFT JOIN inter.user_consent uc_email ON u.dw_country_code = uc_email.dw_country_code AND u.id = uc_email.user_id and uc_email.consent_topic_id=3
-  LEFT JOIN inter.user_consent uc_sms ON u.dw_country_code = uc_sms.dw_country_code AND u.id = uc_sms.user_id and uc_sms.consent_topic_id=4
-  LEFT JOIN inter.user_consent uc_partner ON u.dw_country_code = uc_partner.dw_country_code AND u.id = uc_partner.user_id and uc_partner.consent_topic_id=1
+  LEFT JOIN {{ ref('user_consent') }} uc_email ON u.dw_country_code = uc_email.dw_country_code AND u.id = uc_email.user_id and uc_email.consent_topic_id=3
+  LEFT JOIN {{ ref('user_consent') }} uc_sms ON u.dw_country_code = uc_sms.dw_country_code AND u.id = uc_sms.user_id and uc_sms.consent_topic_id=4
+  LEFT JOIN {{ ref('user_consent') }} uc_partner ON u.dw_country_code = uc_partner.dw_country_code AND u.id = uc_partner.user_id and uc_partner.consent_topic_id=1
 ),
 range_of_age_table AS (
   SELECT ud.dw_country_code,
