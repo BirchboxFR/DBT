@@ -40,3 +40,9 @@ WHERE `_ab_cdc_deleted_at` IS NULL
 {% endif %}
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
+
+
+UNION ALL
+
+-- Archives
+SELECT * FROM {{ ref('archives_survey_answers') }}
