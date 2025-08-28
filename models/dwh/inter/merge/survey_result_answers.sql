@@ -19,7 +19,7 @@ WHERE (id) IN (
   SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
   FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_survey_result_answers`
   WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
-    AND TIMESTAMP(_airbyte_extracted_at) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
+    AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
 )
   {%- endset -%}
   {%- do delete_hooks.append(delete_sql) -%}
@@ -45,7 +45,7 @@ SELECT
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_survey_result_answers`
 WHERE `_ab_cdc_deleted_at` IS NULL
 {% if is_incremental() %}
-  AND DATETIME(`_airbyte_extracted_at`) >= DATETIME_SUB(CURRENT_DATETIME(), INTERVAL 2 HOUR)
+  AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
 {% endif %}
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
