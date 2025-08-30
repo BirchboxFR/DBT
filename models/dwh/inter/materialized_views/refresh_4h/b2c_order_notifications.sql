@@ -45,6 +45,7 @@ reference,
 type_text,
 created_at,
 event_date,
+order_detail_id,
 updated_at,
   _airbyte_extracted_at
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_b2c_order_notifications`
