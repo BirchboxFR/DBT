@@ -10,8 +10,6 @@ models:
         description: "Code pays (FR, DE, etc.)"
       - name: date
         description: "date de la box"
-      - name: month
-        description: "mois de la box"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -21,3 +19,9 @@ models:
           config:
             store_failures: true
             name: "Doublons box_sales"
+
+  - name: shop_sales
+    description: "Table des ventes shop"
+    columns:
+      - name: dw_country_code
+        description: "Code pays pour les ventes shop"
