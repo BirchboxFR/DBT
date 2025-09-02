@@ -3,6 +3,16 @@ version: 2
 models:
   - name: box_sales
     description: "Table des ventes de box"
+    columns:
+      - name: sub_id
+        description: "Identifiant unique de l'abonnement"
+      - name: dw_country_code
+        description: "Code pays (FR, DE, etc.)"
+      - name: date
+        description: "date de la box"
+      - name: month
+        description: "mois de la box"
+      # Ajoutez toutes vos autres colonnes...
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
