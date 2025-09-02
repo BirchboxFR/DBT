@@ -12,7 +12,6 @@ models:
         description: "date de la box"
       - name: month
         description: "mois de la box"
-      # Ajoutez toutes vos autres colonnes...
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
