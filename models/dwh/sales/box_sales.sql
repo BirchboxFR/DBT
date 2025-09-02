@@ -1,5 +1,7 @@
 {{ config(
     materialized='table',
+    description='Table des ventes de box - TEST DIRECT',
+    persist_docs={"relation": true, "columns": true},
     on_schema_change='ignore' ,
     partition_by={
       "field": "box_id",
