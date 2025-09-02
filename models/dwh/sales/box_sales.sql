@@ -40,6 +40,9 @@ from {{ ref('products') }}
 
 group by all
 ),
+mini_reexp as (
+select distinct sub_id,box_id,dw_country_code from `teamdata-291012.inter.mini_reexp`
+),
 shipping_mode_dedup as(
 select 
 shipping_mode_id,max(price)price,min_weight,max_weight,max(price_daily) price_daily,date_Start,date_end,max(shipping_taxes_rate)shipping_taxes_rate
@@ -233,6 +236,7 @@ FROM
   s.coffret_id,
   b.date,
   ta.value is not null as reexp, 
+  mree.sub_id is not null as mini_reexp,
    DATE_DIFF(CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END, date(b.shipping_date), DAY) + 1  AS day_in_cycle,
   CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END AS payment_date,
  DATE_DIFF(CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END, date(b.shipping_date), DAY) + 1 AS nb_days_since_opening,
@@ -335,6 +339,8 @@ raf_parent_id,
   /*LEFT JOIN (select user_id,month,year,dw_country_code,box_id,max(sub_suspended_reason_lvl1)sub_suspended_reason_lvl1,max(sub_suspended_reason_lvl2)sub_suspended_reason_lvl2,max(sub_suspended_reason_lvl3)sub_suspended_reason_lvl3 from`teamdata-291012.sales.box_sales_by_user_by_type`  group by 1,2,3,4,5)bsbu ON o.dw_country_code = bsbu.dw_country_code AND bsbu.user_id=o.user_id and bsbu.box_id = s.box_id + 1*/
   LEFT JOIN {{ ref('partial_box_paid') }} pbp ON pbp.dw_country_code = s.dw_country_code AND pbp.sub_id = s.id
   LEFT JOIN {{ ref('tags') }} ta ON ta.link_id=s.id AND ta.dw_country_code = o.dw_country_code and ta.type='SUB' and ta.value='reexp'
+  LEFT JOIN mini_reexp mree ON mree.dw_country_code = o.dw_country_code and mree.sub_id=s.id and mree.box_id=s.box_id
+  
   WHERE -- o.status_id IN (1, 3) AND 
   (s.shipping_status_id IN (2, 3, 4, 5, 19, 22) OR (s.sub_payment_status_id = 3 AND s.box_id >= cbt.current_box_id)
   -------------------
