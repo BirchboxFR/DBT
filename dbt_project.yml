@@ -51,6 +51,9 @@ models:
       pnl:
       product: 
       sales:
+        +persist_docs:
+          relation: true
+          columns: true
       snippets:
       inter:
         +schema: inter
