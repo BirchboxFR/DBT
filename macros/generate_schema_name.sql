@@ -23,6 +23,7 @@
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
     {%- set crm_tmp_tables = ['crm_zapier'] -%}
+    {%- set archives_tmp_tables = ['archives_payments'] -%}
     {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
     {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
     
@@ -52,6 +53,8 @@
         blissim_analytics
     {%- elif node.name in inter_all_tables -%}
         inter
+    {%- elif node.name in archives_tmp_tables -%}
+        Archives
     {%- elif node.name in crm_tmp_tables -%}
         crm
     {%- elif node.name in sublissim_tmp_tables -%}
