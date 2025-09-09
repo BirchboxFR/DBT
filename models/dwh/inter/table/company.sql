@@ -1,62 +1,45 @@
-{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_company')) -%}
-{%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_company')) -%}
-{%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_company')) -%}
-{%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_company')) -%}
+{{ config(
+    partition_by={
+      "field": "_airbyte_extracted_at", 
+      "data_type": "timestamp",
+      "granularity": "day"
+    },
+    cluster_by=["dw_country_code", "id"]
+) }}
 
-SELECT 'FR' AS dw_country_code,
-t.* EXCEPT(
- {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in fr_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in fr_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in fr_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_fr.wp_jb_company` t
-WHERE {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+{%- set countries = var('survey_countries') -%}
 
-UNION ALL
+--- partie pays
 
-SELECT 'DE' AS dw_country_code,
-t.* EXCEPT(
- {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in de_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in de_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in de_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_de.wp_jb_company` t
-WHERE {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+{%- set delete_hooks = [] -%}
+{%- for country in countries -%}
+  {%- set delete_sql -%}
+DELETE FROM `teamdata-291012.{{ country.dataset }}.wp_jb_company` 
+WHERE (id) IN (
+  SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
+  FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_company`
+  WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
+    AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
+)
+  {%- endset -%}
+  {%- do delete_hooks.append(delete_sql) -%}
+{%- endfor -%}
 
-UNION ALL
+{{ config(
+    post_hook=delete_hooks
+) }}
+-- debug
 
-SELECT 'ES' AS dw_country_code,
-t.* EXCEPT(
- {% if '__deleted' in es_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in es_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in es_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in es_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in es_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_es.wp_jb_company` t
-WHERE {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
+{%- for country in countries %}
+SELECT 
+  '{{ country.code }}' as dw_country_code,
+  b.*,
+  _airbyte_extracted_at
+FROM `teamdata-291012.{{ country.dataset }}.wp_jb_company` b
+WHERE `_ab_cdc_deleted_at` IS NULL
+{% if is_incremental() %}
+  AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
+{% endif %}
+{{ "UNION ALL" if not loop.last }}
+{%- endfor %}
 
-UNION ALL
-
-SELECT 'IT' AS dw_country_code,
-t.* EXCEPT(
- {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in it_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in it_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in it_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in it_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id,{% endif %}
- {% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_it.wp_jb_company` t
-WHERE {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) {% else %}true{% endif %}
