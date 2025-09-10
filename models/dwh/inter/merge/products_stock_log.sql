@@ -45,13 +45,15 @@ SELECT
   stock_physique,
   _airbyte_extracted_at
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_products_stock_log`
-WHERE `_ab_cdc_deleted_at` IS NULL
-{% if is_incremental() %}
-  AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
-{% endif %}
+WHERE 1=1
+   {% if country.code != 'FR' %}
+   AND `_ab_cdc_deleted_at` IS NULL 
+   {% endif %}
+   {% if is_incremental() %}   
+   AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR) 
+   {% endif %} 
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
-
 
 {% if not is_incremental() %}
 UNION ALL
