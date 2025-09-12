@@ -382,7 +382,7 @@ gp_shop AS
 
 SELECT ac.dw_country_code,
        ac.email,
-       case when ac.user_id =3065143 then 'SLACK' else null end as slack_bot,
+       case when ac.user_id =3065143 then TRUE else null end as slack_bot,
        ac.user_id,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
        else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
