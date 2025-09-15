@@ -4,7 +4,7 @@
       "data_type": "timestamp",
       "granularity": "day"
     },
-    cluster_by=["dw_country_code", "id"]
+    cluster_by=["dw_country_code"]
 ) }}
 
 {%- set countries = var('survey_countries') -%}
