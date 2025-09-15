@@ -33,21 +33,12 @@ WHERE (id) IN (
 {%- for country in countries %}
 SELECT 
   '{{ country.code }}' as dw_country_code,
-  id,
-  date,
-  ranking,
-  answer_id,
-  result_id,
-  created_at,
-  updated_at,
-  question_id,
-  _airbyte_extracted_at
-FROM `teamdata-291012.{{ country.dataset }}.wp_jb_adyen`
+  b.*
+FROM `teamdata-291012.{{ country.dataset }}.wp_jb_adyen_notifications` b
 WHERE `_ab_cdc_deleted_at` IS NULL
 {% if is_incremental() %}
   AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
 {% endif %}
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
-
 
