@@ -33,12 +33,13 @@ WHERE (id) IN (
 {%- for country in countries %}
 SELECT 
   '{{ country.code }}' as dw_country_code,
-  b.*
+max(raf_offer_id) as raf_offer_id,order_id,max(created_at) as created_at ,max(updated_at) as updated_at,max(id) as id ,_airbyte_extracted_at
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_raf_order_link` b
 WHERE `_ab_cdc_deleted_at` IS NULL
 {% if is_incremental() %}
   AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
 {% endif %}
+group by all
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
 
