@@ -1,7 +1,8 @@
-SELECT c.dw_country_code,cart_id,(c.created_at) as date,concat(c.dw_country_code,'_',user_id) as user_key ,
+SELECT c.dw_country_code,cart_id,(cd.created_at) as date,concat(c.dw_country_code,'_',user_id) as user_key ,
 cd.product_id, c.status_id,p.brand_full_name,p.ht_sale_price,p.product_nice_name,p.thumb_url,pro.price,pro.attr_special_sub_price,pro.attr_special_price,
 case when timestamp_diff(current_timestamp(), c.created_at, hour)>1  and c.status_id in (1,2) then true else false end as  is_abandonned,
 timestamp_diff(current_timestamp(), c.created_at, hour) as cart_age_hours,
+sum(cd.qty) as nb_items,
 case when timestamp_diff(current_timestamp(), c.created_at, hour)<48 then true else false end as winback_possible
 FROM `teamdata-291012.inter.saved_cart` c
 left join inter.saved_cart_details cd on c.id=cd.cart_id and c.dw_country_code=cd.dw_country_code
