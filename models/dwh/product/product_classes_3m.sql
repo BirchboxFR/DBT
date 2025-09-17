@@ -8,7 +8,7 @@ WITH all_dates_table AS (
 real_parents AS (
   SELECT parent_product_id
   FROM (
-    SELECT MAX(CASE WHEN is_parent = 1 THEN id END) AS parent_product_id, COUNT(*) AS nb
+    SELECT MAX(CASE WHEN is_parent  THEN id END) AS parent_product_id, COUNT(*) AS nb
     FROM {{ ref('products') }}
     WHERE dw_country_code = 'FR'
     GROUP BY parent_post_id
