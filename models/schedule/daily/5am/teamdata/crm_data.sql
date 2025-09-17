@@ -1,5 +1,9 @@
     
-    
+        select dw_country_code,email,user_id,max(open_email) open_email,
+        max(click) click,max(date_last_open_email) date_last_open_email,
+        max(date_last_click_email)date_last_click_email,max(ltm_client_email_rate)ltm_client_email_rate,
+        max(ltm_open_email_rate) ltm_open_email_rate,max(ltm_click_email)ltm_click_email,
+        max(ltm_open_email)ltm_open_email,max(ltm_nb_email)ltm_nb_email from (
     SELECT distinct dw_country_code, email, NULL AS user_id,
             MAX(lower(status)  = 'open') AS open_email,
          MAX(lower(status) = 'click') AS click,
@@ -33,4 +37,5 @@
 --where t.address='clementine.clement+compteboximagino@blissim.fr'
 group by all
  
-  
+        ) 
+        group by all
