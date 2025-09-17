@@ -380,7 +380,9 @@ gp_shop AS
   GROUP BY c.dw_country_code, c.user_id
 )
 
-SELECT ac.dw_country_code,
+SELECT 
+distinct 
+ac.dw_country_code,
        ac.email,
        case when ac.user_id =3065143 then TRUE else null end as slack_bot,
        ac.user_id,
