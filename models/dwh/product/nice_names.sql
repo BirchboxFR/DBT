@@ -5,8 +5,8 @@ SELECT p.dw_country_code,
        CONCAT(IF(g.post_title IS NULL, '', CONCAT(g.post_title, ' - ')), IF((b.visible = 0), CONCAT(b.name, ' (disabled)'), b.name)) AS brand_full_name,
        REGEXP_REPLACE(CASE
                            WHEN p_product.post_title IS NULL THEN p.name
-                           WHEN p.is_parent = 1 AND (COALESCE(p.nb_children, 0) = 0) THEN p_product.post_title
-                           WHEN p.is_parent = 1 AND (p.nb_children > 0) THEN CONCAT(p_product_parent.post_title, ' [Parent]')
+                           WHEN p.is_parent  AND (COALESCE(p.nb_children, 0) = 0) THEN p_product.post_title
+                           WHEN p.is_parent  AND (p.nb_children > 0) THEN CONCAT(p_product_parent.post_title, ' [Parent]')
                            WHEN p.post_id <> p.parent_post_id THEN CONCAT(p_product_parent.post_title, ' | ', p_product.post_title)
                            ELSE p_product.post_title
                       END, r'\&.*;', '') AS product_nice_name
