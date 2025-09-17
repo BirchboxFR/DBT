@@ -5,9 +5,9 @@ timestamp_diff(current_timestamp(), c.created_at, hour) as cart_age_hours,
 sum(cd.qty) as nb_items,
 case when timestamp_diff(current_timestamp(), c.created_at, hour)<48 then true else false end as winback_possible
 FROM `teamdata-291012.inter.saved_cart` c
-left join inter.saved_cart_details cd on c.id=cd.cart_id and c.dw_country_code=cd.dw_country_code
-left join product.catalog p on p.product_id=cd.product_id and p.dw_country_code=cd.dw_country_code
-left join inter.products pro on pro.id=cd.product_id and pro.dw_country_code=cd.dw_country_code
+left join {{ ref('saved_cart_details') }} cd on c.id=cd.cart_id and c.dw_country_code=cd.dw_country_code
+left join {{ ref('catalog') }} p on p.product_id=cd.product_id and p.dw_country_code=cd.dw_country_code
+left join {{ ref('products') }} pro on pro.id=cd.product_id and pro.dw_country_code=cd.dw_country_code
 where 1=1
 --and user_id=2622634
 group by all
