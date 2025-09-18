@@ -33,7 +33,8 @@ WHERE (id) IN (
 {%- for country in countries %}
 SELECT 
   '{{ country.code }}' as dw_country_code,
-  b.*
+  b.*,
+  DATE_SUB(LEAD(shipping_date) OVER (ORDER BY date), INTERVAL 1 DAY) AS closing_date,
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_boxes` b
 WHERE `_ab_cdc_deleted_at` IS NULL
 {% if is_incremental() %}
