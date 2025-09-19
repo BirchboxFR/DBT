@@ -25,7 +25,7 @@
     {%- set crm_tmp_tables = ['crm_zapier'] -%}
     {%- set archives_tmp_tables = ['archives_payments'] -%}
     {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
-    {%- set history_table_tmp_tables = ['pnl__export_pnl_live'] -%}
+    {%- set history_table_tmp_tables = ['pnl__export_pnl_live','catalog__bank'] -%}
     
 
     {%- set inter_all_tables = inter_tmp_tables + inter_view_tmp_tables + inter_materialized_view_tmp_tables   -%}
