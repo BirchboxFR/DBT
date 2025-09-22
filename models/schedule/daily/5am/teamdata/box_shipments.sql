@@ -204,9 +204,9 @@ JOIN `inter.shipping_modes` sm_original ON sm_original.id = s.shipping_mode AND 
 JOIN `inter.shipping_modes` sm ON sm.dw_country_code = s.dw_country_code 
 AND 
   (
-    (sm_original.tracked = 1 AND sm.id = sm_original.id)
-  OR (sm_original.tracked = 0 AND sm_original.linked_shipping_mode_id IS NOT NULL AND sm.id = sm_original.linked_shipping_mode_id)
-  OR (sm_original.tracked = 0 AND sm_original.linked_shipping_mode_id IS NULL AND sm.id = 1)
+    (sm_original.tracked  AND sm.id = sm_original.id)
+  OR (sm_original.tracked is false AND sm_original.linked_shipping_mode_id IS NOT NULL AND sm.id = sm_original.linked_shipping_mode_id)
+  OR (sm_original.tracked is false AND sm_original.linked_shipping_mode_id IS NULL AND sm.id = 1)
   )
 JOIN inter.boxes b ON b.id = s.box_id AND b.dw_country_code = s.dw_country_code
 LEFT JOIN pot_box_reexp_shipments ON pot_box_reexp_shipments.sub_id = s.id AND pot_box_reexp_shipments.dw_country_code = s.dw_country_code
@@ -280,9 +280,9 @@ JOIN `inter.shipping_modes` sm_original ON sm_original.id = bs.shipping_mode AND
 JOIN `inter.shipping_modes` sm ON sm.dw_country_code = bs.dw_country_code 
 AND 
   (
-    (COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.tracked = 1 AND sm.id = sm_original.id)
-  OR (sm_original.tracked = 0 AND COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.linked_shipping_mode_id IS NOT NULL AND sm.id = sm_original.linked_shipping_mode_id)
-  OR (sm_original.tracked = 0 AND COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.linked_shipping_mode_id IS NULL AND sm.id = 1)
+    (COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.tracked  AND sm.id = sm_original.id)
+  OR (sm_original.tracked is false AND COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.linked_shipping_mode_id IS NOT NULL AND sm.id = sm_original.linked_shipping_mode_id)
+  OR (sm_original.tracked is false AND COALESCE(mr.reexp_date, mr.date) < '2024-01-08' AND sm_original.linked_shipping_mode_id IS NULL AND sm.id = 1)
   OR (COALESCE(mr.reexp_date, mr.date) >= '2024-03-01' AND  sm.id = 2)
   )
 
