@@ -26,18 +26,18 @@ user_data AS (
          u.user_email AS email,
          uuid,
          CASE
-          WHEN uc_email.consent_status = 1  OR uc_sms.consent_status = 1  THEN TRUE
+          WHEN uc_email.consent_status   OR uc_sms.consent_status  THEN TRUE
           ELSE FALSE
           END  AS optin,
           CASE
-          WHEN uc_email.consent_status = 1 THEN TRUE
+          WHEN uc_email.consent_status  THEN TRUE
           ELSE FALSE
           END  AS optin_email,
           CASE
-          WHEN uc_email.consent_status = 1 THEN TRUE
+          WHEN uc_email.consent_status  THEN TRUE
           ELSE FALSE
           END   AS optin_partner,
-         COALESCE(uc_sms.consent_status= 1, false) AS optin_sms,
+         COALESCE(uc_sms.consent_status, false) AS optin_sms,
          u.id AS user_id,
          u.user_email LIKE '%@blissim%' OR u.user_email LIKE '%@birchbox%' AS is_admin,
          u.user_firstname AS firstname,
@@ -389,10 +389,10 @@ ac.dw_country_code,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
        else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
        uuid,
-        case when ucs.consent_status=1 then true else false end as user_consent_optin_email,
+        case when ucs.consent_status then true else false end as user_consent_optin_email,
        ud.optin,
        case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
-        case when ucs.consent_status=1 then true else false end as optin_email,
+        case when ucs.consent_status then true else false end as optin_email,
        ud.optin_partner,
        ud.optin_sms,
        ud.is_admin,

@@ -9,11 +9,9 @@ last_value(billing_phone) over ( partition by user_id,dw_country_code order by d
 last_value(billing_city) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_city,
 last_value(billing_adr1) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_adress,
 last_value(billing_civility) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) billing_civility,
-case when last_value(billing_civility) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) = 'MISTER' then 'M' else 'F' end  gender,
-last_value(_rivery_last_update) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) last_update,
- 
+case when last_value(billing_civility) over ( partition by user_id,dw_country_code order by date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) = 'MISTER' then 'M' else 'F' end  gender
  FROM {{ ref('orders') }}
   where billing_zipcode<>'DELETED'
-  {% if is_incremental() %}
-    AND _rivery_last_update > (SELECT max(last_update) FROM {{ this }})
+{% if is_incremental() %}
+  AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
 {% endif %}
