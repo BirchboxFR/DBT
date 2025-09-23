@@ -136,7 +136,7 @@ self_churn_reason AS
   INNER JOIN {{ ref('orders') }} o ON sol.dw_country_code = o.dw_country_code AND sol.order_id = o.id
   INNER JOIN {{ ref('order_details') }} d ON o.dw_country_code = d.dw_country_code AND o.id = d.order_id
   INNER JOIN {{ ref('catalog') }} c ON d.dw_country_code = c.dw_country_code AND d.product_id = c.product_id
-  WHERE d.special_type = 'GWS' and status=1
+  WHERE d.special_type = 'GWS' and status
   GROUP BY sol.dw_country_code,
            sol.sub_id
 ),
