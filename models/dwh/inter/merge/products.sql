@@ -35,7 +35,7 @@ SELECT
   '{{ country.code }}' as dw_country_code,
   b.*
 FROM `teamdata-291012.{{ country.dataset }}.wp_jb_products` b
-WHERE `_ab_cdc_deleted_at` IS NULL
+WHERE `_ab_cdc_deleted_at` IS NULL and Type <>'DELETED'
 {% if is_incremental() %}
   AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
 {% endif %}
