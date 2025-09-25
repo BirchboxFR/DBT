@@ -15,6 +15,6 @@ where 1=1
 
 group by all
 --having cart_age_hours < 1000
-having  user_key='FR_2817932'
+--having  user_key='FR_2817932'
 order by date desc
 --LIMIT 1000
