@@ -85,5 +85,8 @@ models:
         1H:
           normalised:
             +database: normalised-417010
+        4H:
+          normalised:
+            +database: normalised-417010
       custom:
                    
