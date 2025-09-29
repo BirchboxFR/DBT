@@ -15,27 +15,31 @@
 TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR), DAY)
 {%- endset -%}
 
-{%- set delete_hooks = [] -%}
-{%- for country in countries -%}
-  {%- set delete_sql -%}
-DELETE FROM inter.coupons
-WHERE dw_country_code = '{{ country.code }}'
-  -- prune partitions de TA table
-  AND _airbyte_extracted_at >= {{ window_start }}
-  AND id IN (
-    SELECT CAST(d.id AS INT64)
+{# ---------- POST HOOK: un seul DELETE avec IN (STRUCT) ---------- #}
+{%- set to_delete_sql -%}
+DELETE FROM `teamdata-291012.inter.coupons` AS t
+WHERE
+  -- prune partitions de TA table (cible)
+  t._airbyte_extracted_at >= {{ window_start }}
+  AND STRUCT(t.dw_country_code, t.id) IN (
+    {%- for country in countries %}
+    SELECT AS STRUCT
+      '{{ country.code }}' AS dw_country_code,
+      CAST(d.id AS INT64) AS id
     FROM `teamdata-291012.{{ country.dataset }}.wp_jb_coupons` AS d
-    -- prune partitions des tables Airbyte
-    WHERE d._airbyte_extracted_at >= {{ window_start }}
+    WHERE
+      -- prune partitions source
+      d._airbyte_extracted_at >= {{ window_start }}
       -- soft delete détecté (STRING → TIMESTAMP)
-      AND SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', NULLIF(d._ab_cdc_deleted_at, '')) IS NOT NULL
+      AND SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', NULLIF(d._ab_cdc_deleted_at,'')) IS NOT NULL
+    {{ "UNION ALL" if not loop.last }}
+    {%- endfor %}
   );
-  {%- endset -%}
-  {%- do delete_hooks.append(delete_sql) -%}
-{%- endfor %}
+{%- endset -%}
 
-{{ config(post_hook=delete_hooks) }}
+{{ config(post_hook=[ to_delete_sql ]) }}
 
+{# ---------- BUILD : seulement les actifs, pruning + incrémental ---------- #}
 {%- for country in countries %}
 SELECT
   '{{ country.code }}' AS dw_country_code,
