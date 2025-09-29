@@ -2,7 +2,7 @@
   config(
     materialized='table',
     partition_by={
-      "field": "first_dete_campaign",
+      "field": "first_date_campaign",
       "data_type": "date"
     }
   )
