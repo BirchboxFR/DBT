@@ -1,3 +1,16 @@
+{{
+  config(
+    materialized='table',
+    partition_by={
+      "field": "startdate",
+      "data_type": "date"
+    },
+    cluster_by=["dw_country_code"]
+  )
+}}
+
+
+
 WITH campaign_message_stats AS (
  SELECT 
    c.*,
