@@ -29,7 +29,7 @@ campaign_tracking_stats AS (
    count(distinct case when t.type='open' then t.address end) as open_uniques,
    count(distinct case when t.type='click' then t.address end) as click_uniques,
    count( case when t.type='click' then t.address end) as clicks,
-   count(case when url like '%unsubscribe%' then 1 end ) as unsubscribes
+   count(distinct case when url like '%unsubscribe%' then t.address end ) as unsubscribes
  FROM cdpimagino.imaginoreplicatedcampaign c
  LEFT JOIN cdpimagino.imaginoreplicatedtracking t ON t.activationid = c.id
  WHERE DATE(t.eventDate) >= '2024-01-01'  -- Filtre partition
