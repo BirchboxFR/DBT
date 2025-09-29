@@ -4,8 +4,7 @@
     partition_by={
       "field": "startdate",
       "data_type": "date"
-    },
-    cluster_by=["dw_country_code"]
+    }
   )
 }}
 
