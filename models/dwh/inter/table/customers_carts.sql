@@ -1,4 +1,4 @@
-SELECT c.dw_country_code,cart_id,datetime(cd.created_at,'Europe/Paris') as date,concat(c.dw_country_code,'_',user_id) as user_key ,
+SELECT c.dw_country_code,cart_id,cd.created_at created_utc ,datetime(cd.created_at,'Europe/Paris') as date,concat(c.dw_country_code,'_',user_id) as user_key ,
 cd.product_id, c.status_id,p.brand_full_name,p.ht_sale_price,p.product_nice_name,p.thumb_url,pro.price,pro.attr_special_sub_price,pro.attr_special_price,
 case 
 
@@ -15,6 +15,6 @@ where 1=1
 
 group by all
 --having cart_age_hours < 1000
---having  user_key='FR_2817932'
+having  user_key='FR_2986148'
 order by date desc
 --LIMIT 1000
