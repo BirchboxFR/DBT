@@ -1,7 +1,7 @@
 SELECT c.dw_country_code,cart_id,c.created_at created_utc ,datetime(cd.created_at,'Europe/Paris') as date,concat(c.dw_country_code,'_',user_id) as user_key ,
 cd.product_id, c.status_id,p.brand_full_name,p.ht_sale_price,p.product_nice_name,p.thumb_url,pro.price,pro.attr_special_sub_price,pro.attr_special_price,
 current_datetime('Europe/Paris') as current_datetime,
-datetime(c.created_at) created_cart_datetime,
+timestamp(c.created_at,"Europe/Paris") created_cart_timestamp,
 case 
 
 when datetime_diff(current_datetime('Europe/Paris'), datetime(c.created_at), hour)>1  and c.status_id in (1,2) then true else false end as  is_abandonned,
@@ -17,6 +17,6 @@ where 1=1
 
 group by all
 --having cart_age_hours < 1000
---having  user_key='FR_626757'
+having  user_key='FR_626757'
 order by date desc
 --LIMIT 1000
