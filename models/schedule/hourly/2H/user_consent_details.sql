@@ -19,11 +19,11 @@ ConsentStatus AS (
   SELECT 
     user_id,
     dw_country_code,
-    max(case when t.name='email' and consent_status=1 then true else false end) AS consent_email,
-    max(case when t.name='sms' and consent_status=1 then true else false end) AS consent_sms,
-    max(case when t.name='whatsapp' and consent_status=1 then true else false end) AS consent_whatsapp,
-    max(case when t.name='partner_sharing' and consent_status=1 then true else false end) AS consent_partner_sharing,
-    max(case when t.name='beauty_profile' and consent_status=1 then true else false end) AS consent_beauty_profile
+    max(case when t.name='email' and consent_status then true else false end) AS consent_email,
+    max(case when t.name='sms' and consent_status then true else false end) AS consent_sms,
+    max(case when t.name='whatsapp' and consent_status then true else false end) AS consent_whatsapp,
+    max(case when t.name='partner_sharing' and consent_status then true else false end) AS consent_partner_sharing,
+    max(case when t.name='beauty_profile' and consent_status then true else false end) AS consent_beauty_profile
   FROM {{ ref('user_consent') }} c
   LEFT JOIN {{ ref('consent_topic') }} t USING (consent_topic_id, dw_country_code)
  
