@@ -91,7 +91,6 @@ models:
       custom:
       history_table:
         normalised:
-          +materialized: table
           +database: normalised-417010
         teamdata  :
           +materialized: table
