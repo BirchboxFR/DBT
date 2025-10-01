@@ -73,10 +73,10 @@ models:
 
         
     schedule:
-      +materialized: table  # Configuration pour le namespace schedule
+      +materialized: table
       daily:
         5am:
-          teamdata:           
+          teamdata:
           normalised:
             +database: normalised-417010
       hourly:
@@ -89,10 +89,10 @@ models:
           normalised:
             +database: normalised-417010
       custom:
-      history_table:
-        normalised:
-          +database: normalised-417010
-        teamdata  :
-          +materialized: table
+        history_table:
+          normalised:
+            +database: normalised-417010
+          teamdata:
+            +materialized: table
 
                    
