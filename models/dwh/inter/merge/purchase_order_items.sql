@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_inventory_items" -%}   
-{%- set target_table = "inter.inventory_items" -%}   
+{%- set source_table = "wp_jb_purchase_order_items" -%}   
+{%- set target_table = "inter.purchase_order_items" -%}   
 
 {{ config(
   materialized='incremental',
