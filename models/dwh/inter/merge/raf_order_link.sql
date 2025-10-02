@@ -38,27 +38,52 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
 {% endif %}
 
 {# ---------- BUILD ---------- #}
-{%- if is_incremental() -%}
-  {# INCRÉMENTAL : actifs + fenêtre pour le pruning source #}
-  {%- for country in countries %}
-  SELECT
-    '{{ country.code }}' AS dw_country_code,
-    CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
-  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
-  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
-    AND b._airbyte_extracted_at >= {{ window_start }}
-  {{ "UNION ALL" if not loop.last }}
-  {%- endfor %}
-{%- else -%}
-  {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
-  {%- for country in countries %}
-  SELECT
-    '{{ country.code }}' AS dw_country_code,
-    CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
-  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
-  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
-  {{ "UNION ALL" if not loop.last }}
-  {%- endfor %}
-{%- endif -%}
+WITH base_data AS (
+  {%- if is_incremental() -%}
+    {# INCRÉMENTAL : actifs + fenêtre pour le pruning source #}
+    {%- for country in countries %}
+    SELECT
+      '{{ country.code }}' AS dw_country_code,
+      CAST(b.id AS INT64) AS id,
+      CAST(b.order_id AS INT64) AS order_id,
+      b.* EXCEPT(id, order_id)
+    FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+    WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+      AND b._airbyte_extracted_at >= {{ window_start }}
+    {{ "UNION ALL" if not loop.last }}
+    {%- endfor %}
+  {%- else -%}
+    {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
+    {%- for country in countries %}
+    SELECT
+      '{{ country.code }}' AS dw_country_code,
+      CAST(b.id AS INT64) AS id,
+      CAST(b.order_id AS INT64) AS order_id,
+      b.* EXCEPT(id, order_id)
+    FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+    WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+    {{ "UNION ALL" if not loop.last }}
+    {%- endfor %}
+  {%- endif -%}
+),
+
+-- Déduplication : garde seulement le MAX(id) par (dw_country_code, order_id)
+max_ids AS (
+  SELECT 
+    dw_country_code,
+    order_id,
+    MAX(id) AS max_id
+  FROM base_data
+  GROUP BY dw_country_code, order_id
+)
+
+-- Sélection finale : uniquement les lignes avec MAX(id)
+SELECT 
+  base_data.dw_country_code,
+  base_data.id,
+  base_data.* EXCEPT(dw_country_code, id)
+FROM base_data
+INNER JOIN max_ids 
+  ON base_data.dw_country_code = max_ids.dw_country_code
+  AND base_data.order_id = max_ids.order_id
+  AND base_data.id = max_ids.max_id
