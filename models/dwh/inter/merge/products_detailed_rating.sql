@@ -33,7 +33,7 @@ WITH source_data AS (
         updated_at,
         'DE' as dw_country_code,
         `_ab_cdc_updated_at` as source_updated_at
-    FROM `teamdata-291012.bdd_prod_de.wp_jb_products_detailed_rating`
+    FROM `teamdata-291012.prod_de.wp_jb_products_detailed_rating`
     WHERE `_ab_cdc_deleted_at` IS NULL
     {% if is_incremental() %}
         AND `_ab_cdc_updated_at` >= (

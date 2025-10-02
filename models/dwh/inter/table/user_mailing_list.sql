@@ -16,7 +16,7 @@
 SELECT 
   '{{ country.code }}' as dw_country_code,
   b.*
-FROM `teamdata-291012.{{ country.dataset }}.wp_jb_user_mailing_list` b
+FROM `teamdata-291012.bdd_prod_fr.wp_jb_user_mailing_list` b
 
 {{ "UNION ALL" if not loop.last }}
 {%- endfor %}
