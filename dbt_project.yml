@@ -26,7 +26,7 @@ vars:
     - code: 'FR'
       dataset: 'bdd_prod_fr'
     - code: 'DE'
-      dataset: 'bdd_prod_de'
+      dataset: 'prod_de'
     - code: 'ES'
       dataset: 'bdd_prod_es'
     - code: 'IT'
