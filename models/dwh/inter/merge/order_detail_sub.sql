@@ -1,44 +1,64 @@
+{# ==========================
+   PARAMÈTRES À CHANGER
+   ========================== #}
+{%- set source_table = "wp_jb_order_detail_sub" -%}   
+{%- set target_table = "inter.order_detail_sub" -%}   
+
 {{ config(
-    partition_by={
-      "field": "_airbyte_extracted_at", 
-      "data_type": "timestamp",
-      "granularity": "day"
-    },
-    cluster_by=["dw_country_code", "id"]
+  materialized='incremental',
+  incremental_strategy='merge',
+  unique_key=['dw_country_code','id'],
+  partition_by={"field": "_airbyte_extracted_at", "data_type": "timestamp", "granularity": "day"},
+  cluster_by=["dw_country_code","id"]
 ) }}
 
 {%- set countries = var('survey_countries') -%}
+{%- set window_hours = 4 -%}
+{%- set window_start -%}
+TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
+{%- endset -%}
 
---- partie pays
-
-{%- set delete_hooks = [] -%}
-{%- for country in countries -%}
-  {%- set delete_sql -%}
-DELETE FROM `teamdata-291012.{{ country.dataset }}.wp_jb_order_detail_sub` 
-WHERE (id) IN (
-  SELECT CAST(JSON_EXTRACT_SCALAR(_airbyte_data, '$.id') AS INT64)
-  FROM `teamdata-291012.airbyte_internal.{{ country.dataset }}_raw__stream_wp_jb_order_detail_sub`
-  WHERE JSON_EXTRACT_SCALAR(_airbyte_data, '$._ab_cdc_deleted_at') IS NOT NULL
-    AND _airbyte_extracted_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 HOUR)
-)
-  {%- endset -%}
-  {%- do delete_hooks.append(delete_sql) -%}
-{%- endfor -%}
-
-{{ config(
-    post_hook=delete_hooks
-) }}
--- debug
-
-{%- for country in countries %}
-SELECT 
-  '{{ country.code }}' as dw_country_code,
-  b.*
-FROM `teamdata-291012.{{ country.dataset }}.wp_jb_order_detail_sub` b
-WHERE `_ab_cdc_deleted_at` IS NULL
+{# ---------- POST HOOK : uniquement si la table existe déjà (vrai incrémental) ---------- #}
 {% if is_incremental() %}
-  AND `_airbyte_extracted_at` >= timestamp_SUB(CURRENT_timestamp(), INTERVAL 2 HOUR)
+  {%- set to_delete_sql -%}
+  DELETE FROM `teamdata-291012.{{ target_table }}`
+  WHERE STRUCT(dw_country_code, id) IN (
+    {%- for country in countries -%}
+    SELECT AS STRUCT
+      '{{ country.code }}' AS dw_country_code,
+      CAST(d.id AS INT64) AS id
+    FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` d
+    WHERE d._airbyte_extracted_at >= {{ window_start }}  -- prune SOURCE uniquement
+      AND SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', NULLIF(d._ab_cdc_deleted_at,'')) IS NOT NULL
+    {{ "UNION ALL" if not loop.last }}
+    {%- endfor -%}
+  );
+  {%- endset -%}
+  {{ config(post_hook=[ to_delete_sql ]) }}
 {% endif %}
-{{ "UNION ALL" if not loop.last }}
-{%- endfor %}
 
+{# ---------- BUILD ---------- #}
+{%- if is_incremental() -%}
+  {# INCRÉMENTAL : actifs + fenêtre pour le pruning source #}
+  {%- for country in countries %}
+  SELECT
+    '{{ country.code }}' AS dw_country_code,
+    CAST(b.id AS INT64) AS id,
+    b.* EXCEPT(id)
+  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+    AND b._airbyte_extracted_at >= {{ window_start }}
+  {{ "UNION ALL" if not loop.last }}
+  {%- endfor %}
+{%- else -%}
+  {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
+  {%- for country in countries %}
+  SELECT
+    '{{ country.code }}' AS dw_country_code,
+    CAST(b.id AS INT64) AS id,
+    b.* EXCEPT(id)
+  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+  {{ "UNION ALL" if not loop.last }}
+  {%- endfor %}
+{%- endif -%}
