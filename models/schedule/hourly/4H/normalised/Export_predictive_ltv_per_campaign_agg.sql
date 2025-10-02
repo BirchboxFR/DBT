@@ -50,9 +50,9 @@ binned AS (
 
 SELECT
   campaign,
-  DATE_TRUNC(opening_date, MONTH) AS opening_month,     -- agrégation au mois d’ouverture
-  MIN(first_date_campaign)        AS first_date_campaign_ref,  -- info de référence
+  DATE_TRUNC(opening_date, MONTH) AS month,     -- agrégation au mois d’ouverture
+  MIN(first_date_campaign)        AS first_date_campaign,  -- info de référence
   AVG(predicted_ltv)              AS average_ltv                   
 FROM binned
-GROUP BY campaign, opening_month
-ORDER BY opening_month;
+group by all
+
