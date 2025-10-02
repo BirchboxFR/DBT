@@ -61,21 +61,17 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
 
   CASE WHEN CAST(shop AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(shop AS STRING) = 'MA==' THEN FALSE END AS shop,
-  CASE WHEN CAST(type AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(type AS STRING) = 'MA==' THEN FALSE END AS type,
+ type,
   delay,
   CASE WHEN CAST(store AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(store AS STRING) = 'MA==' THEN FALSE END AS store,
   title,
-  CASE WHEN CAST(franco AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(franco AS STRING) = 'MA==' THEN FALSE END AS franco,
+franco,
   CASE WHEN CAST(status AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(status AS STRING) = 'MA==' THEN FALSE END AS status,
   country,
-  CASE WHEN CAST(`default` AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(`default` AS STRING) = 'MA==' THEN FALSE END AS `default`,
-  CASE WHEN CAST(tracked AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(tracked AS STRING) = 'MA==' THEN FALSE END AS tracked,
+`default`,
+tracked,
 
   b2c_code,
   b2c_name,
@@ -87,16 +83,14 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   b2c_method,
   created_at,
   fee_franco,
-  CASE WHEN CAST(franco_sub AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(franco_sub AS STRING) = 'MA==' THEN FALSE END AS franco_sub,
+franco_sub,
   more_infos,
   updated_at,
   business_days,
   _ab_cdc_cursor,
   _ab_cdc_log_pos,
   _ab_cdc_log_file,
-  CASE WHEN CAST(b2c_method_daily AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(b2c_method_daily AS STRING) = 'MA==' THEN FALSE END AS b2c_method_daily,
+  b2c_method_daily,
   _ab_cdc_deleted_at,
   _ab_cdc_updated_at,
   shipup_carrier_code,
@@ -128,21 +122,17 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
 
   CASE WHEN CAST(shop AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(shop AS STRING) = 'MA==' THEN FALSE END AS shop,
-  CASE WHEN CAST(type AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(type AS STRING) = 'MA==' THEN FALSE END AS type,
+type,
   delay,
   CASE WHEN CAST(store AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(store AS STRING) = 'MA==' THEN FALSE END AS store,
   title,
-  CASE WHEN CAST(franco AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(franco AS STRING) = 'MA==' THEN FALSE END AS franco,
+franco,
   CASE WHEN CAST(status AS STRING) = 'MQ==' THEN TRUE 
        WHEN CAST(status AS STRING) = 'MA==' THEN FALSE END AS status,
   country,
-  CASE WHEN CAST(`default` AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(`default` AS STRING) = 'MA==' THEN FALSE END AS `default`,
-  CASE WHEN CAST(tracked AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(tracked AS STRING) = 'MA==' THEN FALSE END AS tracked,
+`default`,
+ tracked,
 
   b2c_code,
   b2c_name,
@@ -154,16 +144,14 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   b2c_method,
   created_at,
   fee_franco,
-  CASE WHEN CAST(franco_sub AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(franco_sub AS STRING) = 'MA==' THEN FALSE END AS franco_sub,
+franco_sub,
   more_infos,
   updated_at,
   business_days,
   _ab_cdc_cursor,
   _ab_cdc_log_pos,
   _ab_cdc_log_file,
-  CASE WHEN CAST(b2c_method_daily AS STRING) = 'MQ==' THEN TRUE 
-       WHEN CAST(b2c_method_daily AS STRING) = 'MA==' THEN FALSE END AS b2c_method_daily,
+b2c_method_daily,
   _ab_cdc_deleted_at,
   _ab_cdc_updated_at,
   shipup_carrier_code,
