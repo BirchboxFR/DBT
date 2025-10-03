@@ -22,11 +22,11 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
 {% if is_incremental() %}
   {%- set to_delete_sql -%}
   DELETE FROM `teamdata-291012.{{ target_table }}`
-  WHERE STRUCT(dw_country_code, id) IN (
+  WHERE STRUCT(dw_country_code, result_id) IN (
     {%- for country in countries -%}
     SELECT AS STRUCT
       '{{ country.code }}' AS dw_country_code,
-      CAST(d.id AS INT64) AS id
+      result_id
     FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` d
     WHERE d._airbyte_extracted_at >= {{ window_start }}  -- prune SOURCE uniquement
       AND SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', NULLIF(d._ab_cdc_deleted_at,'')) IS NOT NULL
@@ -43,8 +43,8 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   {%- for country in countries %}
   SELECT
     '{{ country.code }}' AS dw_country_code,
-    CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
+    CAST(b.result_id AS INT64) AS id,
+    b.* 
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
     AND b._airbyte_extracted_at >= {{ window_start }}
@@ -55,8 +55,8 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   {%- for country in countries %}
   SELECT
     '{{ country.code }}' AS dw_country_code,
-    CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
+    CAST(b.result_id AS INT64) AS id,
+    b.* 
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
   {{ "UNION ALL" if not loop.last }}
