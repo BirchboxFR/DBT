@@ -6,8 +6,7 @@
 {%- set countries = var('survey_countries') -%}
 {{ config(
 
-  partition_by={"field": "_airbyte_extracted_at", "data_type": "timestamp", "granularity": "day"},
-  cluster_by=["dw_country_code","id"]
+  partition_by={"field": "_airbyte_extracted_at", "data_type": "timestamp", "granularity": "day"}
 ) }}
 
   {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
