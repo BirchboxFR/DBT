@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_partial_cancelations" -%}   
-{%- set target_table = "inter.partial_cancelations" -%}   
+{%- set source_table = "wp_jb_reward_points_history_uses" -%}   
+{%- set target_table = "inter.reward_points_history_uses" -%}   
 
 {{ config(
   materialized='incremental',

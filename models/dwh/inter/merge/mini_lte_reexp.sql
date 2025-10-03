@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_partial_cancelations" -%}   
-{%- set target_table = "inter.partial_cancelations" -%}   
+{%- set source_table = "wp_jb_mini_lte_reexp" -%}   
+{%- set target_table = "inter.mini_lte_reexp" -%}   
 
 {{ config(
   materialized='incremental',

@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_partial_cancelations" -%}   
-{%- set target_table = "inter.partial_cancelations" -%}   
+{%- set source_table = "wp_jb_brands_correspondances" -%}   
+{%- set target_table = "inter.brands_correspondances" -%}   
 
 {{ config(
   materialized='incremental',
