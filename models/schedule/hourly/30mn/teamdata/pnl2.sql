@@ -797,9 +797,9 @@ UPPER(Channel) as type,
 UPPER(Product_type) as product_codification,
 SUM(cost) AS value
 FROM `teamdata-291012.funnel.funnel_data` d
-inner join inter.boxes b on d.date>=b.shipping_date and
- case when market='France' then 'FR' when market='Spain' then 'ES' when market ='Germany' then 'DE'end=b.dw_country_code
---where y=2025 and m=9
+inner join inter.boxes b on d.date>=b.shipping_date AND  d.date <= b.closing_date
+AND case when market='France' then 'FR' when market='Spain' then 'ES' when market ='Germany' then 'DE'end=b.dw_country_code
+WHERE b.date >= '2023-01-01'
 GROUP BY country, y, m, store, type, product_codification
 
 
