@@ -45,7 +45,7 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
     '{{ country.code }}' AS dw_country_code,
     CAST(b.id AS INT64) AS id,
     b.* EXCEPT(id),
-    CAST(NULL AS DATE) AS user_birthday ---- delete this line if the column exists in source
+    CAST(NULL AS DATE) AS user_birthday
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
     AND b._airbyte_extracted_at >= {{ window_start }}
