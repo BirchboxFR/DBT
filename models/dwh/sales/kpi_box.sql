@@ -37,7 +37,7 @@ boxes_reexp AS
   JOIN {{ ref('box_sales') }} bs ON bs.sub_id = ta.link_id AND ta.type = 'SUB' AND ta.dw_country_code = bs.dw_country_code
   WHERE 1=1
   GROUP BY bs.dw_country_code, bs.year, bs.month
-),
+),/*
 all_subs_for_churn AS 
 (
 
@@ -48,21 +48,19 @@ all_subs_for_churn AS
 --   WHERE bsbu.type NOT LIKE 'GIFT%'
   GROUP BY bsbu.dw_country_code, bsbu.box_month
 
-),
+),*/
 churn AS
 (
   
-SELECT bsbu.dw_country_code, bsbu.box_month , -- bsbu.sub_suspended_reason_lvl1,
-SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END) AS nb_churn,
-max(subs.nb_subs_lm)  AS nb_subs_last_month,
-SAFE_DIVIDE(SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END),max(subs.nb_subs_lm)) AS total_churn
-FROM {{ ref('box_sales_by_user_by_type') }} bsbu
-JOIN all_subs_for_churn AS subs ON subs.dw_country_code = bsbu.dw_country_code AND bsbu.box_month = subs.box_month
+SELECT bs.dw_country_code, FORMAT_DATE('%Y-%m', bs.next_month_date) AS box_month , 
+SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END) AS nb_churn,
+count(*)  AS nb_subs_last_month,
+SAFE_DIVIDE(SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END),count(*)) AS total_churn
+FROM {{ ref('box_sales') }}  as bs
 WHERE 1=1
-AND bsbu.diff < 0
-GROUP BY bsbu.dw_country_code, bsbu.box_month-- , bsbu.sub_suspended_reason_lvl1
+GROUP BY ALL
 
-),
+),/*
 all_subs_for_self_churn AS 
 (
 
@@ -74,34 +72,32 @@ all_subs_for_self_churn AS
    
   GROUP BY bsbu.dw_country_code, bsbu.box_month, sub_type
 
-),
+),*/
 self_churn AS
 (
- SELECT bsbu.dw_country_code, bsbu.box_month, bsbu.sub_suspended_reason_lvl1,
-SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END) AS nb_churn,
-max(subs.nb_subs_lm)  AS nb_subs_last_month,
-SAFE_DIVIDE(SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END),max(subs.nb_subs_lm)) AS total_churn
-FROM {{ ref('box_sales_by_user_by_type') }} bsbu
-JOIN all_subs_for_self_churn AS subs ON subs.dw_country_code = bsbu.dw_country_code AND bsbu.box_month = subs.box_month AND subs.sub_type = 'self'
+SELECT bs.dw_country_code, FORMAT_DATE('%Y-%m', bs.next_month_date) AS box_month, 
+SUM(CASE WHEN bs.next_month_status = 'CHURN' AND bs.sub_suspended_reason_lvl1 = 'self-willed' THEN 1 ELSE 0 END) AS churn_self_willed_nb,
+SUM(CASE WHEN bs.next_month_status = 'CHURN' AND bs.sub_suspended_reason_lvl1 = 'technical' THEN 1 ELSE 0 END) AS churn_self_tech_nb,
+SAFE_DIVIDE(SUM(CASE WHEN bs.next_month_status = 'CHURN' AND bs.sub_suspended_reason_lvl1 = 'self-willed' THEN 1 ELSE 0 END),count(*)) AS churn_rate_self_willed,
+SAFE_DIVIDE(SUM(CASE WHEN bs.next_month_status = 'CHURN' AND bs.sub_suspended_reason_lvl1 = 'technical' THEN 1 ELSE 0 END),count(*)) AS churn_rate_self_tech,
+count(*)  AS nb_self_subs_last_month,
+SAFE_DIVIDE(SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END),count(*)) AS total_churn
+FROM {{ ref('box_sales') }} as bs
 WHERE 1=1
-AND bsbu.diff < 0
-AND bsbu.type NOT LIKE 'GIFT%'
-GROUP BY bsbu.dw_country_code, bsbu.box_month , bsbu.sub_suspended_reason_lvl1
-
+AND bs.gift = 0
+GROUP BY ALL
 ),
 
 gift_churn AS
 (
- SELECT bsbu.dw_country_code, bsbu.box_month, bsbu.sub_suspended_reason_lvl1,
-SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END) AS nb_churn,
-max(subs.nb_subs_lm)  AS nb_subs_last_month,
-SAFE_DIVIDE(SUM(CASE WHEN bsbu.diff < 0 THEN -bsbu.diff ELSE 0 END),max(subs.nb_subs_lm)) AS total_churn
-FROM {{ ref('box_sales_by_user_by_type') }} bsbu
-JOIN all_subs_for_self_churn AS subs ON subs.dw_country_code = bsbu.dw_country_code AND bsbu.box_month = subs.box_month AND subs.sub_type <> 'self'
+SELECT bs.dw_country_code, FORMAT_DATE('%Y-%m', bs.next_month_date) AS box_month, 
+SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END) AS churn_gift_nb,
+count(*)  AS nb_gift_subs_last_month,
+SAFE_DIVIDE(SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END),count(*)) AS churn_rate_gift
+FROM {{ ref('box_sales') }} as bs
 WHERE 1=1
-AND bsbu.diff < 0
-AND bsbu.type LIKE 'GIFT%'
-GROUP BY bsbu.dw_country_code, bsbu.box_month , bsbu.sub_suspended_reason_lvl1
+AND bs.gift = 1
+GROUP BY ALL
 
 ),
 
@@ -136,14 +132,14 @@ boxes_reexp.value AS box_reexp,
 churn.nb_churn AS churn_nb_total,
 churn.nb_subs_last_month AS total_last_box,
 churn.total_churn AS churn_rate_total,
-self_suspended.nb_churn AS churn_self_willed_nb,
-self_suspended.nb_subs_last_month AS nb_self_subs_last_month,
-self_suspended.total_churn AS churn_rate_self_willed,
-SUM(self_tech.nb_churn) AS churn_self_tech_nb,
-SUM(self_tech.total_churn) AS churn_rate_self_tech,
-gift_churn.nb_churn AS churn_gift_nb,
-gift_churn.nb_subs_last_month AS nb_gift_subs_last_month,
-gift_churn.total_churn AS churn_rate_gift,
+self_churn.churn_self_willed_nb,
+self_churn.nb_self_subs_last_month,
+self_churn.churn_rate_self_willed,
+self_churn.churn_self_tech_nb,
+self_churn.churn_rate_self_tech,
+gift_churn.churn_gift_nb,
+gift_churn.nb_gift_subs_last_month,
+gift_churn.churn_rate_gift,
 acquis.new_new + acquis.reactivation + acquis.gift AS acquis_total,
 acquis.new_new AS acquis_new_new,
 acquis.reactivation AS acquis_reactivation,
@@ -158,28 +154,9 @@ LEFT JOIN boxes_forthcoming ON all_boxes.dw_country_code = boxes_forthcoming.dw_
 LEFT JOIN boxes_free ON all_boxes.dw_country_code = boxes_free.dw_country_code AND all_boxes.year = boxes_free.year AND all_boxes.month = boxes_free.month
 LEFT JOIN boxes_reexp ON all_boxes.dw_country_code = boxes_reexp.dw_country_code AND all_boxes.year = boxes_reexp.year AND all_boxes.month = boxes_reexp.month
 LEFT JOIN churn ON all_boxes.dw_country_code = churn.dw_country_code AND all_boxes.box_month = churn.box_month
-LEFT JOIN self_churn self_suspended ON all_boxes.dw_country_code = self_suspended.dw_country_code AND all_boxes.box_month = self_suspended.box_month AND self_suspended.sub_suspended_reason_lvl1 = 'self-willed'
-LEFT JOIN self_churn self_tech ON all_boxes.dw_country_code = self_tech.dw_country_code AND all_boxes.box_month = self_tech.box_month AND  self_tech.sub_suspended_reason_lvl1 = 'technical'
+LEFT JOIN self_churn  ON all_boxes.dw_country_code = self_churn.dw_country_code AND all_boxes.box_month = self_churn.box_month 
 LEFT JOIN gift_churn  ON all_boxes.dw_country_code = gift_churn.dw_country_code AND all_boxes.box_month = gift_churn.box_month 
 LEFT JOIN acquis ON acquis.dw_country_code = all_boxes.dw_country_code AND acquis.year = all_boxes.year AND acquis.month = all_boxes.month
 
 GROUP BY 
-all_boxes.dw_country_code, all_boxes.year, all_boxes.month, is_current, all_boxes.box_month, all_boxes.box_id, all_boxes.diff_current_box,
-box_total,
-box_shipped,
-box_forthcoming,
-box_free,
-box_reexp,
-churn.nb_churn,
-churn.nb_subs_last_month,
-churn.total_churn,
-self_suspended.nb_churn,
-self_suspended.nb_subs_last_month,
-self_suspended.total_churn,
-churn_gift_nb,
-nb_gift_subs_last_month,
-churn_rate_gift,
-acquis.new_new,
-acquis.reactivation,
-acquis.gift
-ORDER BY all_boxes.dw_country_code, all_boxes.year, all_boxes.month
+ALL
