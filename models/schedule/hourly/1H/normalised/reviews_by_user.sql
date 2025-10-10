@@ -1,10 +1,12 @@
-
 {{ config(
+    materialized='incremental',
+    unique_key=['review_id', 'product_name'],
     partition_by={
-    "field": "box_date",
+      "field": "box_date",
       "data_type": "date"
     },
-    cluster_by=['review_date', 'dw_country_code', 'brand_name']
+    cluster_by=['review_date', 'dw_country_code', 'brand_name'],
+    on_schema_change='sync_all_columns'
 ) }}
 
 
@@ -74,7 +76,11 @@ review_id
 ) subquery on r.id = subquery.review_id
 
 where (s.box_id <= (select id from `teamdata-291012.inter.boxes` where shipping_status_id=2 and dw_country_code='FR') or s.box_id is null)
-AND DATE(r.created_at) >= DATE_ADD(ifnull(DATE(bo.date),'2000-01-01'), INTERVAL -8 DAY) 
+AND DATE(r.created_at) >= DATE_ADD(ifnull(DATE(bo.date),'2000-01-01'), INTERVAL -8 DAY)
 
+{% if is_incremental() %}
+  -- En mode incrémental : ne prendre que les nouvelles reviews
+  AND DATE(r.created_at) >= DATE_SUB((SELECT MAX(review_date) FROM {{ this }}), INTERVAL 1 DAY)
+{% endif %}
 
 group by all
