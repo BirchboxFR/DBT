@@ -24,7 +24,7 @@ WITH ltv AS (
       DATE(SAFE_CAST(first_date_campaign AS TIMESTAMP))
     ) AS observation_date,
     predicted_ltv
-  FROM `normalised-417010.marketing.Export_predictive_ltv_per_campaign`
+  FROM {{ ref('Export_predictive_ltv_per_campaign') }}
   -- WHERE  Session_campaign___GA4__Google_Analytics = 'ACQUISITION BOX summer Choose ton sac CHURNEVER'
 ),
 
