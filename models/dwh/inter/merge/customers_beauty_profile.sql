@@ -16,6 +16,8 @@
 SELECT    concat(sq.dw_country_code,'_',cast(sr.user_id as string)) as ID,
           sq.dw_country_code,
        sr.user_id,
+         MAX(CASE WHEN sq.id = 81628 THEN sa.value END) AS children,
+         MAX(CASE WHEN sq.id = 81629 THEN sa.value END) AS sport,
          MAX(CASE WHEN sq.id = 46861 THEN sa.value END) AS beauty_budget,
          MAX(CASE WHEN sq.id = 62162 THEN sa.value END) AS skin_tone,
          MAX(CASE WHEN sq.id = 62163 THEN sa.value END) AS eyebrows,
