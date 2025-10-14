@@ -29,34 +29,39 @@ all_customers AS (
   GROUP BY dw_country_code, email
 ),
 user_data AS (
-  SELECT u.dw_country_code,
+  SELECT 
+         u.dw_country_code,
          u.user_email AS email,
          uuid,
+
+         -- optin global = email OR sms OR whatsapp
          CASE
-          WHEN uc_email.consent_status   OR uc_sms.consent_status  THEN TRUE
-          ELSE FALSE
-          END  AS optin,
-          CASE
-          WHEN uc_email.consent_status  THEN TRUE
-          ELSE FALSE
-          END  AS optin_email,
-          CASE
-          WHEN uc_email.consent_status  THEN TRUE
-          ELSE FALSE
-          END   AS optin_partner,
-         COALESCE(uc_sms.consent_status, false) AS optin_sms,
+           WHEN COALESCE(uc_email.consent_status, FALSE)
+             OR COALESCE(uc_sms.consent_status, FALSE)
+             OR COALESCE(uc_whatsapp.consent_status, FALSE)
+           THEN TRUE ELSE FALSE
+         END AS optin,
+
+         -- optins par canal
+         COALESCE(uc_email.consent_status, FALSE)     AS optin_email,
+         COALESCE(uc_partner.consent_status, FALSE)   AS optin_partner,
+         COALESCE(uc_sms.consent_status, FALSE)       AS optin_sms,
+         COALESCE(uc_whatsapp.consent_status, FALSE)  AS optin_whatsapp,
+
          u.id AS user_id,
          u.user_email LIKE '%@blissim%' OR u.user_email LIKE '%@birchbox%' AS is_admin,
          u.user_firstname AS firstname,
          u.user_lastname AS lastname,
-         CASE WHEN DATE(u.user_registered) >= '2011-01-01' THEN u.user_registered END AS registration_date, # If registration before 2011, consider problem in data
-         CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN u.user_birthday END AS birth_date,
-         CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) <= 100 AND DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) >= 12 THEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) END AS age
+         CASE WHEN DATE(u.user_registered) >= '2011-01-01' THEN u.user_registered END AS registration_date,
+         CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) BETWEEN 12 AND 100 THEN u.user_birthday END AS birth_date,
+         CASE WHEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) BETWEEN 12 AND 100 THEN DATE_DIFF(CURRENT_DATE(), DATE(u.user_birthday), YEAR) END AS age
   FROM inter.users u
-  LEFT JOIN {{ ref('user_consent') }} uc_email ON u.dw_country_code = uc_email.dw_country_code AND u.user_email= uc_email.user_email and uc_email.consent_topic_id=3
-  LEFT JOIN {{ ref('user_consent') }} uc_sms ON u.dw_country_code = uc_sms.dw_country_code AND u.user_email = uc_sms.user_email and uc_sms.consent_topic_id=4
-  LEFT JOIN {{ ref('user_consent') }} uc_partner ON u.dw_country_code = uc_partner.dw_country_code AND u.user_email = uc_partner.user_email and uc_partner.consent_topic_id=1
+  LEFT JOIN {{ ref('user_consent') }} uc_email    ON u.dw_country_code = uc_email.dw_country_code   AND u.user_email = uc_email.user_email    AND uc_email.consent_topic_id = 3
+  LEFT JOIN {{ ref('user_consent') }} uc_sms      ON u.dw_country_code = uc_sms.dw_country_code     AND u.user_email = uc_sms.user_email      AND uc_sms.consent_topic_id   = 4
+  LEFT JOIN {{ ref('user_consent') }} uc_partner  ON u.dw_country_code = uc_partner.dw_country_code AND u.user_email = uc_partner.user_email  AND uc_partner.consent_topic_id = 1
+  LEFT JOIN {{ ref('user_consent') }} uc_whatsapp ON u.dw_country_code = uc_whatsapp.dw_country_code AND u.user_email = uc_whatsapp.user_email AND uc_whatsapp.consent_topic_id = 5
 ),
+
 range_of_age_table AS (
   SELECT ud.dw_country_code,
          ud.user_id,
@@ -419,6 +424,7 @@ ac.dw_country_code,
         ucs.consent_status then true else false end as optin_email,
        ud.optin_partner,
        ud.optin_sms,
+       ud.optin_whatsapp,
        ud.is_admin,
        ud.firstname,
        ud.lastname,
