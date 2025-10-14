@@ -8,3 +8,5 @@ models:
         description: "statut de la box (LIVE, CHURN, NEVERSUB)"
       - name: dw_country_code
         description: "Code pays (FR, DE, etc.)"
+      - name : hair_type
+        description: "Type de cheveux (Crépus , Bouclés ou frisés ,Ondulés Raides)"
