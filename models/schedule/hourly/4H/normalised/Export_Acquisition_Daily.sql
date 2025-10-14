@@ -4,7 +4,8 @@
     materialized='table',
     partition_by={
       "field": "payment_date",
-      "data_type": "date"
+      "data_type": "date",
+       "granularity": "month"
     },
     cluster_by=["dw_country_code"]
   )
