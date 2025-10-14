@@ -302,14 +302,29 @@ shop_table AS (
 
 first_order AS 
 (
-  SELECT c.dw_country_code,c.user_id,count(distinct o.id)as nb_shop_orders, min(o.id) AS first_order, min(o.date) as first_order_date,min(bs.order_id) as first_box_order,
-    c.initial_box_date
-  FROM user.customers c
-  JOIN {{ ref('orders') }} o ON o.user_id = c.user_id AND o.dw_country_code = c.dw_country_code
-    LEFT JOIN sales.box_sales bs ON o.ID = bs.order_id AND o.dw_country_code = bs.dw_country_code
-  LEFT JOIN sales.shop_sales as ss ON ss.order_id = o.id AND ss.dw_country_code = o.dw_country_code
+  SELECT 
+    ac.dw_country_code,
+    ac.user_id,
+    COUNT(DISTINCT o.id) AS nb_shop_orders,
+    MIN(o.id)            AS first_order,
+    MIN(o.date)          AS first_order_date,
+    MIN(bs.order_id)     AS first_box_order,
+    ibt.initial_box_date
+  FROM all_customers ac
+  JOIN `teamdata-291012`.`inter`.`orders` o 
+    ON o.user_id = ac.user_id 
+   AND o.dw_country_code = ac.dw_country_code
+  LEFT JOIN sales.box_sales bs 
+    ON bs.order_id = o.id 
+   AND bs.dw_country_code = o.dw_country_code
+  LEFT JOIN sales.shop_sales ss 
+    ON ss.order_id = o.id 
+   AND ss.dw_country_code = o.dw_country_code
+  LEFT JOIN initial_box_table ibt 
+    ON ibt.dw_country_code = ac.dw_country_code 
+   AND ibt.user_id = ac.user_id
   WHERE o.status_id = 1
-  GROUP BY c.dw_country_code, c.user_id,initial_box_date
+  GROUP BY ac.dw_country_code, ac.user_id, ibt.initial_box_date
 ),
 first_order_type AS
 (
