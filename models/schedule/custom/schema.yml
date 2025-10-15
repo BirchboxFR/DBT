@@ -4,12 +4,520 @@ models:
   - name: customers
     description: "Table des customers par pays et notion de statut de client et profil beauté"
     columns:
-      - name: box_sub_status
-        description: "statut de la box (LIVE, CHURN, NEVERSUB)"
       - name: dw_country_code
-        description: "Code pays (FR, DE, etc.)"
-      - name : hair_type
-        description: "Type de cheveux (Crépus , Bouclés ou frisés ,Ondulés Raides)"
+        description: "Code pays normalisé (FR, DE, ES, IT, BE, PT)."
+      - name: email
+        description: "Email client normalisé en minuscules."
+      - name: slack_bot
+        description: "Champ pour l'envoi dans slack"
+      - name: user_id
+        description: "Identifiant numérique utilisateur (source inter.users)."
+      - name: user_key
+        description: "Clé utilisateur 'CC_userId' pour jointures cross-pays."
+      - name: uuid
+        description: "Champ métier issu du pipeline Blissim (description à préciser)."
+      - name: user_consent_optin_email
+        description: "Consentement ou optin email en complement de la table inter.user_consent"
+      - name: optin
+        description: "Champ optin global si au moins 1 optin est rempli"
+      - name: optin_ctc
+        description: "optin contactable. "
+      - name: optin_email
+        description: "optin email"
+      - name: optin_partner
+        description: "optin paternaire"
+      - name: optin_sms
+        description: "optin sms"
+      - name: optin_whatsapp
+        description: "optin whatsapp"
+      - name: is_admin
+        description: "Indicateur booléen si c'est kkn de chez blissim"
+      - name: firstname
+        description: "prénom"
+      - name: lastname
+        description: "nom"
+      - name: gender
+        description: "sexe"
+      - name: registration_date
+        description: "date d'inscription"
+      - name: birth_date
+        description: "date de naissance"
+      # Informations client de base
+      - name: age
+        description: "Âge du client en années."
+      - name: billing_phone
+        description: "Numéro de téléphone de facturation (format brut saisi par le client)."
+      - name: billing_phone_standardized
+        description: "Numéro de téléphone de facturation normalisé au format international."
+      - name: billing_region
+        description: "Région administrative de l'adresse de facturation."
+      - name: billing_country
+        description: "Pays de l'adresse de facturation (code ISO)."
+      - name: billing_zipcode
+        description: "Code postal de l'adresse de facturation."
+      - name: billing_city
+        description: "Ville de l'adresse de facturation."
+      - name: billing_adress
+        description: "Adresse complète de facturation (ligne d'adresse)."
+      - name: range_of_age
+        description: "Tranche d'âge du client (ex: 18-25, 26-35, 36-45, 46+)."
+      - name: last_login
+        description: "Date et heure de la dernière connexion du client sur la plateforme."
+      
+      # Comportement de navigation (LTM = Last Twelve Months)
+      - name: ltm_has_seen_box_page
+        description: "Indicateur booléen si le client a visité la page d'abonnement box sur les 12 derniers mois."
+      - name: ltm_has_seen_product_fullsize_page
+        description: "Indicateur booléen si le client a consulté une page produit taille normale sur les 12 derniers mois."
+      - name: ltm_has_seen_search_page
+        description: "Indicateur booléen si le client a utilisé la fonction recherche sur les 12 derniers mois."
+      - name: ltm_has_seen_checkout_page
+        description: "Indicateur booléen si le client a atteint la page de paiement sur les 12 derniers mois."
+      
+      # Engagement email
+      - name: open_email
+        description: "Nombre total d'emails ouverts par le client (depuis l'origine)."
+      - name: click
+        description: "Nombre total de clics effectués dans les emails (depuis l'origine)."
+      - name: date_last_open_email
+        description: "Date et heure de la dernière ouverture d'email (UTC)."
+      - name: date_last_click_email
+        description: "Date et heure du dernier clic dans un email (UTC)."
+      - name: ltm_client_email_rate
+        description: "Taux de délivrabilité des emails sur les 12 derniers mois."
+      - name: ltm_open_email_rate
+        description: "Taux d'ouverture des emails sur les 12 derniers mois (ouvertures/envois)."
+      - name: ltm_click_email
+        description: "Nombre de clics dans les emails sur les 12 derniers mois."
+      - name: ltm_open_email
+        description: "Nombre d'emails ouverts sur les 12 derniers mois."
+      - name: ltm_nb_email
+        description: "Nombre total d'emails envoyés au client sur les 12 derniers mois."
+      
+      # Profil beauté - Informations générales
+      - name: children
+        description: "Indicateur si le client a des enfants (booléen ou nombre)."
+      - name: sport
+        description: "si le client fait du sport"
+      - name: skin_complexion
+        description: "Teint de la peau (clair, moyen, foncé, etc.)."
+      - name: skin_type
+        description: "Type de peau (normale, sèche, grasse, mixte)."
+      - name: skin_redness
+        description: "Présence de rougeurs cutanées (booléen ou niveau d'intensité)."
+      - name: skin_sensitiveness
+        description: "Niveau de sensibilité de la peau."
+      - name: skin_aging
+        description: "Indicateur de préoccupation liée au vieillissement cutané."
+      - name: skin_acne
+        description: "Indicateur de problème d'acné."
+      - name: skin_dilated_pores
+        description: "Indicateur de pores dilatés."
+      - name: skin_dehydration
+        description: "Indicateur de déshydratation cutanée."
+      - name: skin_eye_bags
+        description: "Indicateur de cernes/poches sous les yeux."
+      - name: skin_dullness
+        description: "Indicateur de teint terne/manque d'éclat."
+      - name: skin_no_problem
+        description: "Indicateur d'absence de problème de peau spécifique."
+      - name: skin_spots
+        description: "Indicateur de taches pigmentaires."
+      - name: skin_wrinkles
+        description: "Indicateur de présence de rides/ridules."
+      
+      # Profil beauté - Corps
+      - name: body_stretch_marks
+        description: "Indicateur de présence de vergetures."
+      - name: body_cellulite
+        description: "Indicateur de présence de cellulite."
+      - name: body_lack_firmness
+        description: "Indicateur de manque de fermeté corporelle."
+      - name: body_dry_skin
+        description: "Indicateur de peau sèche sur le corps."
+      - name: body_water_retention
+        description: "Indicateur de rétention d'eau."
+      - name: body_no_problem
+        description: "Indicateur d'absence de problème corporel spécifique."
+      - name: body_spots
+        description: "Indicateur de taches sur le corps."
+      
+      # Profil beauté - Cheveux (caractéristiques)
+      - name: hair_color
+        description: "Couleur naturelle des cheveux."
+      - name: hair_dye
+        description: "Indicateur si le client colore ses cheveux."
+      - name: hair_thickness
+        description: "Épaisseur des cheveux (fins, normaux, épais)."
+      - name: hair_type
+        description: "Type de cheveux (raides, ondulés, bouclés, crépus)."
+      - name: hair_scalp
+        description: "Type de cuir chevelu (normal, gras, sec, sensible)."
+      - name: hair_style
+        description: "Style/longueur des cheveux."
+      - name: hair_damaged
+        description: "Indicateur de cheveux abîmés."
+      - name: hair_split_end
+        description: "Indicateur de présence de pointes fourchues."
+      - name: hair_greasy
+        description: "Indicateur de cheveux gras."
+      - name: hair_dried
+        description: "Indicateur de cheveux secs."
+      - name: hair_dandruff
+        description: "Indicateur de présence de pellicules."
+      - name: hair_no_problem
+        description: "Indicateur d'absence de problème capillaire spécifique."
+      - name: hair_falls
+        description: "Indicateur de chute de cheveux."
+      
+      # Profil beauté - Attentes cheveux
+      - name: want_hair_straight
+        description: "Souhait de cheveux lisses."
+      - name: want_hair_frizz_free
+        description: "Souhait de réduire les frisottis."
+      - name: want_hair_volume
+        description: "Souhait de volume capillaire."
+      - name: want_hair_shine
+        description: "Souhait de brillance des cheveux."
+      - name: want_hair_soft
+        description: "Souhait de cheveux doux."
+      - name: want_hair_less_thinning
+        description: "Souhait de réduire l'affinement des cheveux."
+      - name: want_hair_curly
+        description: "Souhait de cheveux bouclés/ondulés."
+      - name: want_hair_grow
+        description: "Souhait de favoriser la pousse des cheveux."
+      
+      # Profil beauté - Appareils capillaires
+      - name: use_hair_dryer
+        description: "Indicateur d'utilisation de sèche-cheveux."
+      - name: use_hair_straightener
+        description: "Indicateur d'utilisation de lisseur."
+      - name: use_hair_no_device
+        description: "Indicateur de non-utilisation d'appareils chauffants."
+      
+      # Routine et préférences
+      - name: beauty_routine
+        description: "Type de routine beauté du client (complète, minimaliste, intermédiaire)."
+      
+      # Préférences parfum
+      - name: fragrance_sweet
+        description: "Préférence pour les parfums sucrés."
+      - name: fragrance_floral
+        description: "Préférence pour les parfums floraux."
+      - name: fragrance_spicy
+        description: "Préférence pour les parfums épicés."
+      - name: fragrance_fruity
+        description: "Préférence pour les parfums fruités."
+      - name: fragrance_woody
+        description: "Préférence pour les parfums boisés."
+      
+      # Habitudes d'achat
+      - name: shop_perfumery
+        description: "achat en parfumerie."
+      - name: shop_brand_store
+        description: "achat en boutique de marque."
+      - name: shop_hairdressing
+        description: "achat en salon de coiffure."
+      - name: shop_pharmacy
+        description: "achat en pharmacie."
+      - name: shop_hypermarket
+        description: "achat en hypermarché."
+      - name: shop_bio_store
+        description: "achat en magasin bio."
+      - name: shop_internet
+        description: "achat sur Internet."
+      - name: beauty_budget
+        description: "Budget mensuel consacré aux produits de beauté."
+      
+      # Profil maquillage
+      - name: skin_tone
+        description: "Tonalité de la peau (chaude, froide, neutre)."
+      - name: eyebrows
+        description: "Préférence/routine pour les sourcils."
+      
+      # Intérêts produits - Soins
+      - name: face_care
+        description: "Intérêt pour les soins du visage."
+      - name: body_care
+        description: "Intérêt pour les soins du corps."
+      - name: bath_products
+        description: "Intérêt pour les produits de bain."
+      
+      # Intérêts produits - Maquillage
+      - name: makeup_general
+        description: "Intérêt général pour le maquillage."
+      - name: makeup_eyes
+        description: "Intérêt pour le maquillage des yeux."
+      - name: makeup_lips
+        description: "Intérêt pour le maquillage des lèvres."
+      - name: makeup_eyebrows
+        description: "Intérêt pour le maquillage des sourcils."
+      - name: makeup_complexion
+        description: "Intérêt pour le maquillage du teint."
+      - name: makeup_nails
+        description: "Intérêt pour les produits pour ongles."
+      
+      # Intérêts produits - Cheveux
+      - name: hair_shampoo
+        description: "Intérêt pour les shampoings."
+      - name: hair_conditioner
+        description: "Intérêt pour les après-shampoings."
+      - name: hair_mask
+        description: "Intérêt pour les masques capillaires."
+      - name: hair_styling
+        description: "Intérêt pour les produits coiffants."
+      
+      # Intérêts produits - Autres
+      - name: accessories
+        description: "Intérêt pour les accessoires beauté."
+      - name: food_supplements
+        description: "Intérêt pour les compléments alimentaires."
+      - name: green_natural_products
+        description: "Intérêt pour les produits naturels/bio."
+      - name: slimming_products
+        description: "Intérêt pour les produits minceur."
+      - name: perfumes
+        description: "Intérêt pour les parfums."
+      - name: self_taining
+        description: "Intérêt pour les produits autobronzants."
+      - name: solid_cosmetics
+        description: "Intérêt pour les cosmétiques solides."
+      - name: hair_products
+        description: "Intérêt général pour les produits capillaires."
+      
+      # Préférences découverte
+      - name: discovery_glitter
+        description: "Intérêt pour les paillettes/produits brillants."
+      - name: discovery_liners_mascaras
+        description: "Intérêt pour les eye-liners et mascaras."
+      - name: discovery_colored_lipstick
+        description: "Intérêt pour les rouges à lèvres colorés."
+      - name: discovery_colored_nail_varnish
+        description: "Intérêt pour les vernis à ongles colorés."
+      - name: discovery_colored_nude_makeup
+        description: "Intérêt pour le maquillage nude/naturel."
+      - name: discovery_makeup
+        description: "Intérêt pour la découverte de nouveaux maquillages."
+      
+      # Abonnement Box - Statut
+      - name: box_sub_status
+        description: "Statut actuel de l'abonnement box (SUB,CHURN ou NEVERSUB)."
+      - name: box_sub_status_before
+        description: "Statut d'abonnement précédent (pour suivi des transitions)."
+      - name: initial_sub_type
+        description: "Type d'abonnement initial (mensuel, trimestriel, annuel)."
+      - name: initial_is_committed
+        description: "Indicateur si l'abonnement initial était avec engagement."
+      - name: initial_box_year
+        description: "Année de la première box souscrite."
+      - name: initial_box_month
+        description: "Mois de la première box souscrite."
+      - name: initial_box_date
+        description: "Date complète de souscription de la première box (UTC)."
+      - name: initial_coupon_code
+        description: "Code promo utilisé lors de la souscription initiale."
+      - name: initial_coupon_code_id
+        description: "Identifiant unique du code promo initial."
+      - name: initial_coupon_type
+        description: "Type de code promo initial (pourcentage, montant fixe, offre spéciale)."
+      
+      # Abonnement Box - État actuel
+      - name: current_coupon_code
+        description: "Code promo actuellement actif sur l'abonnement."
+      - name: current_coupon_code_id
+        description: "Identifiant unique du code promo actuel."
+      - name: current_sub_type
+        description: "Type d'abonnement actuel (mensuel, trimestriel, annuel)."
+      - name: current_is_initial
+        description: "Indicateur si l'abonnement actuel est toujours l'abonnement initial."
+      - name: current_is_committed
+        description: "Indicateur si l'abonnement actuel est avec engagement."
+      - name: current_box_paid
+        description: "Indicateur si la box du mois en cours est payée."
+      - name: current_box_forthcoming
+        description: "Indicateur si la box du mois en cours est à venir/en préparation."
+      - name: next_box_paid
+        description: "Indicateur si la prochaine box est déjà payée."
+      - name: next_box_forthcoming
+        description: "Indicateur si la prochaine box est programmée."
+      - name: next_box_active
+        description: "Indicateur si le statut sera actif pour la prochaine box."
+      - name: next_box_churn
+        description: "Indicateur de risque de churn pour la prochaine box."
+      - name: paid_prev_box
+        description: "Indicateur si la box du mois précédent a été payée."
+      - name: paid_prev_prev_box
+        description: "Indicateur si la box d'il y a deux mois a été payée."
+      
+      # Abonnement Box - Historique
+      - name: last_box_paid_year
+        description: "Année de la dernière box payée."
+      - name: last_box_paid_month
+        description: "Mois de la dernière box payée."
+      - name: last_box_paid_date
+        description: "Date complète du paiement de la dernière box (UTC)."
+      - name: last_box_acquis_year
+        description: "Année de la dernière box acquise/reçue."
+      - name: last_box_acquis_month
+        description: "Mois de la dernière box acquise/reçue."
+      - name: last_box_acquis_date
+        description: "Date complète de la dernière box acquise (UTC)."
+      - name: array_boxes
+        description: "Liste/tableau de toutes les boxes reçues par le client."
+      - name: nb_box_paid
+        description: "Nombre total de boxes payées depuis l'origine."
+      - name: last_consecutive_box_paid
+        description: "Nombre de boxes consécutives payées (streak actuel)."
+      - name: ltm_nb_box_paid
+        description: "Nombre de boxes payées sur les 12 derniers mois."
+      - name: ltm_last_consecutive_box_paid
+        description: "Nombre de boxes consécutives payées sur les 12 derniers mois."
+      
+      # Abonnement Box - Financier
+      - name: box_net_revenue
+        description: "Revenu net généré par les abonnements box (hors remises et retours)."
+      - name: box_average_discount
+        description: "Pourcentage moyen de réduction appliqué sur les abonnements box."
+      - name: box_gross_profit
+        description: "Marge brute réalisée sur les abonnements box."
+      
+      # Abonnement Box - Comportement
+      - name: is_ever_gifted
+        description: "Indicateur si le client a déjà reçu une box en cadeau."
+      - name: is_ever_self
+        description: "Indicateur si le client a déjà souscrit une box pour lui-même."
+      - name: is_raffed
+        description: "Indicateur si le client a été parrainé."
+      - name: is_raffer
+        description: "Indicateur si le client a parrainé d'autres clients."
+      - name: chose_ever
+        description: "Indicateur si le client a déjà utilisé l'option de personnalisation de box."
+      - name: choose_participation_rate
+        description: "Taux de participation au choix de produits (depuis l'origine)."
+      - name: ltm_choose_participation_rate
+        description: "Taux de participation au choix de produits sur les 12 derniers mois."
+      
+      # Abonnement Box - Satisfaction
+      - name: has_answered_box_survey
+        description: "Indicateur si le client a déjà répondu à un questionnaire satisfaction box."
+      - name: ltm_has_answered_box_survey
+        description: "Indicateur si le client a répondu à un questionnaire box sur les 12 derniers mois."
+      - name: rate_answering_box_survey
+        description: "Taux de réponse aux questionnaires satisfaction box (depuis l'origine)."
+      - name: ltm_rate_answering_box_survey
+        description: "Taux de réponse aux questionnaires satisfaction box sur les 12 derniers mois."
+      
+      # Shop - Typologie client
+      - name: is_shopper
+        description: "Indicateur si le client a déjà effectué un achat shop (hors abonnement)."
+      - name: is_shopper_fullsize
+        description: "Indicateur si le client a acheté des produits taille normale."
+      - name: is_shopper_exclusives
+        description: "Indicateur si le client a acheté des produits exclusifs."
+      - name: is_shopper_lte
+        description: "Indicateur si le client a acheté des offres limitées (Limited Time Edition)."
+      - name: is_shopper_splendist
+        description: "Indicateur si le client a acheté sur la plateforme Splendist."
+      - name: is_shopper_calendar
+        description: "Indicateur si le client a acheté un calendrier de l'avent."
+      
+      # Shop - Dates premières commandes
+      - name: first_shop_order_date
+        description: "Date de la première commande shop tous types confondus (UTC)."
+      - name: first_fullsize_order_date
+        description: "Date de la première commande de produit taille normale (UTC)."
+      - name: first_exclusive_order_date
+        description: "Date de la première commande de produit exclusif (UTC)."
+      - name: first_splendist_order_date
+        description: "Date de la première commande Splendist (UTC)."
+      - name: first_calendar_order_date
+        description: "Date de la première commande de calendrier (UTC)."
+      
+      # Shop - Dates dernières commandes
+      - name: last_shop_order_date
+        description: "Date de la dernière commande shop tous types confondus (UTC)."
+      - name: last_fullsize_order_date
+        description: "Date de la dernière commande de produit taille normale (UTC)."
+      - name: last_exclusive_order_date
+        description: "Date de la dernière commande de produit exclusif (UTC)."
+      
+      # Shop - Première commande globale
+      - name: first_order
+        description: "Identifiant ou détails de la toute première commande du client."
+      - name: first_order_type
+        description: "Type de la première commande (box, shop, fullsize, etc.)."
+      - name: first_order_date
+        description: "Date de la toute première commande du client, tous types confondus (UTC)."
+      - name: first_order_source
+        description: "Source d'acquisition de la première commande (SEA, SEO, direct, social, etc.)."
+      - name: first_order_campaign
+        description: "Campagne marketing associée à la première commande."
+      - name: first_order_support
+        description: "Support publicitaire de la première commande (display, email, social, etc.)."
+      - name: first_order_device
+        description: "Type d'appareil utilisé pour la première commande (mobile, desktop, tablet)."
+      
+      # Shop - Métriques
+      - name: nb_shop_orders
+        description: "Nombre total de commandes shop effectuées (hors abonnement box)."
+      
+      # Programme fidélité
+      - name: balance
+        description: "Solde actuel de points de fidélité du client."
+      - name: points_soon_to_expire
+        description: "Nombre de points de fidélité arrivant bientôt à expiration."
+      
+      # Shop - Segmentation
+      - name: group_shop_orders
+        description: "Groupe/segment basé sur le comportement d'achat shop (VIP, régulier, occasionnel, etc.)."
+      
+      # LTV (Lifetime Value) - Box
+      - name: ltv_box_year1
+        description: "LTV box réalisée sur la 1ère année d'abonnement."
+      - name: ltv_box_tmp_year1
+        description: "LTV box temporaire/projetée pour la 1ère année (en cours)."
+      - name: ltv_box_year2
+        description: "LTV box réalisée sur la 2ème année d'abonnement."
+      - name: ltv_box_year3
+        description: "LTV box réalisée sur la 3ème année d'abonnement."
+      - name: ltv_box_year4
+        description: "LTV box réalisée sur la 4ème année d'abonnement."
+      - name: ltv_Box_ever
+        description: "LTV box totale depuis l'origine (toutes années confondues)."
+      
+      # LTV (Lifetime Value) - Shop
+      - name: ltv_shop_ever
+        description: "LTV shop totale depuis l'origine (toutes années confondues)."
+      - name: ltv_shop_year1
+        description: "LTV shop réalisée sur la 1ère année."
+      - name: ltv_shop_tmp_year1
+        description: "LTV shop temporaire/projetée pour la 1ère année (en cours)."
+      - name: ltv_shop_year2
+        description: "LTV shop réalisée sur la 2ème année."
+      - name: ltv_shop_year3
+        description: "LTV shop réalisée sur la 3ème année."
+      - name: ltv_shop_year4
+        description: "LTV shop réalisée sur la 4ème année."
+      
+      # LTV (Lifetime Value) - Totale
+      - name: ltv_ever
+        description: "LTV totale (box + shop) depuis l'origine."
+      - name: ltv_year1
+        description: "LTV totale (box + shop) réalisée sur la 1ère année."
+      - name: ltv_tmp_year1
+        description: "LTV totale (box + shop) temporaire/projetée pour la 1ère année (en cours)."
+      - name: ltv_year2
+        description: "LTV totale (box + shop) réalisée sur la 2ème année."
+      - name: ltv_year3
+        description: "LTV totale (box + shop) réalisée sur la 3ème année."
+      - name: ltv_year4
+        description: "LTV totale (box + shop) réalisée sur la 4ème année."
+      
+      # LTV prédictive
+      - name: predicted_ltv_year1
+        description: "LTV prédite sur 12 mois calculée par modèle de machine learning (BQML/Vertex AI)."
+
   - name: Choose_by_user
     description: "Table des choix effectués par les utilisateurs pour leurs box du mois. une ligne par user par mois. jointure possible user_key avec user.csutomers "
     columns:
