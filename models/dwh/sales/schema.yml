@@ -6,135 +6,182 @@ models:
       Table des ventes d'abonnements box. Une ligne = un abonné pour un mois donné.
       Cette table contient l'historique complet des abonnements avec les informations de paiement,
       statut d'acquisition, raisons de churn et métriques de performance.
-      Clé de jointure: user_key (avec user.customers et autres tables user)
+      Clé de jointure : user_key (avec user.customers et autres tables user).
     columns:
       - name: user_key
-        description: Clé unique de l'utilisateur au format pays/user_id (ex FR_12345). Utilisé pour les jointures avec les tables user
+        description: "Clé unique de l'utilisateur au format pays/user_id (ex : FR_12345). Utilisée pour les jointures avec les tables user."
       - name: dw_country_code
-        description: Code pays de l'utilisateur (FR, DE, ES, IT, BE, PT, etc.)
+        description: "Code pays de l'utilisateur (FR, DE, ES, IT, BE, PT, etc.)."
       - name: sub_id
-        description: Identifiant unique de l'abonnement
+        description: "Identifiant unique de l'abonnement."
       - name: order_detail_id
-        description: Identifiant du détail de commande
+        description: "Identifiant du détail de commande."
       - name: order_id
-        description: Identifiant de la commande
+        description: "Identifiant de la commande."
       - name: user_id
-        description: Identifiant numérique de l'utilisateur
+        description: "Identifiant numérique de l'utilisateur."
       - name: box_id
-        description: Identifiant de la box reçue ce mois-ci
+        description: "Identifiant de la box reçue ce mois-ci."
       - name: is_current
-        description: Booléen indiquant si c'est la box du mois en cours. Utiliser ce champ pour les analyses "en ce moment" ou "actuellement"
+        description: "Booléen indiquant si c'est la box du mois en cours."
       - name: diff_current_box
-        description: Différence entre la box actuelle et la box du mois en cours. Nombre de box depuis la première. Filtrer sur BETWEEN -24 AND 1 pour les analyses de churn
+        description: "Différence entre la box actuelle et la box du mois en cours. Filtrer sur BETWEEN -24 AND 1 pour les analyses de churn."
       - name: coffret_id
-        description: Identifiant du coffret (variation de produits) reçu par l'abonné. Il peut y avoir jusqu'à 70 coffrets différents par mois
+        description: "Identifiant du coffret (variation de produits) reçu par l'abonné."
       - name: date
-        description: Date de la box au format DATE (année-mois-01). Correspond au mois de l'abonnement
+        description: "Date de la box au format DATE (année-mois-01). Correspond au mois de l'abonnement."
       - name: reexp
-        description: Booléen indiquant si la box a été réexpédiée
+        description: "Booléen indiquant si la box a été réexpédiée."
       - name: mini_reexp
-        description: Booléen indiquant si une mini réexpédition a eu lieu
+        description: "Booléen indiquant si une mini réexpédition a eu lieu."
       - name: day_in_cycle
-        description: Jour dans le cycle de paiement (1-31). Utiliser pour les analyses de timing de paiement
+        description: "Jour dans le cycle de paiement (1-31)."
       - name: payment_date
-        description: Date réelle du paiement (jour précis). On paie le mois d'avant - pour les abos monthly le 14 du mois d'avant, sinon pendant le mois
+        description: "Date réelle du paiement (jour précis)."
       - name: nb_days_since_opening
-        description: Nombre de jours depuis l'ouverture du cycle de paiement
+        description: "Nombre de jours depuis l'ouverture du cycle de paiement."
       - name: nb_days_next_cycle
-        description: Nombre de jours jusqu'au prochain cycle
+        description: "Nombre de jours jusqu'au prochain cycle."
       - name: month
-        description: Mois de la box (1-12)
+        description: "Mois de la box (1-12)."
       - name: year
-        description: Année de la box
+        description: "Année de la box."
       - name: coupon_code_id
-        description: Identifiant du code promo utilisé
+        description: "Identifiant du code promo utilisé."
       - name: coupon_code
-        description: Code promo utilisé pour cette order_DEtail donc le coupon_code va se répéter pour les box futur
+        description: "Code promo utilisé pour cette order_detail. Se répète pour les box futures."
       - name: sub_offer_id
-        description: Identifiant de l'offre d'abonnement
+        description: "Identifiant de l'offre d'abonnement."
       - name: sub_offer_code
-        description: Code de l'offre d'abonnement
+        description: "Code de l'offre d'abonnement."
       - name: coupon
-        description: Coupon appliqué uniquement sur ce mois. différent de coupon_code qui sera répété tout le long de l'abonnement
+        description: "Coupon appliqué uniquement sur ce mois (différent de coupon_code)."
       - name: reactivated_date
-        description: Date et heure de réactivation de l'abonnement (si applicable)
+        description: "Date et heure de réactivation de l'abonnement (si applicable)."
       - name: shipping_mode
-        description: Mode de livraison pour le detail jointer avec la table shipping_modes.
+        description: "Mode de livraison (jointure avec la table shipping_modes)."
       - name: self
-        description: Indicateur de self 
+        description: "Indicateur de self."
       - name: gift
-        description: Indicateur d'abonnement cadeau (1 = cadeau, 0 = abonnement normal)
+        description: "Indicateur d'abonnement cadeau (1 = cadeau, 0 = normal)."
       - name: yearly
-        description: Indicateur d'abonnement annuel actuel (1 = annuel, 0 = mensuel)
+        description: "Indicateur d'abonnement annuel actuel (1 = annuel, 0 = mensuel)."
       - name: old_yearly
-        description: Indicateur d'ancien abonnement annuel
+        description: "Indicateur d'ancien abonnement annuel."
       - name: dquantity
-        description: Quantité d'engagement (nombre de mois)
+        description: "Quantité d'engagement (nombre de mois)."
       - name: cannot_suspend
-        description: Indicateur si l'abonnement ne peut pas être suspendu (1 = engagé, 0 = peut suspendre)
+        description: "Indicateur si l'abonnement ne peut pas être suspendu (1 = engagé, 0 = suspendable)."
       - name: total_product
-        description: Montant total des produits HT
+        description: "Montant total des produits HT."
       - name: store_code
-        description: Code du store (FR, DE, ES, Store = la boutique rue montmartre)
+        description: "Code du store (FR, DE, ES, etc.)."
       - name: vat_rate
-        description: Taux de TVA appliqué (en pourcentage, ex 20.0)
+        description: "Taux de TVA appliqué (ex : 20.0)."
       - name: total_discount
-        description: Montant total des réductions HT
+        description: "Montant total des réductions HT."
       - name: shipping_country
-        description: Pays de livraison (code ISO)
+        description: "Pays de livraison (code ISO)."
       - name: total_shipping
-        description: Montant total de la livraison HT
+        description: "Montant total de la livraison HT."
       - name: payment_status
-        description: Statut du paiement (paid, forthcoming). Filtrer sur 'paid' pour les paiements effectués, forthocming = payments a venir. différencier
+        description: "Statut du paiement (paid, forthcoming)."
       - name: sub_payment_status
-        description: Libellé du statut de paiement de l'abonnement
+        description: "Libellé du statut de paiement de l'abonnement."
       - name: sub_payment_status_id
-        description: Identifiant du statut de paiement de l'abonnement
+        description: "Identifiant du statut de paiement de l'abonnement."
       - name: sub_start_box
-        description: ID de la première box reçue par l'abonné 
+        description: "ID de la première box reçue par l'abonné."
       - name: raffed
-        description: Indicateur si l'abonné a été parrainé (1 = parrainé, 0 = non parrainé)
+        description: "Indicateur si l'abonné a été parrainé (1 = oui, 0 = non)."
       - name: raf_parent_id
-        description: Identifiant de l'utilisateur parrain (si parrainé)
+        description: "Identifiant du parrain (si applicable)."
       - name: shipping_firstname
-        description: Prénom de livraison
+        description: "Prénom de livraison."
       - name: shipping_lastname
-        description: Nom de livraison
+        description: "Nom de livraison."
       - name: gift_card_id
-        description: Identifiant de la carte cadeau utilisée
+        description: "Identifiant de la carte cadeau utilisée."
       - name: discount_type
-        description: Type de réduction appliquée (Coupon, Other, etc.)
+        description: "Type de réduction appliquée (Coupon, Other, etc.)."
       - name: coupon_engagement
-        description: Type d'engagement du coupon (engaged, not engaged)
+        description: "Type d'engagement du coupon (engaged, not engaged)."
       - name: coop
-        description: Montant de couts produits
+        description: "Montant des coûts produits."
       - name: assembly_cost
-        description: Coût d'assemblage de la box
+        description: "Coût d'assemblage de la box."
       - name: pack_cost
-        description: Coût d'emballage
+        description: "Coût d'emballage."
       - name: print_cost
-        description: Coût d'impression
+        description: "Coût d'impression."
       - name: consumable_cost
-        description: Coût des consommables
+        description: "Coût des consommables."
       - name: shipping_cost
-        description: Coût de livraison
+        description: "Coût de livraison."
       - name: next_month_date
-        description: Date du mois suivant (format DATE)
+        description: "Date du mois suivant (format DATE)."
       - name: next_payment_date
-        description: Date du prochain paiement prévu
+        description: "Date du prochain paiement prévu."
       - name: last_payment_date
-        description: Date du dernier paiement effectué
+        description: "Date du dernier paiement effectué."
       - name: last_committed_box
-        description: Dernière box sous engagement
+        description: "Dernière box sous engagement."
       - name: is_mono
-        description: Booléen indiquant si c'est une box mono-marque
+        description: "Booléen indiquant si c'est une box mono-marque."
       - name: mono_brand
-        description: Nom de la marque si box mono-marque
+        description: "Nom de la marque si box mono-marque."
       - name: next_month_id
-        description: ID de la box du mois suivant
+        description: "ID de la box du mois suivant."
       - name: last_box_received_date
-        description: Date de réception de la dernière box
+        description: "Date de réception de la dernière box."
       - name: next_month_status
+        description: "Statut de la prochaine box (LIVE ou CHURN)."
+      - name: next_month_committment
+        description: "Indique l'engagement du client pour le mois suivant."
+      - name: is_new_sequence
+        description: "Indique si l'abonnement correspond à une nouvelle séquence."
+      - name: total_boxes_so_far
+        description: "Nombre total de box reçues jusqu'à présent."
+      - name: sub_suspended_reason_lvl1
+        description: "Raison principale de suspension (technical, gift end ou self-willed)."
+      - name: sub_suspended_reason_lvl2
+        description: "Raison secondaire de suspension (paused, suspended, gift end, breakage, expired card, etc.)."
+      - name: sub_suspended_reason_lvl3
+        description: "Raison tertiaire de suspension (jointure avec sub_suspended_reasons)."
+      - name: box_global_grade
+        description: "Note globale attribuée à la box."
+      - name: coupon_type
+        description: "Type de coupon appliqué à la commande."
+      - name: acquis_status_lvl1
+        description: "Niveau 1 du statut d'acquisition (LIVE, ACQUISITION)."
+      - name: acquis_status_lvl2
+        description: "Niveau 2 du statut d'acquisition (LIVE, NEWNEW, REACTIVATION, GIFT, etc.)."
+      - name: committed
+        description: "Indique si le client est engagé à recevoir une box."
+      - name: gws_costs
+        description: "Coûts liés aux produits GWS."
+      - name: gross_revenue
+        description: "Revenu brut généré."
+      - name: vat_on_gross_revenue
+        description: "TVA appliquée sur le revenu brut."
+      - name: discount
+        description: "Montant des réductions appliquées."
+      - name: vat_on_discount
+        description: "TVA appliquée sur la réduction."
+      - name: net_revenue
+        description: "Revenu net après réductions."
+      - name: shipping
+        description: "Coût de livraison associé à la box."
+      - name: vat_on_shipping
+        description: "TVA appliquée sur les frais de livraison."
+      - name: gross_profit
+        description: "Marge brute après coûts et remises."
+      - name: sequence_group
+        description: "Groupe de séquence de l'abonnement."
+      - name: committment_status
+        description: "Statut de l'engagement du client."
+      - name: consecutive_boxes
+        description: "Nombre de box consécutives reçues sans interruption."
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -146,7 +193,7 @@ models:
             name: "Doublons box_sales"
 
   - name: shop_sales
-    description: "Table des ventes shop"
+    description: "Table des ventes du shop (hors abonnement)."
     columns:
       - name: dw_country_code
-        description: "Code pays pour les ventes shop"
+        description: "Code pays pour les ventes shop."
