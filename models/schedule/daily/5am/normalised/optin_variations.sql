@@ -93,4 +93,3 @@ final AS (
 
 SELECT *
 FROM final
-ORDER BY dw_country_code, month;
