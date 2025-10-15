@@ -1,3 +1,13 @@
+   
+   {{ config(
+    materialized='table',
+    description='able des customers par pays et notion de statut de client et profil beauté',
+    persist_docs={"relation": true, "columns": true},
+    on_schema_change='ignore' 
+
+) }}
+
+   
    SELECT cu.user_id,
    concat(cu.dw_country_code,'_',cu.user_id)as user_key,
     box_id, cc.choice_name, cu.dw_country_code, cu.status_id, cu.created_at as choice_date, cf.name as form_name,cf.id as form_id,
