@@ -42,3 +42,71 @@ models:
         
       - name: choice_id
         description: "Identifiant unique du choix effectué"
+  - name: user_compo
+    description: "Table de composition des box par utilisateur. Une ligne représente un composant (produit) reçu par un utilisateur dans une box donnée. Permet d'analyser le contenu détaillé des box et les produits reçus par chaque abonné."
+    columns:
+      - name: user_key
+        description: "Clé unique de l'utilisateur au format pays/user_id (ex: FR/12345). Utilisé pour les jointures avec d'autres tables user"
+
+      - name: dw_country_code
+        description: "Code pays de l'utilisateur (FR, DE, ES, etc.)"
+
+      - name: sub_id
+        description: "Identifiant unique de l'abonnement"
+
+      - name: user_id
+        description: "Identifiant numérique de l'utilisateur dans le système"
+
+      - name: box_id
+        description: "Identifiant de la box reçue. Peut être jointé avec inter.boxes pour obtenir la date et autres infos"
+
+      - name: coffret_id
+        description: "Identifiant du coffret contenant le produit"
+
+      - name: kit_sku
+        description: "SKU (référence) du kit/ensemble de produits"
+
+      - name: component_sku
+        description: "SKU (référence) du composant/produit individuel dans le kit - format mini"
+
+      - name: email
+        description: "Email de l'utilisateur"
+
+      - name: component_product_id
+        description: "Identifiant du produit composant"
+
+      - name: kit_product_id
+        description: "Identifiant du produit kit"
+
+      - name: FZ_product_id
+        description: "Identifiant produit équivalent full size"
+
+      - name: FZ_sku
+        description: "SKU du produit équivalent en full size"
+
+      - name: product_categories_lvl2
+        description: "Catégorie du produit niveau 2 (ex: Soin visage, Maquillage, Cheveux, etc.)"
+
+      - name: component_codification_lvl2
+        description: "Codification du composant niveau 2 pour classification des produits"
+
+      - name: box_date
+        description: "Date de la box au format DATE (année-mois-jour)"
+
+      - name: box_month
+        description: "Mois de la box (1-12)"
+
+      - name: box_year
+        description: "Année de la box"
+
+      - name: product_name
+        description: "Nom du produit reçu"
+
+      - name: kit_brand_name
+        description: "Nom de la marque du kit"
+
+      - name: component_brand_name
+        description: "Nom de la marque du composant/produit"
+
+      - name: ean
+        description: "Code-barres EAN du produit (European Article Number)"
