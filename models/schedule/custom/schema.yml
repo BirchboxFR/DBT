@@ -10,3 +10,35 @@ models:
         description: "Code pays (FR, DE, etc.)"
       - name : hair_type
         description: "Type de cheveux (Crépus , Bouclés ou frisés ,Ondulés Raides)"
+  - name: Choose_by_user
+    description: "Table des choix effectués par les utilisateurs pour leurs box du mois. une ligne par user par mois. jointure possible user_key avec user.csutomers "
+    columns:
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+        
+      - name: user_key
+        description: "Clé unique de l'utilisateur pays/user_id (format string, utilisé pour les jointures)"
+        
+      - name: box_id
+        description: "Identifiant de la box concernée par le choix - le mois de la box peut se trouver avec une jointure inter.boxes sur le box_id et pays"
+        
+      - name: choice_name
+        description: "Nom ou libellé du choix effectué par l'utilisateur"
+        
+      - name: dw_country_code
+        description: "Code pays de l'utilisateur (FR, DE, ES, etc.)"
+        
+      - name: status_id
+        description: "Identifiant du statut du choix 1 - validé / 2 - en attente / 3 - bruouillon"
+        
+      - name: choice_date
+        description: "Date et heure à laquelle le choix a été effectué"
+        
+      - name: form_name
+        description: "Nom du formulaire de choix présenté à l'utilisateur"
+        
+      - name: form_id
+        description: "Identifiant du formulaire de choix"
+        
+      - name: choice_id
+        description: "Identifiant unique du choix effectué"
