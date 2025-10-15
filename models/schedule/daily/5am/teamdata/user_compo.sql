@@ -6,5 +6,5 @@
 
 ) }}
 
-SELECT * FROM `teamdata-291012.user.Choose_by_user` 
-where user_key='FR_2622634'
+SELECT * FROM `normalised-417010.box.sku_by_user_by_box`
+where box_id >100
