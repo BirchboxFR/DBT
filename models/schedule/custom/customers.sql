@@ -41,7 +41,7 @@ user_data AS (
              OR COALESCE(uc_whatsapp.consent_status, FALSE)
            THEN TRUE ELSE FALSE
          END AS optin,
-
+        user_birthday as user_birthday_raw,
          -- optins par canal
          COALESCE(uc_email.consent_status, FALSE)     AS optin_email,
          COALESCE(uc_partner.consent_status, FALSE)   AS optin_partner,
@@ -431,6 +431,7 @@ ac.dw_country_code,
        ip.gender,
        ud.registration_date,
        ud.birth_date,
+       user_birthday_raw,
        ud.age,
        ip.billing_phone,
        functions.standardize_phone(billing_phone, ac.dw_country_code) AS billing_phone_standardized,
@@ -664,4 +665,4 @@ LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.us
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
--- where ac.user_id=3065143
+ -- where ac.user_id=2982031
