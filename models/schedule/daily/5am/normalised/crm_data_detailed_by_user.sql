@@ -8,11 +8,11 @@
 {{ config(
     materialized = 'table',
     partition_by = {
-      "field": "startdate",
+      "field": "last_activity_date",
       "data_type": "date",
-      "granularity": "month"  -- mensuel pour limiter les partitions
+      "granularity": "month"  
     },
-    cluster_by = ["address"],  -- utile pour filtrer rapidement par user
+    cluster_by = ["address"], 
     on_schema_change = 'sync',
     description = "Table des campagnes reçues par utilisateur dans Imagino, avec statut message et interactions (open/click/unsubscribe)."
 ) }}
@@ -89,6 +89,7 @@ per_user_campaign AS (
 SELECT
   'IMAGINO' AS source,
   address,
+    DATE(MAX(startdate)) AS last_activity_date,
   -- Toutes les campagnes reçues avec leurs indicateurs
   ARRAY_AGG(
     STRUCT(
@@ -125,7 +126,7 @@ SELECT
 
 FROM per_user_campaign
 
-GROUP BY address;
+GROUP BY address
 
 
 
