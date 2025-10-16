@@ -41,7 +41,9 @@ models:
       - name: registration_date
         description: "date d'inscription"
       - name: birth_date
-        description: "date de naissance"
+        description: "date de naissance sécurité entre 12 et 99 ans uniquement"
+      - name: user_birthday_raw
+        description: "date de naissance en base brute, peut contenir des erreurs"
       # Informations client de base
       - name: age
         description: "Âge du client en années."
