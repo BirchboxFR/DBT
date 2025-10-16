@@ -22,7 +22,7 @@
     {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
-    {%- set crm_tmp_tables = ['crm_zapier','Export_imagino_extract','optin_variations'] -%}
+    {%- set crm_tmp_tables = ['crm_data_detailed_by_user','crm_zapier','Export_imagino_extract','optin_variations'] -%}
     {%- set archives_tmp_tables = ['archives_payments'] -%}
     {%- set catalog_tmp_tables = ['flag_materialized','projects_materialized','work_orders_materialized'] -%}
     {%- set history_table_tmp_tables = ['catalog__stock','pnl__export_pnl_live','catalog__bank'] -%}
