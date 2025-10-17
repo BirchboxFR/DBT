@@ -2,56 +2,76 @@ version: 2
 
 models:
   - name: "shipments_all"
-    description: |
-      "Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues.
-      Chaque ligne correspond à un regroupement mensuel ou journalier selon le champ `daily_monthly`.
-      Source : `normalised-417010.ops.shipments_all`."
+    description: "Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues. Chaque ligne correspond à une expédition (une commande shop ou un envoi de box ou une reexp). Source : `normalised-417010.ops.shipments_all`."
     columns:
       - name: "shipment_type"
-        description: "Type d’expédition (ex : box, eshop, réexpédition, etc.)"
+        description: "Type d'expédition (box ou shop)."
+
       - name: "dw_country_code"
-        description: "Code pays (FR, DE, ES, IT, etc.)"
+        description: "Code pays (FR, DE, ES, IT, etc.)."
+
       - name: "box_date"
-        description: "Mois de box (au format YYYYMM ou similaire)"
+        description: "Mois de box pour une expédition de box (au format YYYY-MM-DD)."
+
       - name: "shipping_year"
-        description: "Année d’expédition"
+        description: "Année d'expédition."
+
       - name: "shipping_month"
-        description: "Mois d’expédition (numérique)"
+        description: "Mois d'expédition (numérique)."
+
       - name: "shipping_date"
-        description: "Date exacte d’expédition"
+        description: "Date exacte d'expédition."
+
       - name: "first_reexp"
-        description: "Indique si c’est la première réexpédition (TRUE/FALSE)"
+        description: "Indique si c'est un premier envoi (first) ou une réexpédition (reexp)."
+
       - name: "daily_monthly"
-        description: "Niveau de granularité (1 = journalier, 0 = mensuel)"
+        description: "Pour une expédition de box, indique si ça a été envoyé dans l'allocation monthly (pendant la production) ou daily (pendant le mois)."
+
       - name: "mono_multi"
-        description: "Indicateur mono-produit ou multi-produit"
+        description: "Indicateur mono-produit ou multi-produits."
+
       - name: "shipping_mode_nice_name"
-        description: "Nom lisible du mode de transport (ex : Colissimo, Mondial Relay, etc.)"
+        description: "Nom lisible du mode de transport (ex : Colissimo, Mondial Relay, etc.)."
+
       - name: "range_of_weight"
-        description: "Tranche de poids associée à l’expédition"
+        description: "Tranche de poids associée à l'expédition."
+
       - name: "min_weight_range"
-        description: "Poids minimum de la tranche (en grammes)"
+        description: "Poids minimum de la tranche (en kg)."
+
       - name: "max_weight_range"
-        description: "Poids maximum de la tranche (en grammes)"
+        description: "Poids maximum de la tranche (en kg)."
+
       - name: "avg_order_weight"
-        description: "Poids moyen des commandes dans la tranche (en grammes)"
+        description: "Poids moyen des commandes dans la tranche (en kg)."
+
       - name: "avg_gws_weight"
-        description: "Poids moyen des colis selon GWS (en grammes)"
+        description: "Poids moyen des colis selon GWS (en kg)."
+
       - name: "avg_box_weight"
-        description: "Poids moyen des box expédiées (en grammes)"
+        description: "Poids moyen des box expédiées (en kg)."
+
       - name: "nb_orders"
-        description: "Nombre total de commandes dans le groupe"
+        description: "Nombre total de commandes dans le groupe."
+
       - name: "shipping_transport_cost"
-        description: "Coût du transporteur pour les expéditions (en €)"
+        description: "Coût du transporteur pour les expéditions (en €)."
+
       - name: "total_shipping_taxes"
-        description: "Montant total des taxes sur le transport (en €)"
+        description: "Montant total des taxes sur le transport (en €)."
+
       - name: "shipping_cost"
-        description: "Coût total de l’expédition (transport + taxes) (en €)"
+        description: "Coût total de l'expédition (transport + taxes) (en €)."
+
       - name: "total_picking_cost"
-        description: "Coût total de picking associé aux expéditions (en €)"
+        description: "Coût total de picking associé aux expéditions (en €)."
+
       - name: "product_cost"
-        description: "Coût total des produits expédiés (en €)"
+        description: "Coût total des produits expédiés (en €)."
+
       - name: "avg_shipping_cost"
-        description: "Coût moyen d’expédition par commande (en €)"
+        description: "Coût moyen d'expédition par commande (en €)."
+
       - name: "avg_picking_cost"
-        description: "Coût moyen de picking par commande (en €)"
+        description: "Coût moyen de picking par commande (en €)."
