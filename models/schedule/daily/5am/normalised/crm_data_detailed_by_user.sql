@@ -28,7 +28,7 @@ WITH base_messages AS (
     m.status,
     m.eventDate
   FROM `cdpimagino.imaginoreplicatedcampaign` c
-  JOIN `cdpimagino.imaginoreplicatedmessage` m
+  JOIN `cdpimagino.BQ_imagino_Message` m
     ON m.activationId = c.id
   WHERE DATE(m.eventDate) >= '2024-01-01'
 ),
@@ -58,7 +58,7 @@ tracking AS (
     COUNTIF(t.type = 'click') > 0 AS clicked,
     COUNTIF(t.type = 'click')     AS clicks,
     COUNTIF(LOWER(t.url) LIKE '%unsubscribe%') > 0 AS unsubscribed
-  FROM `cdpimagino.imaginoreplicatedtracking` t
+  FROM `cdpimagino.BQ_imagino_Tracking` t
   WHERE DATE(t.eventDate) >= '2024-01-01'
   GROUP BY campaign_id, address
 ),

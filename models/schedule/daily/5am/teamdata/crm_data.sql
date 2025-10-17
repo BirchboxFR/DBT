@@ -33,7 +33,7 @@
          COUNTIF(lower(t.type) = 'open' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
          COUNTIF(lower(t.type) = 'done' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
  FROM cdpimagino.imaginoreplicatedcampaign c
- LEFT JOIN cdpimagino.imaginoreplicatedtracking t ON t.activationid = c.id
+ LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
 --where t.address='clementine.clement+compteboximagino@blissim.fr'
 group by all
  
