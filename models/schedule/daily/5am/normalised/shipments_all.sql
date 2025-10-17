@@ -1,3 +1,11 @@
+{{ config(
+    materialized='table',
+    description='Table des customers par pays et notion de statut de client et profil beauté',
+    persist_docs={"relation": true, "columns": true},
+    on_schema_change='ignore' 
+
+) }}
+
 SELECT 
 "BOX" as shipment_type,
 dw_country_code,
