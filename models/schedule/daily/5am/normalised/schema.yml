@@ -1,57 +1,57 @@
 version: 2
 
 models:
-  - name: shipments_all
+  - name: "shipments_all"
     description: |
-      Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues.
+      "Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues.
       Chaque ligne correspond à un regroupement mensuel ou journalier selon le champ `daily_monthly`.
-      Source : `normalised-417010.ops.shipments_all`
+      Source : `normalised-417010.ops.shipments_all`."
     columns:
-      - name: shipment_type
-        description: Type d’expédition (ex : box, eshop, réexpédition, etc.)
-      - name: dw_country_code
-        description: Code pays (FR, DE, ES, IT, etc.)
-      - name: box_date
-        description: Mois de box (au format YYYYMM ou similaire)
-      - name: shipping_year
-        description: Année d’expédition
-      - name: shipping_month
-        description: Mois d’expédition (numérique)
-      - name: shipping_date
-        description: Date exacte d’expédition
-      - name: first_reexp
-        description: Indique si c’est la première réexpédition (TRUE/FALSE)
-      - name: daily_monthly
-        description: Niveau de granularité (1 = journalier, 0 = mensuel)
-      - name: mono_multi
-        description: Indicateur mono-produit ou multi-produit
-      - name: shipping_mode_nice_name
-        description: Nom lisible du mode de transport (ex : Colissimo, Mondial Relay, etc.)
-      - name: range_of_weight
-        description: Tranche de poids associée à l’expédition
-      - name: min_weight_range
-        description: Poids minimum de la tranche (en grammes)
-      - name: max_weight_range
-        description: Poids maximum de la tranche (en grammes)
-      - name: avg_order_weight
-        description: Poids moyen des commandes dans la tranche (en grammes)
-      - name: avg_gws_weight
-        description: Poids moyen des colis selon GWS (en grammes)
-      - name: avg_box_weight
-        description: Poids moyen des box expédiées (en grammes)
-      - name: nb_orders
-        description: Nombre total de commandes dans le groupe
-      - name: shipping_transport_cost
-        description: Coût du transporteur pour les expéditions (en €)
-      - name: total_shipping_taxes
-        description: Montant total des taxes sur le transport (en €)
-      - name: shipping_cost
-        description: Coût total de l’expédition (transport + taxes) (en €)
-      - name: total_picking_cost
-        description: Coût total de picking associé aux expéditions (en €)
-      - name: product_cost
-        description: Coût total des produits expédiés (en €)
-      - name: avg_shipping_cost
-        description: Coût moyen d’expédition par commande (en €)
-      - name: avg_picking_cost
-        description: Coût moyen de picking par commande (en €)
+      - name: "shipment_type"
+        description: "Type d’expédition (ex : box, eshop, réexpédition, etc.)"
+      - name: "dw_country_code"
+        description: "Code pays (FR, DE, ES, IT, etc.)"
+      - name: "box_date"
+        description: "Mois de box (au format YYYYMM ou similaire)"
+      - name: "shipping_year"
+        description: "Année d’expédition"
+      - name: "shipping_month"
+        description: "Mois d’expédition (numérique)"
+      - name: "shipping_date"
+        description: "Date exacte d’expédition"
+      - name: "first_reexp"
+        description: "Indique si c’est la première réexpédition (TRUE/FALSE)"
+      - name: "daily_monthly"
+        description: "Niveau de granularité (1 = journalier, 0 = mensuel)"
+      - name: "mono_multi"
+        description: "Indicateur mono-produit ou multi-produit"
+      - name: "shipping_mode_nice_name"
+        description: "Nom lisible du mode de transport (ex : Colissimo, Mondial Relay, etc.)"
+      - name: "range_of_weight"
+        description: "Tranche de poids associée à l’expédition"
+      - name: "min_weight_range"
+        description: "Poids minimum de la tranche (en grammes)"
+      - name: "max_weight_range"
+        description: "Poids maximum de la tranche (en grammes)"
+      - name: "avg_order_weight"
+        description: "Poids moyen des commandes dans la tranche (en grammes)"
+      - name: "avg_gws_weight"
+        description: "Poids moyen des colis selon GWS (en grammes)"
+      - name: "avg_box_weight"
+        description: "Poids moyen des box expédiées (en grammes)"
+      - name: "nb_orders"
+        description: "Nombre total de commandes dans le groupe"
+      - name: "shipping_transport_cost"
+        description: "Coût du transporteur pour les expéditions (en €)"
+      - name: "total_shipping_taxes"
+        description: "Montant total des taxes sur le transport (en €)"
+      - name: "shipping_cost"
+        description: "Coût total de l’expédition (transport + taxes) (en €)"
+      - name: "total_picking_cost"
+        description: "Coût total de picking associé aux expéditions (en €)"
+      - name: "product_cost"
+        description: "Coût total des produits expédiés (en €)"
+      - name: "avg_shipping_cost"
+        description: "Coût moyen d’expédition par commande (en €)"
+      - name: "avg_picking_cost"
+        description: "Coût moyen de picking par commande (en €)"
