@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: "shipments_all"
-    description: "Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues. chaque ligne correspond à une expédition .chaque ligne correspond à un groupe d'expédition pour lesquels on a le volume dans le champ nb_orders Source : `normalised-417010.ops.shipments_all`."
+    description: "Table regroupant l'ensemble des expéditions (`shipments`) toutes catégories confondues. chaque ligne correspond à un groupe d'expédition pour lesquels on a le volume dans le champ nb_orders Source : `normalised-417010.ops.shipments_all`."
     columns:
       - name: "shipment_type"
         description: "Type d'expédition (box ou shop)."
