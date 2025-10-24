@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_products_bundle_component" -%}   
-{%- set target_table = "inter.products_bundle_component" -%}   
+{%- set source_table = "wp_jb_christmas_offer" -%}   
+{%- set target_table = "inter.christmas_offer" -%}   
 {%- set countries = var('survey_countries') -%}
 {%- set window_hours = 4 -%}
 {%- set window_start -%}

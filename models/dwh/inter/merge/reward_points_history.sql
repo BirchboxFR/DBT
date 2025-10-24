@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_products_bundle_component" -%}   
-{%- set target_table = "inter.products_bundle_component" -%}   
+{%- set source_table = "wp_jb_reward_points_history" -%}   
+{%- set target_table = "inter.reward_points_history" -%}   
 {%- set countries = var('survey_countries') -%}
 {%- set window_hours = 4 -%}
 {%- set window_start -%}

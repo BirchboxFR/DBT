@@ -1,120 +1,47 @@
+{# ==========================
+   PARAMÈTRES À CHANGER
+   ========================== #}
+{%- set source_table = "wp_jb_kit_links" -%}   
+{%- set target_table = "inter.kit_links" -%}   
+{%- set countries = var('survey_countries') -%}
+{%- set window_hours = 4 -%}
+{%- set window_start -%}
+TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
+{%- endset -%}
 
 {{ config(
-    partition_by={
-    "field": "_rivery_last_update",
-      "data_type": "timestamp",
-      "granularity": "day"
-    },
-    cluster_by=['dw_country_code']
+  materialized='incremental',
+  incremental_strategy='merge',
+  unique_key=['dw_country_code','id'],
+  partition_by={"field": "_airbyte_extracted_at", "data_type": "timestamp", "granularity": "day"},
+  cluster_by=["dw_country_code","id"],
+  post_hook=[
+    "{% if is_incremental() %} {{ delete_soft_deleted(var('survey_countries'), '" ~ source_table ~ "', '" ~ window_start ~ "') }} {% endif %}"
+  ]
 ) }}
 
---partition 
-{% set lookback_hours = 2 %}
---lookback 2h
-
-
-{%- set fr_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_fr', identifier='wp_jb_kit_links')) -%}
-{%- set de_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_de', identifier='wp_jb_kit_links')) -%}
-{%- set es_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_es', identifier='wp_jb_kit_links')) -%}
-{%- set it_columns = adapter.get_columns_in_relation(api.Relation.create(schema='bdd_prod_it', identifier='wp_jb_kit_links')) -%}
-
-
---données FR
-SELECT 'FR' AS dw_country_code,
-concat(cast(kit_id as string),'_',cast( product_id as string)) as id ,
-t.* EXCEPT(
- {% if '__deleted' in fr_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in fr_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in fr_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in fr_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in fr_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in fr_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in fr_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_fr.wp_jb_kit_links` t
-WHERE 
-  -- Filtre sur les lignes non supprimées
-  {% if '__deleted' in fr_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
-  -- Filtre sur les données récentes uniquement
-  {% if is_incremental() %}
-  (
-    -- Données mises à jour récemment (dans les X dernières heures)
-    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
-  )
-  {% else %}
-  -- Premier chargement: toutes les données
-  TRUE
-  {% endif %}
-UNION ALL
-
-SELECT 'DE' AS dw_country_code,
-concat(cast(kit_id as string),'_',cast( product_id as string)) as id ,
-t.* EXCEPT(
- {% if '__deleted' in de_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in de_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in de_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in de_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in de_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in de_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in de_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_de.wp_jb_kit_links` t
-WHERE 
-  {% if '__deleted' in de_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
-  {% if is_incremental() %}
-  (
-    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
-  )
-  {% else %}
-  TRUE
-  {% endif %}
-UNION ALL
-
-SELECT 'ES' AS dw_country_code,
-concat(cast(kit_id as string),'_',cast( product_id as string)) as id ,
-t.* EXCEPT(
- {% if '__deleted' in es_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in es_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in es_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in es_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in es_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in es_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in es_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_es.wp_jb_kit_links` t
-WHERE 
-  {% if '__deleted' in es_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
-  {% if is_incremental() %}
-  (
-    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
-  )
-  {% else %}
-  TRUE
-  {% endif %}
-UNION ALL
-
-SELECT 'IT' AS dw_country_code,
-concat(cast(kit_id as string),'_',cast( product_id as string)) as id ,
-t.* EXCEPT(
- {% if '__deleted' in it_columns | map(attribute='name') %}__deleted,{% endif %}
- {% if '__ts_ms' in it_columns | map(attribute='name') %}__ts_ms,{% endif %}
- {% if '__transaction_order' in it_columns | map(attribute='name') %}__transaction_order,{% endif %}
- {% if '__transaction_id' in it_columns | map(attribute='name') %}__transaction_id,{% endif %}
- {% if '_rivery_river_id' in it_columns | map(attribute='name') %}_rivery_river_id,{% endif %}
- {% if '_rivery_run_id' in it_columns | map(attribute='name') %}_rivery_run_id{% endif %}
- --{% if '_rivery_last_update' in it_columns | map(attribute='name') %}_rivery_last_update{% endif %}
-) 
-FROM `bdd_prod_it.wp_jb_kit_links` t
-WHERE 
-  {% if '__deleted' in it_columns | map(attribute='name') %}(t.__deleted is null OR t.__deleted = false) AND{% endif %}
-  {% if is_incremental() %}
-  (
-    t._rivery_last_update >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ lookback_hours }} HOUR)
-
-  )
-  {% else %}
-  TRUE
-  {% endif %}
+{# ---------- BUILD ---------- #}
+{%- if is_incremental() -%}
+  {# INCRÉMENTAL : actifs + fenêtre pour le pruning source #}
+  {%- for country in countries %}
+  SELECT
+    '{{ country.code }}' AS dw_country_code,
+    CAST(b.id AS INT64) AS id,
+    b.* EXCEPT(id)
+  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+    AND b._airbyte_extracted_at >= {{ window_start }}
+  {{ "UNION ALL" if not loop.last }}
+  {%- endfor %}
+{%- else -%}
+  {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
+  {%- for country in countries %}
+  SELECT
+    '{{ country.code }}' AS dw_country_code,
+    CAST(b.id AS INT64) AS id,
+    b.* EXCEPT(id)
+  FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
+  WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
+  {{ "UNION ALL" if not loop.last }}
+  {%- endfor %}
+{%- endif -%}
