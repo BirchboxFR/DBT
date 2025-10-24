@@ -1,5 +1,5 @@
     
-        select source,dw_country_code,email,user_id,max(open_email) open_email,
+        select min(source) as source,dw_country_code,email,user_id,max(open_email) open_email,
         max(click) click,max(date_last_open_email) date_last_open_email,
         max(date_last_click_email)date_last_click_email,max(ltm_client_email_rate)ltm_client_email_rate,
         max(ltm_open_email_rate) ltm_open_email_rate,max(ltm_click_email)ltm_click_email,
@@ -31,7 +31,7 @@
          SAFE_DIVIDE(COUNTIF(lower(t.type) = 'open' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)), COUNTIF(lower(t.type) = 'done' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) AS ltm_open_email_rate,
          COUNTIF(lower(t.type) = 'click' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_click_email,
          COUNTIF(lower(t.type) = 'open' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
-         COUNTIF(lower(t.type) = 'done' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
+         COUNTIF( date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
  FROM cdpimagino.imaginoreplicatedcampaign c
  LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
 
@@ -39,5 +39,5 @@ group by all
  
         ) 
 
-        --where email='beahugo26@hotmail.com'
+        where  dw_country_code is not null
         group by all
