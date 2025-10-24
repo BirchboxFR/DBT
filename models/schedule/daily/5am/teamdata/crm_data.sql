@@ -1,5 +1,5 @@
     
-        select min(source) as source,dw_country_code,email,user_id,max(open_email) open_email,
+        select min(source) as source,min(dw_country_code) dw_country_code,email,user_id,max(open_email) open_email,
         max(click) click,max(date_last_open_email) date_last_open_email,
         max(date_last_click_email)date_last_click_email,max(ltm_client_email_rate)ltm_client_email_rate,
         max(ltm_open_email_rate) ltm_open_email_rate,max(ltm_click_email)ltm_click_email,
@@ -16,6 +16,7 @@
          COUNTIF(lower(status) = 'done' AND event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
     FROM {{ ref('splio_data_dedup') }} 
     WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 36 MONTH)
+    --and email='tijen09@hotmail.de'
     GROUP BY ALL
     union all
      
@@ -34,10 +35,10 @@
          COUNTIF( date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
  FROM cdpimagino.imaginoreplicatedcampaign c
  LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
-
+--where address='tijen09@hotmail.de'
 group by all
  
         ) 
 
-        where  dw_country_code is not null
+        where  dw_country_code is not null --and email='tijen09@hotmail.de'
         group by all
