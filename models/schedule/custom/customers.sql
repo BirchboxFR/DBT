@@ -645,7 +645,16 @@ FROM all_customers ac
 LEFT JOIN user_data ud ON ac.dw_country_code = ud.dw_country_code AND ac.user_id = ud.user_id
 LEFT JOIN range_of_age_table roa ON ac.dw_country_code = roa.dw_country_code AND ac.user_id = roa.user_id
 LEFT JOIN traffic_table tt ON ac.dw_country_code = tt.dw_country_code AND ac.user_id = tt.user_id
-LEFT JOIN {{ ref('crm_data') }} cd ON ac.dw_country_code  = cd.dw_country_code AND ac.email = cd.email
+LEFT JOIN {{ ref('crm_data') }} cd ON  ac.email = cd.email AND (
+         -- match direct (FR, IT, etc.)
+         ac.dw_country_code = cd.dw_country_code
+         OR
+         -- fallback EU pour l'Espagne
+         (ac.dw_country_code = 'ES' AND cd.dw_country_code = 'EU')
+         OR
+         -- fallback EU pour l'Allemagne
+         (ac.dw_country_code = 'DE' AND cd.dw_country_code = 'EU')
+       )
 LEFT JOIN {{ ref('customers_beauty_profile') }}  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
 LEFT JOIN sub_status_table sst ON ac.dw_country_code = sst.dw_country_code AND ac.email = sst.email
 LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_code AND ac.email = sstb.email
