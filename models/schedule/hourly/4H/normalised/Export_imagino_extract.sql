@@ -19,7 +19,7 @@ WITH campaign_message_stats AS (
    count(distinct case when m.status='softBounce' then m.address end) as softBounce,
    count(distinct case when m.status='hardBounce' then m.address end) as hardBounce
  FROM cdpimagino.imaginoreplicatedcampaign c  
- JOIN cdpimagino.imaginoreplicatedmessage m ON m.activationId = c.id
+ JOIN cdpimagino.BQ_imagino_Message m ON m.activationId = c.id
  WHERE DATE(m.eventDate) >= '2024-01-01'  -- Filtre partition
  GROUP BY ALL
 ),
@@ -32,7 +32,7 @@ campaign_tracking_stats AS (
    count( case when t.type='click' then t.address end) as clicks,
    count(distinct case when url like '%unsubscribe%' then t.address end ) as unsubscribes
  FROM cdpimagino.imaginoreplicatedcampaign c
- LEFT JOIN cdpimagino.imaginoreplicatedtracking t ON t.activationid = c.id
+ LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
  WHERE DATE(t.eventDate) >= '2024-01-01'  -- Filtre partition
  GROUP BY c.id
 )
