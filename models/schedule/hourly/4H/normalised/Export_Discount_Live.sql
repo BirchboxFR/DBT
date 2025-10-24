@@ -11,35 +11,38 @@
   )
 }}
 
-SELECT 
+WITH subs_with_real_coupon AS 
+(
+  SELECT
+  bs.discount,
+  bs.sub_id,
+  bs.date AS month,
+  CASE WHEN day_in_cycle >=0 THEN b.shipping_date ELSE date(payment_date) END as date,
     bs.dw_country_code,
-    bs.date as month, 
-    date(payment_date) as date,
-    round(sum(bs.discount),1) as cost,
-    case 
-        when coupon is null and raffed=1 then 'RAF' 
-        else coupon 
-    end as coupon,
-    case 
-        when yearly=1 then 'YEARLY'
-        when raffed=1 then 'RAF' 
-        else 'DISCOUNT' 
-    end as type,
-    'BOX' as product_type,
+    b.shipping_date AS first_date,
+    bs.order_id,
+    bs.box_id,
+    bs.yearly,
+    COALESCE(
+      bs.coupon,
+      CASE WHEN raffed=1 OR rsl.order_detail_sub_id IS NOT NULL THEN 'RAF'ELSE NULL END,
+      LAST_VALUE(coupon IGNORE NULLS) OVER (
+        PARTITION BY bs.dw_country_code, bs.order_id
+        ORDER BY box_id
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+      )
+    ) AS coupon_filled
+  FROM sales.box_sales bs
+  JOIN inter.boxes b ON b.date = bs.date AND b.dw_country_code = bs.dw_country_code
+  LEFT JOIN `teamdata-291012.inter.raf_sub_link` rsl ON rsl.dw_country_code = bs.dw_country_code AND bs.sub_id = rsl.order_detail_sub_id
+) 
+
+SELECT dw_country_code, month,  date, ROUND(SUM(discount)) AS cost,
+coupon_filled AS coupon,
+CASE WHEN yearly = 1 THEN 'YEARLY' ELSE coupon_filled END AS type,
+ 'BOX' as product_type,
     'ACQUIZ' as acquis_type,
-    shipping_Date as first_day 
-FROM sales.box_sales bs 
-LEFT JOIN inter.coupons c 
-    ON c.code = bs.coupon 
-    AND c.dw_country_code = bs.dw_country_code 
-LEFT JOIN inter.products p 
-    ON c.discount_type = 'PRODUCT' 
-    AND c.discount_amount = CAST(p.id AS STRING)
-    AND p.dw_country_code = c.dw_country_code
-JOIN inter.boxes b 
-    ON b.dw_country_code = bs.dw_country_code 
-    AND b.date = bs.date 
-WHERE diff_current_box <= 0 
-    AND (coupon is not null or raffed = 1) and bs.year>2021
-GROUP BY ALL 
-HAVING cost > 0 
+    first_date as first_day 
+FROM subs_with_real_coupon
+WHERE discount > 0
+GROUP BY ALL
