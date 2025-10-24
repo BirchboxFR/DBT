@@ -1,8 +1,8 @@
 {# ==========================
    PARAMÈTRES À CHANGER
    ========================== #}
-{%- set source_table = "wp_jb_orders_status" -%}   
-{%- set target_table = "inter.orders_status" -%}   
+{%- set source_table = "wp_jb_order_status" -%}   
+{%- set target_table = "inter.order_status" -%}   
 {%- set countries = var('survey_countries') -%}
 {%- set window_hours = 4 -%}
 {%- set window_start -%}
