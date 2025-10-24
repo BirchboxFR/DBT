@@ -37,8 +37,6 @@
  LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
 --where address='tijen09@hotmail.de'
 group by all
- 
         ) 
-
         where  dw_country_code is not null --and email='tijen09@hotmail.de'
         group by all
