@@ -1,10 +1,10 @@
     
-        select dw_country_code,email,user_id,max(open_email) open_email,
+        select source,dw_country_code,email,user_id,max(open_email) open_email,
         max(click) click,max(date_last_open_email) date_last_open_email,
         max(date_last_click_email)date_last_click_email,max(ltm_client_email_rate)ltm_client_email_rate,
         max(ltm_open_email_rate) ltm_open_email_rate,max(ltm_click_email)ltm_click_email,
         max(ltm_open_email)ltm_open_email,max(ltm_nb_email)ltm_nb_email from (
-    SELECT distinct dw_country_code, email, NULL AS user_id,
+    SELECT distinct 'splio' as source,dw_country_code, email, NULL AS user_id,
             MAX(lower(status)  = 'open') AS open_email,
          MAX(lower(status) = 'click') AS click,
          MAX(CASE WHEN lower(status) = 'open' THEN event_date END) AS date_last_open_email,
@@ -22,7 +22,7 @@
 
 
      -- imagino part
- select custom_country,address,null,
+ select 'imagino',custom_country,address,null,
  MAX(lower(t.type)  = 'open') AS open_email,
          MAX(lower(t.type) = 'click') AS click,
          date(MAX(CASE WHEN lower(t.type) = 'open' THEN eventdate END)) AS date_last_open_email,
@@ -34,8 +34,10 @@
          COUNTIF(lower(t.type) = 'done' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
  FROM cdpimagino.imaginoreplicatedcampaign c
  LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
---where t.address='clementine.clement+compteboximagino@blissim.fr'
+
 group by all
  
         ) 
+
+        --where email='beahugo26@hotmail.com'
         group by all

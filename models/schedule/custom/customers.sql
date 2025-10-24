@@ -644,7 +644,10 @@ FROM all_customers ac
 LEFT JOIN user_data ud ON ac.dw_country_code = ud.dw_country_code AND ac.user_id = ud.user_id
 LEFT JOIN range_of_age_table roa ON ac.dw_country_code = roa.dw_country_code AND ac.user_id = roa.user_id
 LEFT JOIN traffic_table tt ON ac.dw_country_code = tt.dw_country_code AND ac.user_id = tt.user_id
-LEFT JOIN {{ ref('crm_data') }}  cd ON case when ac.dw_country_code = 'FR' then 'FR' else 'EU' end  = cd.dw_country_code AND ac.email = cd.email
+LEFT JOIN {{ ref('crm_data') }}  cd ON case when source <> 'imagino' and ac.dw_country_code <> 'FR' then 'EU' 
+when source <> 'imagino' and ac.dw_country_code = 'FR' then 'FR'
+when source = 'imagino' then cd.dw_country_code  
+else 'FR' end  = cd.dw_country_code AND ac.email = cd.email
 LEFT JOIN {{ ref('customers_beauty_profile') }}  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
 LEFT JOIN sub_status_table sst ON ac.dw_country_code = sst.dw_country_code AND ac.email = sst.email
 LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_code AND ac.email = sstb.email
@@ -665,4 +668,4 @@ LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.us
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
- -- where ac.user_id=2982031
+--where ac.email='beahugo26@hotmail.com'
