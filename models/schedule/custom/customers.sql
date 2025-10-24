@@ -21,10 +21,10 @@ all_customers AS (
     FROM inter.users
     WHERE user_login <> 'DELETED'
     UNION ALL
-    SELECT 'FR' AS dw_country_code, lower(email) as mail, NULL AS user_id
+    SELECT dw_country_code, lower(email) as mail, NULL AS user_id
     FROM user.crm_data
-    where dw_country_code='FR'
-    GROUP BY mail
+    --where email='beahugo26@hotmail.com'
+    GROUP BY all
   )
   GROUP BY dw_country_code, email
 ),
@@ -644,10 +644,7 @@ FROM all_customers ac
 LEFT JOIN user_data ud ON ac.dw_country_code = ud.dw_country_code AND ac.user_id = ud.user_id
 LEFT JOIN range_of_age_table roa ON ac.dw_country_code = roa.dw_country_code AND ac.user_id = roa.user_id
 LEFT JOIN traffic_table tt ON ac.dw_country_code = tt.dw_country_code AND ac.user_id = tt.user_id
-LEFT JOIN {{ ref('crm_data') }}  cd ON case when source <> 'imagino' and ac.dw_country_code <> 'FR' then 'EU' 
-when source <> 'imagino' and ac.dw_country_code = 'FR' then 'FR'
-when source = 'imagino' then cd.dw_country_code  
-else 'FR' end  = cd.dw_country_code AND ac.email = cd.email
+LEFT JOIN {{ ref('crm_data') }} cd ON ac.dw_country_code  = cd.dw_country_code AND ac.email = cd.email
 LEFT JOIN {{ ref('customers_beauty_profile') }}  bpt ON ac.dw_country_code = bpt.dw_country_code AND ac.user_id = bpt.user_id
 LEFT JOIN sub_status_table sst ON ac.dw_country_code = sst.dw_country_code AND ac.email = sst.email
 LEFT JOIN sub_status_table_before sstb ON ac.dw_country_code = sstb.dw_country_code AND ac.email = sstb.email
