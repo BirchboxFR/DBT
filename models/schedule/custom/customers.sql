@@ -21,11 +21,12 @@ all_customers AS (
     FROM inter.users
     WHERE user_login <> 'DELETED'
     UNION ALL
-    SELECT dw_country_code, lower(email) as mail, NULL AS user_id
+    SELECT max( dw_country_code), lower(email) as mail, NULL AS user_id
     FROM user.crm_data
+    --where email='mathieu.helie@blissim.fr'
     --where email='beahugo26@hotmail.com'
     GROUP BY all
-  )
+  )--where mail='beahugo26@hotmail.com'
   GROUP BY dw_country_code, email
 ),
 user_data AS (
@@ -665,4 +666,4 @@ LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.us
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
---where ac.email='beahugo26@hotmail.com'
+where ac.email='mathieu.helie@blissim.fr'
