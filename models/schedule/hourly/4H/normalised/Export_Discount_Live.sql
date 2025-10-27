@@ -39,7 +39,9 @@ WITH subs_with_real_coupon AS
 
 SELECT dw_country_code, month,  date, ROUND(SUM(discount)) AS cost,
 coupon_filled AS coupon,
-CASE WHEN yearly = 1 THEN 'YEARLY' ELSE coupon_filled END AS type,
+CASE WHEN yearly = 1 THEN 'YEARLY' 
+WHEN coupon_filled = 'RAF' THEN 'RAF'
+ELSE 'DISCOUNT' END AS type,
  'BOX' as product_type,
     'ACQUIZ' as acquis_type,
     first_date as first_day 
