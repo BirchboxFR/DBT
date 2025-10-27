@@ -22,7 +22,7 @@ all_customers AS (
     WHERE user_login <> 'DELETED'
     UNION ALL
     SELECT max( dw_country_code), lower(email) as mail, NULL AS user_id
-    FROM user.crm_data
+    FROM {{ ref('crm_data') }}
     --where email='mathieu.helie@blissim.fr'
     --where email='beahugo26@hotmail.com'
     GROUP BY all
