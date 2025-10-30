@@ -57,6 +57,8 @@ tracking AS (
     COUNTIF(t.type = 'open')  > 0 AS opened,
     COUNTIF(t.type = 'click') > 0 AS clicked,
     COUNTIF(t.type = 'click')     AS clicks,
+    case when t.type = 'open' then t.eventDate end as date_open,
+    case when t.type = 'click' then t.eventDate end as date_click,
     COUNTIF(LOWER(t.url) LIKE '%unsubscribe%') > 0 AS unsubscribed
   FROM `cdpimagino.BQ_imagino_Tracking` t
   WHERE DATE(t.eventDate) >= '2024-01-01'
@@ -79,7 +81,10 @@ per_user_campaign AS (
     COALESCE(tr.opened, FALSE)            AS opened,
     COALESCE(tr.clicked, FALSE)           AS clicked,
     COALESCE(tr.clicks, 0)                AS clicks,
-    COALESCE(tr.unsubscribed, FALSE)      AS unsubscribed
+    COALESCE(tr.unsubscribed, FALSE)      AS unsubscribed,
+
+    tr.date_open     AS date_open,
+    tr.date_click     AS date_click
   FROM latest_message lm
   LEFT JOIN tracking tr
     ON tr.campaign_id = lm.campaign_id
@@ -89,6 +94,7 @@ per_user_campaign AS (
 SELECT
   'IMAGINO' AS source,
   address,
+  user_key,
     DATE(MAX(startdate)) AS last_activity_date,
   -- Toutes les campagnes reçues avec leurs indicateurs
   ARRAY_AGG(
@@ -110,12 +116,12 @@ SELECT
 
   -- Sous-listes utiles
   ARRAY_AGG(IF(opened,
-    STRUCT(campaign_id, campaign_name, startdate), NULL) IGNORE NULLS
+    STRUCT(campaign_id, campaign_name, date_open), NULL) IGNORE NULLS
     ORDER BY startdate DESC, campaign_id
   ) AS opened_campaigns,
 
   ARRAY_AGG(IF(clicked,
-    STRUCT(campaign_id, campaign_name, startdate, clicks), NULL) IGNORE NULLS
+    STRUCT(campaign_id, campaign_name, date_click, clicks), NULL) IGNORE NULLS
     ORDER BY startdate DESC, campaign_id
   ) AS clicked_campaigns,
 
@@ -125,8 +131,9 @@ SELECT
   ) AS unsubscribed_campaigns
 
 FROM per_user_campaign
+inner join user.customers on customers.email=per_user_campaign.address
 
-GROUP BY address
+GROUP BY address,user_key
 
 
 
