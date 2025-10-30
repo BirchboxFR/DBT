@@ -271,6 +271,7 @@ FROM
         WHEN s.total_product = 0 AND gc.id IS NOT NULL AND pbp.sub_id IS NOT NULL THEN (gc.amount/gc.duration) -- if partial box paid, count only one box
         ELSE s.total_product 
   END AS total_product,
+  case when acqui.user_key is not null then true else false end as crm_acquisition,
   o.dw_country_code AS store_code,
   COALESCE(tva.taux, 0) AS vat_rate,
   CASE WHEN s.sub_payment_status_id = 8 OR o.status_id = 3 THEN 0.0
@@ -335,6 +336,7 @@ raf_parent_id,
   LEFT JOIN {{ ref('box_gift') }} bg ON bg.dw_country_code = s.dw_country_code AND bg.sub_id = s.id
   LEFT JOIN snippets.yearly_coupons yc ON o.dw_country_code = yc.country_code AND o.coupon_code_id = yc.yearly_coupon_id
   LEFT JOIN {{ ref('raf_order_link') }} rol on o.id=rol.order_id and rol.dw_country_code=d.dw_country_code
+  LEFT JOIN {{ ref('crm_acquisitions') }} acqui on  acqui.dw_country_code=o.dw_country_code and acqui.user_id=o.user_id and b.date=campaign_date
   LEFT JOIN {{ ref('box_committed_not_paid') }} bn ON o.dw_country_code = bn.dw_country_code AND o.user_id = bn.user_id AND bn.box_id = s.box_id + 1
   /*LEFT JOIN (select user_id,month,year,dw_country_code,box_id,max(sub_suspended_reason_lvl1)sub_suspended_reason_lvl1,max(sub_suspended_reason_lvl2)sub_suspended_reason_lvl2,max(sub_suspended_reason_lvl3)sub_suspended_reason_lvl3 from`teamdata-291012.sales.box_sales_by_user_by_type`  group by 1,2,3,4,5)bsbu ON o.dw_country_code = bsbu.dw_country_code AND bsbu.user_id=o.user_id and bsbu.box_id = s.box_id + 1*/
   LEFT JOIN {{ ref('partial_box_paid') }} pbp ON pbp.dw_country_code = s.dw_country_code AND pbp.sub_id = s.id

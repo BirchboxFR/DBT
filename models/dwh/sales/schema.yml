@@ -16,6 +16,8 @@ models:
         description: "Identifiant unique de l'abonnement."
       - name: order_detail_id
         description: "Identifiant du détail de commande."
+      - name: crm_acquisition
+        description: "Indicateur si l'utilisateur est une acquisition CRM (true/false)."
       - name: order_id
         description: "Identifiant de la commande."
       - name: user_id
