@@ -14,6 +14,8 @@
   WITH acquisitions_cycle AS (
   SELECT 
     bs.user_key,
+    bs.user_id,
+    bs.dw_country_code,
     bs.acquis_status_lvl2,
     bs.payment_date,
     bs.day_in_cycle
