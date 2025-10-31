@@ -62,7 +62,7 @@ tracking AS (
     COUNTIF(LOWER(t.url) LIKE '%unsubscribe%') > 0 AS unsubscribed
   FROM `cdpimagino.BQ_imagino_Tracking` t
   WHERE DATE(t.eventDate) >= '2024-01-01'
-  GROUP BY campaign_id, address
+  GROUP BY all
 ),
 
 -- Jointure message (statut dernier) + tracking
