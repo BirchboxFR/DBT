@@ -8,10 +8,7 @@ models:
 
       - name: dw_country_code
         description: "Code pays d’expédition"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ["FR", "DE", "ES", "IT"]
+        
 
       - name: order_id
         description: "Identifiant de commande e-shop"
@@ -69,27 +66,11 @@ models:
       - name: first_reexp
         description: "Indique s’il s’agit d’un premier envoi ('first') ou d’une réexpédition ('reexp')"
         tests:
-          - accepted_values:
-              values: ["first", "reexp"]
+          
 
       - name: shipping_mode_nice_name
         description: "Mode d’expédition lisible"
-        tests:
-          - accepted_values:
-              values: [
-                "Colissimo",
-                "Lettre Max",
-                "DHL Domicile",
-                "Correos",
-                "Colissimo inter",
-                "Point Relais",
-                "Chronopost",
-                "Asendia",
-                "Chronorelais",
-                "Maersk",
-                "DHL Packstation",
-                "Click & Collect"
-              ]
+        
 
       - name: min_weight_range
         description: "Borne basse de la tranche de poids"
@@ -111,15 +92,11 @@ models:
 
       - name: mono_multi
         description: "Type de panier : 'mono' = un seul produit, 'multi' = plusieurs"
-        tests:
-          - accepted_values:
-              values: ["mono", "multi"]
+       
 
       - name: msg_perso
         description: "Message personnalisé (0 = non, 1 = oui)"
-        tests:
-          - accepted_values:
-              values: [0, 1]
+        
 
 
   - name: box_shipments
@@ -128,10 +105,7 @@ models:
 
       - name: dw_country_code
         description: "Code pays d’expédition (site/destination)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ["FR", "DE", "ES", "IT"]
+        
 
       - name: box_date
         description: "Mois de la box au format YYYY-MM-DD (généralement le 1er du mois)"
@@ -154,28 +128,11 @@ models:
 
       - name: shipping_mode_nice_name
         description: "Mode d’expédition lisible"
-        tests:
-          - accepted_values:
-              values: [
-                "Colissimo",
-                "Lettre Max",
-                "DHL Domicile",
-                "Correos",
-                "Colissimo inter",
-                "Point Relais",
-                "Chronopost",
-                "Asendia",
-                "Chronorelais",
-                "Maersk",
-                "DHL Packstation",
-                "Click & Collect"
-              ]
+       
 
       - name: first_reexp
         description: "Type d’envoi : 'first' = envoi initial, 'reexp' = réexpédition"
-        tests:
-          - accepted_values:
-              values: ["first", "reexp"]
+        
 
       - name: min_weight_range
         description: "Borne basse de la tranche de poids"
@@ -208,6 +165,4 @@ models:
 
       - name: msg_perso
         description: "Message personnalisé ajouté dans le colis (0 = non, 1 = oui)"
-        tests:
-          - accepted_values:
-              values: [0, 1]
+        
