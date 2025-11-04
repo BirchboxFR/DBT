@@ -1,3 +1,15 @@
+{{ config(
+    materialized='table',
+    partition_by={
+        "field": "shipping_date",
+        "data_type": "date",
+        "granularity": "month"
+    },
+    cluster_by=["dw_country_code", "shipping_mode_nice_name"],
+    persist_docs={"relation": true, "columns": true},
+    on_schema_change='ignore'
+) }}
+
 WITH 
 first_shipping_mode AS
 (

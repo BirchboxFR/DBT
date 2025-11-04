@@ -1,0 +1,213 @@
+version: 2
+
+models:
+
+  - name: shop_shipments
+    description: "Table des expéditions e-shop (hors box). Une ligne correspond à un colis envoyé depuis une commande shop."
+    columns:
+
+      - name: dw_country_code
+        description: "Code pays d’expédition"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["FR", "DE", "ES", "IT"]
+
+      - name: order_id
+        description: "Identifiant de commande e-shop"
+        tests:
+          - not_null
+
+      - name: order_detail_id
+        description: "Identifiant de ligne de commande (item)"
+
+      - name: order_date
+        description: "Date de la commande"
+        tests:
+          - not_null
+
+      - name: integration_date
+        description: "Date d’intégration de la donnée dans le DWH"
+
+      - name: shipping_date
+        description: "Date réelle d’expédition du colis"
+        tests:
+          - not_null
+
+      - name: year
+        description: "Année d’expédition (numérique)"
+
+      - name: month
+        description: "Mois d’expédition (numérique 1-12)"
+
+      - name: gross_revenue
+        description: "Chiffre d’affaires brut de la commande"
+
+      - name: net_revenue
+        description: "Chiffre d’affaires net après remises et TVA"
+
+      - name: shipping_country
+        description: "Pays de livraison (ISO)"
+
+      - name: packaging_cost
+        description: "Coût d’emballage"
+
+      - name: shipping_taxes_rate
+        description: "Taux de taxes appliquées au transport"
+
+      - name: shipping_transport_cost
+        description: "Coût transporteur facturé"
+
+      - name: total_shipping_taxes
+        description: "Total des taxes appliquées au transport"
+
+      - name: shipping_cost
+        description: "Coût total du shipping (transport + taxes)"
+        tests:
+          - not_null
+
+      - name: first_reexp
+        description: "Indique s’il s’agit d’un premier envoi ('first') ou d’une réexpédition ('reexp')"
+        tests:
+          - accepted_values:
+              values: ["first", "reexp"]
+
+      - name: shipping_mode_nice_name
+        description: "Mode d’expédition lisible"
+        tests:
+          - accepted_values:
+              values: [
+                "Colissimo",
+                "Lettre Max",
+                "DHL Domicile",
+                "Correos",
+                "Colissimo inter",
+                "Point Relais",
+                "Chronopost",
+                "Asendia",
+                "Chronorelais",
+                "Maersk",
+                "DHL Packstation",
+                "Click & Collect"
+              ]
+
+      - name: min_weight_range
+        description: "Borne basse de la tranche de poids"
+
+      - name: max_weight_range
+        description: "Borne haute de la tranche de poids"
+
+      - name: range_of_weight
+        description: "Libellé de la tranche de poids (ex: '0-250g', '250-500g')"
+
+      - name: product_codification
+        description: "Code interne produit"
+
+      - name: products_cost
+        description: "Coût total des produits envoyés dans le colis"
+
+      - name: quantity
+        description: "Quantité d’articles dans l’envoi"
+
+      - name: mono_multi
+        description: "Type de panier : 'mono' = un seul produit, 'multi' = plusieurs"
+        tests:
+          - accepted_values:
+              values: ["mono", "multi"]
+
+      - name: msg_perso
+        description: "Message personnalisé (0 = non, 1 = oui)"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+
+  - name: box_shipments
+    description: "Table des expéditions d’abonnements box. Une ligne correspond à un colis envoyé dans le cadre de l’abonnement."
+    columns:
+
+      - name: dw_country_code
+        description: "Code pays d’expédition (site/destination)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["FR", "DE", "ES", "IT"]
+
+      - name: box_date
+        description: "Mois de la box au format YYYY-MM-DD (généralement le 1er du mois)"
+        tests:
+          - not_null
+
+      - name: shipping_date
+        description: "Date réelle d’expédition du colis"
+        tests:
+          - not_null
+
+      - name: year
+        description: "Année d’expédition (numérique)"
+
+      - name: month
+        description: "Mois d’expédition (numérique 1-12)"
+
+      - name: shipping_country
+        description: "Pays de livraison (ISO)"
+
+      - name: shipping_mode_nice_name
+        description: "Mode d’expédition lisible"
+        tests:
+          - accepted_values:
+              values: [
+                "Colissimo",
+                "Lettre Max",
+                "DHL Domicile",
+                "Correos",
+                "Colissimo inter",
+                "Point Relais",
+                "Chronopost",
+                "Asendia",
+                "Chronorelais",
+                "Maersk",
+                "DHL Packstation",
+                "Click & Collect"
+              ]
+
+      - name: first_reexp
+        description: "Type d’envoi : 'first' = envoi initial, 'reexp' = réexpédition"
+        tests:
+          - accepted_values:
+              values: ["first", "reexp"]
+
+      - name: min_weight_range
+        description: "Borne basse de la tranche de poids"
+
+      - name: max_weight_range
+        description: "Borne haute de la tranche de poids"
+
+      - name: range_of_weight
+        description: "Libellé de la tranche de poids (ex: '0-250g', '250-500g')"
+
+      - name: packaging_cost
+        description: "Coût d’emballage unitaire"
+
+      - name: shipping_taxes_rate
+        description: "Taux de taxes appliquées au transport"
+
+      - name: shipping_transport_cost
+        description: "Coût facturé au transporteur (hors taxes)"
+
+      - name: total_shipping_taxes
+        description: "Montant total des taxes appliquées"
+
+      - name: shipping_cost
+        description: "Coût total du shipping (transport + taxes)"
+        tests:
+          - not_null
+
+      - name: products_cost
+        description: "Coût estimé des produits contenus dans la box"
+
+      - name: msg_perso
+        description: "Message personnalisé ajouté dans le colis (0 = non, 1 = oui)"
+        tests:
+          - accepted_values:
+              values: [0, 1]
