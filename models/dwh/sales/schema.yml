@@ -194,8 +194,174 @@ models:
             store_failures: true
             name: "Doublons box_sales"
 
-  - name: shop_sales
-    description: "Table des ventes du shop (hors abonnement)."
+  - name: "shop_sales"
+    description: "Ventes e-shop hors box — une ligne correspond à un produit (item) d’une commande shop."
     columns:
-      - name: dw_country_code
-        description: "Code pays pour les ventes shop."
+
+      - name: "user_key"
+        description: "Clé utilisateur (dérivée/obfusquée) associée à la commande."
+
+      - name: "dw_country_code"
+        description: "Code pays du site de vente (FR, DE, ES, …)."
+
+      - name: "order_id"
+        description: "Identifiant de la commande e-shop (niveau commande)."
+
+      - name: "user_id"
+        description: "Identifiant interne de l’utilisateur (numérique)."
+
+      - name: "order_status"
+        description: "Statut de la commande (ex: paid, shipped, cancelled…)."
+
+      - name: "is_active_sub"
+        description: "Utilisateur abonné actif au moment de la commande (0/1)."
+
+      - name: "is_first_order"
+        description: "Vrai si c’est la première commande de l’utilisateur (0/1)."
+
+      - name: "is_first_shop_order"
+        description: "Vrai si c’est la première commande e-shop (hors box) (0/1)."
+
+      - name: "order_date"
+        description: "Date de la commande (UTC ou tz boutique)."
+
+      - name: "product_id"
+        description: "Identifiant produit (catalogue)."
+
+      - name: "sku"
+        description: "SKU de l’article vendu."
+
+      - name: "product_name"
+        description: "Nom du produit à la vente."
+
+      - name: "store_code"
+        description: "Store pour la boutique montmartre sinon FR, DE, ES…"
+
+      - name: "store_id"
+        description: "Identifiant numérique de la boutique/canal."
+
+      - name: "vat_rate"
+        description: "Taux de TVA appliqué sur la ligne (ex: 0.20)."
+
+      - name: "product_codification_id"
+        description: "Identifiant de codification/typologie produit (référence interne)."
+
+      - name: "product_codification"
+        description: "Libellé de la classification commande/produit (ex: ESHOP, LTE…)."
+
+      - name: "planning_category_1"
+        description: "Catégorie (niveau 1) pour le pilotage merchandising/planning."
+
+      - name: "unit_price"
+        description: "Prix unitaire TTC avant remises."
+
+      - name: "quantity"
+        description: "Quantité vendue pour ce SKU dans la commande."
+
+      - name: "unit_product_discount"
+        description: "Remise unitaire liée au produit (TTC)."
+
+      - name: "unit_coupon_discount"
+        description: "Remise unitaire liée au coupon (TTC)."
+
+      - name: "unit_sub_discount"
+        description: "Remise unitaire liée à l’abonnement (TTC)."
+
+      - name: "unit_points_discount"
+        description: "Remise unitaire liée aux points/fidélité (TTC)."
+
+      - name: "unit_store_discount"
+        description: "Remise unitaire liée au magasin/canal (TTC)."
+
+      - name: "brand_name"
+        description: "Marque du produit."
+
+      - name: "brand_group"
+        description: "Groupe de marques (regroupement business)."
+
+      - name: "is_in_house"
+        description: "Produit maison / marque propre (0/1)."
+
+      - name: "gift_card_type"
+        description: "Type de carte cadeau s’il s’agit d’un gift card (sinon NULL)."
+
+      - name: "gift_card_duration"
+        description: "Durée en mois pour une carte cadeau (mois)"
+
+      - name: "order_coupon_code"
+        description: "Code coupon appliqué au niveau commande (si présent)."
+
+      - name: "order_total_shipping_ttc"
+        description: "Montant TTC total des frais de port sur la commande."
+
+      - name: "order_shipping_mode_name"
+        description: "Mode d’expédition au niveau de la commande (libellé)."
+
+      - name: "shipping_mode_id"
+        description: "Identifiant du mode d’expédition."
+
+      - name: "detail_valid"
+        description: "Drapeau de validité de la ligne (0/1)."
+
+      - name: "euro_purchase_price"
+        description: "Prix d’achat unitaire en euros (hors taxes si base supply)."
+
+      - name: "products_cost"
+        description: "Coût total des produits sur la ligne (euro_purchase_price × quantity)."
+
+      - name: "bundle_product_id"
+        description: "Identifiant du bundle si l’article fait partie d’un lot (sinon NULL)."
+
+      - name: "bundle_index"
+        description: "Position de l’article dans le bundle (si applicable)."
+
+      - name: "shipping_country"
+        description: "Pays de livraison (ISO)."
+
+      - name: "selections"
+        description: "les corners en gros"
+
+      - name: "year"
+        description: "Année civil de la commande (numérique)."
+
+      - name: "month"
+        description: "Mois de la commande (1–12)."
+
+      - name: "gross_revenue"
+        description: "Chiffre d’affaires brut ligne (unit_price × quantity)."
+
+      - name: "vat_on_gross_revenue"
+        description: "TVA collectée sur le CA brut de la ligne."
+
+      - name: "total_discount"
+        description: "Remises totales ligne (somme des remises unitaires × quantity)."
+
+      - name: "vat_on_total_discount"
+        description: "TVA associée aux remises de la ligne."
+
+      - name: "product_discount"
+        description: "Total remise produit (agrégée sur la ligne)."
+
+      - name: "points_discount"
+        description: "Total remise points/fidélité (agrégée sur la ligne)."
+
+      - name: "coupons_discount"
+        description: "Total remise coupons (agrégée sur la ligne)."
+
+      - name: "store_discount"
+        description: "Total remise magasin/canal (agrégée sur la ligne)."
+
+      - name: "sub_discount"
+        description: "Total remise abonnement (agrégée sur la ligne)."
+
+      - name: "order_total_shipping"
+        description: "Frais de port totaux HT au niveau de la commande (si distinct)."
+
+      - name: "vat_on_total_shipping"
+        description: "TVA sur les frais de port totaux."
+
+      - name: "net_revenue"
+        description: "Chiffre d’affaires net ligne (gross_revenue − total_discount)."
+
+      - name: "sell_out"
+        description: "Drapeau/valeur sell-out (logique retail), si alimenté."
