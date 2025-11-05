@@ -1,6 +1,7 @@
 
 {{ config(
    materialized='table',
+    persist_docs={"relation": true, "columns": true},
    partition_by={
      "field": "order_date",
      "data_type": "date",
