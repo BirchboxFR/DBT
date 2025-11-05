@@ -137,7 +137,7 @@ current_box_table AS (
          CASE WHEN bs.coupon_code_id > 0 THEN bs.coupon_code_id END AS current_coupon_code_id,
          CASE WHEN bs.self = 1 THEN 'self' WHEN bs.gift = 1 THEN 'gift' END AS current_sub_type,
          ibt.order_detail_id IS NOT NULL AS current_is_initial,
-         bs.coupon_engagement = 'engaged' AS current_is_committed,
+         bs.cannot_suspend = 1 AS current_is_committed,
          bs.payment_status = 'paid' AS current_box_paid,
          bs.payment_status = 'forthcoming' AS current_box_forthcoming,
          COALESCE(bs_next.payment_status = 'paid', False) AS next_box_paid,
