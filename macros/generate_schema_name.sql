@@ -20,6 +20,7 @@
     {%- set alerting_tmp_tables = ['surveillance_incremental'] -%}
     {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
     {%- set mailjet_tmp_tables = ['mailjet'] -%}
+    {%- set cdpimagino_tmp_tables = ['device_by_user_id'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
     {%- set crm_tmp_tables = ['crm_acquisitions','crm_data_detailed_by_user','crm_zapier','Export_imagino_extract','optin_variations'] -%}
@@ -45,6 +46,8 @@
         allocation
     {%- elif node.name in payment_tmp_tables -%}
         payment
+    {%- elif node.name in cdpimagino_tmp_tables -%}
+        cdpimagino
     {%- elif node.name in marketing_tmp_tables -%}
         marketing
     {%- elif node.name in accounting_tmp_tables -%}
