@@ -3,23 +3,23 @@ version: 2
 models:
 
   - name: "shop_shipments"
-    description: "Table des expéditions e-shop (hors box). Une ligne correspond à un colis envoyé depuis une commande shop."
+    description: "Table des expéditions e-shop (hors box). Une ligne correspond à une commande shop"
     columns:
 
       - name: "dw_country_code"
-        description: "Code pays d’expédition"
+        description: "Code pays site de vente"
 
       - name: "order_id"
         description: "Identifiant de commande e-shop"
 
       - name: "order_detail_id"
-        description: "Identifiant de ligne de commande (item)"
+        description: "Identifiant de ligne de commande (item) - NULL dans cette table"
 
       - name: "order_date"
         description: "Date de la commande"
 
       - name: "integration_date"
-        description: "Date d’intégration de la donnée dans le DWH"
+        description: "Date et horaire de réception dans le WMS"
 
       - name: "shipping_date"
         description: "Date réelle d’expédition du colis"
@@ -40,7 +40,7 @@ models:
         description: "Pays de livraison (ISO)"
 
       - name: "packaging_cost"
-        description: "Coût d’emballage"
+        description: "Coût d’emballage théorique"
 
       - name: "shipping_taxes_rate"
         description: "Taux de taxes appliquées au transport"
@@ -70,7 +70,7 @@ models:
         description: "Libellé de la tranche de poids (ex: '0-250g', '250-500g')"
 
       - name: "product_codification"
-        description: "Code interne produit"
+        description: "Classification de la commande ex: si que des produits FZ alors ESHOP, si 1 LTE min alors LTE etc.."
 
       - name: "products_cost"
         description: "Coût total des produits envoyés dans le colis"
@@ -90,7 +90,7 @@ models:
     columns:
 
       - name: "dw_country_code"
-        description: "Code pays d’expédition (site/destination)"
+        description: "Code pays site de vente"
 
       - name: "box_date"
         description: "Mois de la box au format YYYY-MM-DD (généralement le 1er du mois)"
@@ -122,8 +122,8 @@ models:
       - name: "range_of_weight"
         description: "Libellé de la tranche de poids (ex: '0-250g', '250-500g')"
 
-      - name: "packaging_cost"
-        description: "Coût d’emballage unitaire"
+      - name: "picking_cost"
+        description: "Coût de préparation (picking) unitaire"
 
       - name: "shipping_taxes_rate"
         description: "Taux de taxes appliquées au transport"
