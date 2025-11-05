@@ -94,6 +94,7 @@ box_sales_one_line_user AS (
            self,
            acquis_status_lvl1,
            gift,
+           cannot_suspend,
            coupon_engagement,
            year,
            month,
