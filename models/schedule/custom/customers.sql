@@ -413,6 +413,7 @@ SELECT
 distinct 
 ac.dw_country_code,
        ac.email,
+        to_hex(sha256(lower(trim(ac.email)))) AS email_sha256,
        case when ac.user_id =3065143 then TRUE else null end as slack_bot,
        ac.user_id,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
