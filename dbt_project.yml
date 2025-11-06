@@ -31,6 +31,10 @@ vars:
       dataset: 'bdd_prod_es'
     - code: 'IT'
       dataset: 'bdd_prod_it'
+    - code: 'PL'
+      dataset: 'bdd_prod_pl'
+    - code: 'SE'
+      dataset: 'bdd_prod_se'
 
 
 # Configuration des modèles
