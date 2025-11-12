@@ -36,6 +36,20 @@ vars:
     - code: 'SE'
       dataset: 'bdd_prod_se'
 
+snapshots:
+  warehouse:
+    +project: normalised-417010
+    +query_tag: "no_cache"
+    +strategy: check
+    +check_cols: all
+    +invalidate_hard_deletes: true
+    region: europe-west1
+    customers_history:
+      +tags: ['daily', 'customers']
+      +partition_by:
+        field: dbt_updated_at
+        data_type: timestamp
+        granularity: day
 
 # Configuration des modèles
 models:
