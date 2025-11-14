@@ -10,5 +10,5 @@ inner join user.customers c on c.user_id=bs.user_id and c.dw_country_code=bs.dw_
 inner join teamdata-291012.predictive_ltv.ltv l on l.user_id=bs.user_id and l.dw_country_code=bs.dw_country_code
 left join inter.orders o on cast(o.id as string)=t.Transaction_ID___GA4__Google_Analytics and o.dw_country_code='FR'
 left join inter.order_details d on d.order_id=o.id and d.dw_country_code='FR'
-where  FBCLID___GA4__Google_Analytics<>'(not set)'
+-- where  FBCLID___GA4__Google_Analytics<>'(not set)'
 group by all
