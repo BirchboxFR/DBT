@@ -7,6 +7,6 @@
     )
 }}
 
-select * from {{ ref('customers') }}
+select * except(array_boxes) from {{ ref('customers') }}
 
 {% endsnapshot %}
