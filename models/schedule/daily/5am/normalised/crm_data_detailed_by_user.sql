@@ -26,7 +26,8 @@ WITH base_messages AS (
     c.startdate,
     m.address,
     m.status,
-    m.eventDate
+    m.eventDate,
+    JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') as imo_variant
   FROM `cdpimagino.imaginoreplicatedcampaign` c
   JOIN `cdpimagino.BQ_imagino_Message` m
     ON m.activationId = c.id
@@ -38,6 +39,7 @@ latest_message AS (
   SELECT
     campaign_id,
     campaign_name,
+    imo_variant,
     address,
     (ARRAY_AGG(STRUCT(status, eventDate, created, startdate)
                ORDER BY eventDate DESC LIMIT 1))[OFFSET(0)].status    AS last_msg_status,
@@ -46,7 +48,7 @@ latest_message AS (
     (ARRAY_AGG(STRUCT(status, eventDate, created, startdate)
                ORDER BY eventDate DESC LIMIT 1))[OFFSET(0)].startdate AS startdate
   FROM base_messages
-  GROUP BY campaign_id, campaign_name, address
+  GROUP BY all
 ),
 
 -- Stats de tracking par (campaign_id, address)
@@ -71,6 +73,7 @@ per_user_campaign AS (
     lm.address,
     lm.campaign_id,
     lm.campaign_name,
+    imo_variant,
     DATE(COALESCE(lm.startdate, lm.created)) AS startdate,
     -- Flags message
     TRUE                                  AS targeted,
@@ -100,7 +103,7 @@ SELECT
   ARRAY_AGG(
     STRUCT(
       campaign_id,
-      campaign_name,
+      campaign_name,imo_variant,
       startdate,
       targeted,
       delivered,
@@ -116,17 +119,17 @@ SELECT
 
   -- Sous-listes utiles
   ARRAY_AGG(IF(opened,
-    STRUCT(campaign_id, campaign_name, date_open), NULL) IGNORE NULLS
+    STRUCT(campaign_id, campaign_name, date_open,imo_variant), NULL) IGNORE NULLS
     ORDER BY startdate DESC, campaign_id
   ) AS opened_campaigns,
 
   ARRAY_AGG(IF(clicked,
-    STRUCT(campaign_id, campaign_name, date_click, clicks), NULL) IGNORE NULLS
+    STRUCT(campaign_id, campaign_name, date_click, clicks,imo_variant), NULL) IGNORE NULLS
     ORDER BY startdate DESC, campaign_id
   ) AS clicked_campaigns,
 
   ARRAY_AGG(IF(unsubscribed,
-    STRUCT(campaign_id, campaign_name, startdate), NULL) IGNORE NULLS
+    STRUCT(campaign_id, campaign_name, startdate,imo_variant), NULL) IGNORE NULLS
     ORDER BY startdate DESC, campaign_id
   ) AS unsubscribed_campaigns
 
