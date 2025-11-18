@@ -14,7 +14,7 @@
 WITH campaign_message_stats AS (
  SELECT 
    c.*,
-   count(distinct m.address) as targeted,
+   count(CASE WHEN m.status <> 'ignored' then  m.address end ) as targeted,
    count(distinct case when m.status='delivered' then m.address end) as delivered,
    count(distinct case when m.status='softBounce' then m.address end) as softBounce,
    count(distinct case when m.status='hardBounce' then m.address end) as hardBounce
