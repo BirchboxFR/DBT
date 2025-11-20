@@ -39,8 +39,8 @@ campaign_ranked AS (
   LEFT JOIN acquisitions_cycle a 
     ON a.user_key = c.user_key 
     AND campaign.startdate BETWEEN DATE_SUB(DATE(a.payment_date), INTERVAL 2 DAY) AND DATE(a.payment_date)
-  WHERE upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%'
-    AND campaign.opened = true
+  WHERE (upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%' or upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%' )
+    AND campaign.opened = true 
     AND a.user_key IS NOT NULL 
 )
 
