@@ -92,6 +92,31 @@ per_user_campaign AS (
   LEFT JOIN tracking tr
     ON tr.campaign_id = lm.campaign_id
    AND tr.address     = lm.address
+----splio
+   union all
+
+   SELECT 
+    contactid AS email, 
+    campaignid,
+    campaignname,
+    '' AS imo_variant,
+    MIN(event_date) AS event_date,
+    TRUE AS targeted,
+    MAX(CASE WHEN status = 'Done' THEN TRUE END) AS delivered,
+    NULL AS softBounce,
+    NULL AS hardBounce,
+    -- Tracking
+    MAX(CASE WHEN status = 'Open' THEN TRUE END) AS opened,
+    MAX(CASE WHEN status = 'Click' THEN TRUE END) AS clicked,
+    SUM(CASE WHEN status = 'Click' THEN 1 ELSE 0 END) AS clicks,
+    MAX(CASE WHEN status = 'Unsubscribe' THEN TRUE END) AS unsubscribed,
+   cast( MIN(CASE WHEN status = 'Open' THEN event_date END) as timestamp) AS date_open,
+    cast(MIN(CASE WHEN status = 'Click' THEN event_date END)as timestamp) AS date_click
+FROM crm.splio_events
+WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+    --AND contactid = 'mathieu.helie@blissim.fr' 
+    -- AND campaignid = '7rY0neRrJ'
+GROUP BY contactid, campaignid, campaignname
 )
 
 SELECT

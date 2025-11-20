@@ -14,12 +14,12 @@ select distinct
     ContactID,
     lower(Status) as status,
     Event_date,
-    CampaignID from (
+    CampaignID,campaignName from (
 SELECT 
     'FR' as dw_country_code,
     ContactID,
     Status,
-    Event_date,
+    Event_date,campaignName,
     CampaignID from `teamdata-291012.crm.splio_events`
     where  Event_Date >= '2023-01-01'
     union all
@@ -27,7 +27,7 @@ SELECT
     'EU' as dw_country_code,
     Contact_ID,
     case when Status ='sent' then 'done' else lower(Status) end as Status,
-    safe_cast(Event_date as date),
+    safe_cast(Event_date as date),campaign_Name,
     Campaign_ID from `teamdata-291012.backup_splio.EU_splio_events_DE`
     where  Event_Date >= '2023-01-01')
 
@@ -38,7 +38,8 @@ SELECT
   ContactID AS email,
   Status AS status,
   Event_date AS event_date,
-  CampaignID AS campaignid
+  CampaignID AS campaignid,
+  campaignName AS campaignname
 FROM (
   SELECT 
     dw_country_code,
@@ -46,6 +47,7 @@ FROM (
     Status,
     Event_date,
     CampaignID,
+    campaignName,
     ROW_NUMBER() OVER (PARTITION BY CampaignID, ContactID, Status ORDER BY Event_date) AS rn
   FROM all_events
   WHERE event_date IS NOT NULL 
