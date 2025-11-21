@@ -437,6 +437,7 @@ ac.dw_country_code,
        user_birthday_raw,
        ud.age,
        ip.billing_phone,
+        to_hex(sha256(lower(trim(billing_phone)))) AS billing_phone_sha256,
        functions.standardize_phone(billing_phone, ac.dw_country_code) AS billing_phone_standardized,
        case when billing_country='FR' then functions.get_region_from_zipcode(billing_zipcode, billing_country)
         else null end as billing_region,
