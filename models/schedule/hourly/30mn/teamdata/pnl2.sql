@@ -321,7 +321,7 @@ UNION ALL
 SELECT dw_country_code, extract(year from next_month_date) as y, extract(month from next_month_date) as m, 'METRIC', 
 concat('churn-nb-',LOWER(dw_country_code)) as cat,
 'BOX',
-SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END) AS churn_nb
+-SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END) AS churn_nb
 FROM {{ ref('box_sales') }} as bs
 WHERE bs.diff_current_box <= 1
 GROUP BY dw_country_code, next_month_date
@@ -331,7 +331,7 @@ UNION ALL
 SELECT dw_country_code, extract(year from next_month_date) as y, extract(month from next_month_date) as m, 'METRIC', 
 concat('churn-rate-',LOWER(dw_country_code)) as cat,
 'BOX',
-SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END)/count(*) AS churn_rate
+-SUM(CASE WHEN bs.next_month_status = 'CHURN' THEN 1 ELSE 0 END)/count(*) AS churn_rate
 FROM {{ ref('box_sales') }} as bs
 WHERE bs.diff_current_box <= 1
 GROUP BY dw_country_code, next_month_date
