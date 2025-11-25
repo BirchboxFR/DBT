@@ -33,12 +33,12 @@
     OPTIMISATIONS BigQuery:
     - Partitionnée par jour → scan seulement périodes nécessaires
     - Clusterisée par pays et type → queries ultra-rapides
-    - Incrémental (31 derniers jours) → coût de refresh minimal
+    - Incrémental (24 derniers mois) → coût de refresh minimal
     - Volume: ~10-50 lignes/jour vs millions dans box_sales
     - Coût requête: < 0.001€ (quasi gratuit)
 
     CAS D'USAGE:
-    - Dashboard acquisition temps réel (31 derniers jours)
+    - Dashboard acquisition temps réel (24 derniers mois)
     - Déclinable par pays (FR, DE, ES, IT, etc.)
     - Déclinable par type (NEW NEW, REACTIVATION, GIFT)
 */
@@ -69,8 +69,8 @@ WITH acquisitions AS (
       AND day_in_cycle > 0
 
     {% if is_incremental() %}
-    -- Ne recharger que les 31 derniers jours
-    AND DATE(payment_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 31 DAY)
+    -- Ne recharger que les 24 derniers mois
+    AND DATE(payment_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
     AND DATE(payment_date) <= CURRENT_DATE()
     {% endif %}
 )
@@ -114,8 +114,8 @@ GROUP BY
     dw_country_code,
     acquis_status_lvl2
 
--- Limiter aux 31 derniers jours et jusqu'à aujourd'hui
-HAVING date >= DATE_SUB(CURRENT_DATE(), INTERVAL 31 DAY)
+-- Limiter aux 24 derniers mois et jusqu'à aujourd'hui
+HAVING date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
    AND date <= CURRENT_DATE()
 
 ORDER BY date DESC, dw_country_code

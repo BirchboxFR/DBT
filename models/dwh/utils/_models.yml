@@ -15,6 +15,7 @@ models:
     columns:
       - name: date_day
         description: "Date unique (granularité jour)"
+        granularity: day
         tests:
           - unique
           - not_null

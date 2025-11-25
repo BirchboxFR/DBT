@@ -16,7 +16,7 @@
     Table de metrics mensuelle ultra-optimisée :
     - Partitionnée par mois (scan seulement les mois nécessaires)
     - Clusterisée par pays et statuts (queries ultra-rapides)
-    - Incrémental (recharge seulement les 3 derniers mois)
+    - Incrémental (recharge seulement les 24 derniers mois)
     - Volume : ~100 lignes/mois au lieu de millions
     - Coût requête Metabase : < 0.01€
 */
@@ -26,8 +26,8 @@ WITH box_sales_filtered AS (
     FROM {{ ref('box_sales') }}
 
     {% if is_incremental() %}
-    -- Ne recharger que les 3 derniers mois pour optimiser
-    WHERE date >= DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH), MONTH)
+    -- Ne recharger que les 24 derniers mois pour optimiser
+    WHERE date >= DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH), MONTH)
     {% endif %}
 )
 
