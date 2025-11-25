@@ -80,6 +80,13 @@ models:
       snippets:
       utils:
         +materialized: table
+      marts:
+        +materialized: table
+        metrics:
+          +tags: ['metrics', 'reporting']
+          +persist_docs:
+            relation: true
+            columns: true
       inter:
         +schema: inter
         +materialized: table
@@ -95,15 +102,6 @@ models:
           +materialized: incremental
           +on_schema_change: sync_all_columns
           +unique_key: ['id', 'dw_country_code']
-
-    marts:
-      +materialized: table
-      +schema: marts
-      metrics:
-        +tags: ['metrics', 'reporting']
-        +persist_docs:
-          relation: true
-          columns: true
 
     schedule:
       +materialized: table
