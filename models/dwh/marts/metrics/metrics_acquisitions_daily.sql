@@ -13,16 +13,33 @@
 ) }}
 
 /*
-    Table de metrics d'acquisition ultra-optimisée :
-    - Partitionnée par jour (scan seulement les jours nécessaires)
-    - Clusterisée par pays et type d'acquisition
-    - Incrémental (recharge les 31 derniers jours)
-    - Volume : ~10-50 lignes/jour vs millions dans box_sales
-    - Coût requête : quasi gratuit (< 0.001€)
+    ┌──────────────────────────────────────────────────────────────────┐
+    │ METRICS ACQUISITIONS - IMPLÉMENTATION MATÉRIALISÉE              │
+    │ Définitions: models/dwh/sales/_metrics.yml                      │
+    └──────────────────────────────────────────────────────────────────┘
 
-    Cas d'usage :
+    MAPPING SEMANTIC LAYER → TABLE:
+    ├─ daily_acquisitions          → nb_acquisitions
+    ├─ daily_new_acquisitions      → nb_new_new
+    ├─ daily_reactivations         → nb_reactivations
+    ├─ daily_gift_acquisitions     → nb_gifts
+    ├─ acquisition_revenue         → total_acquisition_revenue
+    └─ avg_acquisition_revenue     → avg_revenue_per_acquisition
+
+    FILTRES (sync avec semantic layer):
+    - acquis_status_lvl1 = 'ACQUISITION'
+    - day_in_cycle > 0
+
+    OPTIMISATIONS BigQuery:
+    - Partitionnée par jour → scan seulement périodes nécessaires
+    - Clusterisée par pays et type → queries ultra-rapides
+    - Incrémental (31 derniers jours) → coût de refresh minimal
+    - Volume: ~10-50 lignes/jour vs millions dans box_sales
+    - Coût requête: < 0.001€ (quasi gratuit)
+
+    CAS D'USAGE:
     - Dashboard acquisition temps réel (31 derniers jours)
-    - Déclinable par pays
+    - Déclinable par pays (FR, DE, ES, IT, etc.)
     - Déclinable par type (NEW NEW, REACTIVATION, GIFT)
 */
 
