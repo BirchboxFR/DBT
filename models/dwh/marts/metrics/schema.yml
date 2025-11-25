@@ -11,13 +11,13 @@ models:
       **Optimisations** :
       - Partitionnée par jour (scan seulement les jours nécessaires)
       - Clusterisée par pays et type d'acquisition (queries ultra-rapides)
-      - Incrémental (recharge uniquement les 31 derniers jours)
+      - Incrémental (recharge uniquement les 24 derniers mois)
       - Pré-agrégée (10-50 lignes/jour vs millions dans box_sales)
 
       **Coût estimé par requête : < 0.001€** (quasi gratuit)
 
       **Cas d'usage** :
-      - Dashboard acquisition temps réel (31 derniers jours)
+      - Dashboard acquisition temps réel (24 derniers mois)
       - Déclinable par pays (FR, DE, ES, IT, etc.)
       - Déclinable par type (NEW NEW, REACTIVATION, GIFT)
 
@@ -67,7 +67,7 @@ models:
       Cette table est conçue pour minimiser les coûts BigQuery :
       - Partitionnée par mois (scan seulement ce dont vous avez besoin)
       - Clusterisée par pays et statuts (queries ultra-rapides)
-      - Incrémental (recharge uniquement les 3 derniers mois)
+      - Incrémental (recharge uniquement les 24 derniers mois)
       - Volume : ~100-500 lignes/mois au lieu de millions
 
       **Coût estimé par requête Metabase : < 0.01€**
@@ -105,29 +105,3 @@ models:
 
       - name: last_updated_at
         description: "Timestamp de dernière mise à jour"
-
-  - name: metrics_box_sales_daily
-    description: |
-      **Table de metrics agrégées quotidienne**
-
-      Granularité jour pour analyses plus détaillées.
-      Moins de dimensions que la version monthly pour rester performant.
-
-      Rafraîchissement : Les 7 derniers jours à chaque run
-
-    columns:
-      - name: date
-        description: "Date complète (YYYY-MM-DD)"
-        tests:
-          - not_null
-
-      - name: dw_country_code
-        description: "Code pays"
-        tests:
-          - not_null
-
-      - name: subscription_count
-        description: "Nombre de subscriptions pour ce jour"
-
-      - name: net_revenue
-        description: "Revenu net du jour"
