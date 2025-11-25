@@ -186,10 +186,9 @@ models:
         description: "Nombre de box consécutives reçues sans interruption."
     tests:
       - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns:
-              - sub_id
-              - dw_country_code
+          combination_of_columns:
+            - sub_id
+            - dw_country_code
           severity: warn
           config:
             store_failures: true
