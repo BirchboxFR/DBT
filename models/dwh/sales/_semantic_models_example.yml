@@ -71,9 +71,9 @@ semantic_models:
   - name: boxes_semantic
     model: ref('boxes')
     entities:
-      - name: box_id
-        type: primary      # Clé primaire des boxes
-        expr: id
+      - name: box_id         # ⚠️ Nom de l'entité (pour matcher avec box_sales)
+        type: primary
+        expr: id             # ⚠️ Colonne réelle DANS la table boxes !
 
     dimensions:
       - name: box_name
@@ -90,6 +90,64 @@ semantic_models:
       - name: nb_boxes
         agg: count_distinct
         expr: id
+
+  # ========================================
+  # 4. Orders (exemple hypothétique)
+  # ========================================
+  - name: orders_semantic
+    model: ref('orders')
+    entities:
+      - name: order_id       # ⚠️ Nom de l'entité (pour matcher avec box_sales)
+        type: primary
+        expr: id             # ⚠️ Colonne réelle DANS la table orders !
+
+      - name: user_id
+        type: foreign
+        expr: user_id        # ✅ Dans orders, la colonne s'appelle user_id
+
+    dimensions:
+      - name: order_status
+        type: categorical
+        expr: status
+
+      - name: order_created_at
+        type: time
+        type_params:
+          time_granularity: day
+        expr: created_at
+
+    measures:
+      - name: nb_orders
+        agg: count_distinct
+        expr: id
+
+# ========================================
+# ⚠️ IMPORTANT : name vs expr
+# ========================================
+
+# RÈGLE : expr = nom de la colonne DANS LA TABLE
+# RÈGLE : name = nom de l'entité (pour les jointures)
+
+# EXEMPLE CONCRET :
+
+# Dans la table ORDERS :
+# - La colonne s'appelle "id"
+# - Mais on nomme l'entité "order_id" (pour matcher avec les autres tables)
+
+# Dans la table BOX_SALES :
+# - La colonne s'appelle "order_id" (résultat du JOIN)
+# - On nomme l'entité "order_id" (pareil)
+
+# JOINTURE AUTOMATIQUE :
+# box_sales.order_id (colonne) ←→ orders.id (colonne)
+#     ↓ via entité "order_id" ↓
+
+# Table          | Entity name | expr (colonne réelle)
+# ---------------|-------------|---------------------
+# box_sales      | order_id    | order_id   ← SELECT o.id AS order_id
+# orders         | order_id    | id         ← Clé primaire de orders
+# boxes          | box_id      | id         ← Clé primaire de boxes
+# box_sales      | box_id      | box_id     ← SELECT b.id AS box_id
 
 # ========================================
 # COMMENT ÇA MARCHE ?
