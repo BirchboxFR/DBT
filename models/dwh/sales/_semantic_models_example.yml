@@ -8,8 +8,16 @@ semantic_models:
   - name: box_sales_semantic
     model: ref('box_sales')
     entities:
+      - name: sub_id
+        type: primary      # ✅ Vraie clé unique : sub_id (car un user peut avoir 2 box)
+        expr: sub_id
+
+      - name: user_key
+        type: foreign      # ✅ MEILLEURE jointure avec customers (pays_user_id)
+        expr: user_key
+
       - name: user_id
-        type: primary      # Cette table est centrée sur user_id
+        type: foreign      # ⚠️ Seul insuffisant, combiner avec dw_country_code
         expr: user_id
 
       - name: box_id
@@ -31,8 +39,12 @@ semantic_models:
   - name: customers_semantic
     model: ref('customers')
     entities:
+      - name: user_key
+        type: primary      # ✅ Clé primaire avec pays (ex: FR_12345)
+        expr: CONCAT(dw_country_code, '_', CAST(user_id AS STRING))
+
       - name: user_id
-        type: primary      # Clé primaire des customers
+        type: foreign      # ID numérique seul (attention multi-pays)
         expr: user_id
 
     dimensions:
@@ -90,16 +102,40 @@ semantic_models:
 # 1. Voir que total_revenue vient de box_sales_semantic
 # 2. Voir que nb_customers vient de customers_semantic
 # 3. Voir que customer_age_group vient de customers_semantic
-# 4. Identifier que les deux ont l'entité user_id
+# 4. Identifier que les deux ont l'entité user_key (ou user_id)
 # 5. Créer automatiquement cette jointure :
 
 # SELECT
 #   c.age_group as customer_age_group,
 #   SUM(bs.net_revenue) as total_revenue,
-#   COUNT(DISTINCT c.user_id) as nb_customers
+#   COUNT(DISTINCT c.user_key) as nb_customers
 # FROM box_sales bs
-# LEFT JOIN customers c ON bs.user_id = c.user_id  -- ✨ JOINTURE AUTO !
+# LEFT JOIN customers c ON bs.user_key = c.user_key  -- ✨ JOINTURE AUTO avec user_key !
 # GROUP BY c.age_group
+
+# ========================================
+# POURQUOI user_key AU LIEU DE user_id ?
+# ========================================
+
+# ✅ AVANTAGES de user_key (format: FR_12345) :
+# - Clé UNIQUE même en multi-pays (user_id seul peut se dupliquer entre pays)
+# - Jointure SÛRE entre box_sales (multi-pays) et customers (multi-pays)
+# - Évite les bugs de duplication de données
+
+# ⚠️ PROBLÈME de user_id seul :
+# - user_id=123 peut exister en FR ET en DE (2 personnes différentes !)
+# - Jointure sur user_id seul → duplication des lignes
+# - Il faut TOUJOURS combiner avec dw_country_code
+
+# EXEMPLE PROBLÉMATIQUE :
+# SELECT * FROM box_sales bs
+# JOIN customers c ON bs.user_id = c.user_id  -- ❌ DANGER !
+# → User FR_123 va matcher avec User DE_123 → DOUBLONS !
+
+# SOLUTION :
+# SELECT * FROM box_sales bs
+# JOIN customers c ON bs.user_key = c.user_key  -- ✅ SAFE !
+# → Jointure précise par pays
 
 # ========================================
 # JOINTURE MULTI-TABLES
