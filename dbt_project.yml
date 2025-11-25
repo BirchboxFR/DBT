@@ -36,10 +36,6 @@ vars:
     - code: 'SE'
       dataset: 'bdd_prod_se'
 
-# Configuration du Semantic Layer (MetricFlow)
-semantic-models:
-  - name: warehouse
-
 # Configuration du time spine pour MetricFlow
 metrics:
   warehouse:
