@@ -36,6 +36,15 @@ vars:
     - code: 'SE'
       dataset: 'bdd_prod_se'
 
+# Configuration du Semantic Layer (MetricFlow)
+semantic-models:
+  - name: warehouse
+
+# Configuration du time spine pour MetricFlow
+metrics:
+  warehouse:
+    +time_spine_model: ref('metricflow_time_spine')
+
 snapshots:
   warehouse:
     +project: normalised-417010
@@ -73,6 +82,8 @@ models:
           relation: true
           columns: true
       snippets:
+      utils:
+        +materialized: table
       inter:
         +schema: inter
         +materialized: table

@@ -7,21 +7,30 @@ semantic_models:
 
     # Entités - Clés de jointure
     entities:
-      - name: user_id
+      - name: sub_id
         type: primary
+        expr: sub_id
+        description: "Clé primaire unique - une ligne = un abonnement pour une box"
+
+      - name: user_key
+        type: foreign
+        expr: user_key
+        description: "Clé de jointure avec customers (format: pays_user_id, ex: FR_12345)"
+
+      - name: user_id
+        type: foreign
         expr: user_id
+        description: "ID utilisateur (attention: doit être combiné avec dw_country_code pour être unique)"
 
       - name: box_id
         type: foreign
         expr: box_id
+        description: "Clé de jointure avec boxes"
 
       - name: order_id
         type: foreign
         expr: order_id
-
-      - name: sub_id
-        type: foreign
-        expr: sub_id
+        description: "Clé de jointure avec orders"
 
     # Dimensions - Attributs pour filtrer et grouper
     dimensions:
