@@ -1,0 +1,129 @@
+metrics:
+  # ===========================================
+  # METRICS D'ACQUISITION
+  # Implémentées dans: models/dwh/marts/metrics/metrics_acquisitions_daily.sql
+  # ===========================================
+
+  - name: daily_acquisitions
+    description: "Nombre d'acquisitions par jour (acquis_status_lvl1='ACQUISITION' et day_in_cycle>0)"
+    type: simple
+    label: "Acquisitions Quotidiennes"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} = 'ACQUISITION'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  - name: daily_new_acquisitions
+    description: "Nombre de nouvelles acquisitions (NEW NEW) par jour"
+    type: simple
+    label: "Nouvelles Acquisitions"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl2') }} = 'NEW NEW'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  - name: daily_reactivations
+    description: "Nombre de réactivations par jour"
+    type: simple
+    label: "Réactivations"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl2') }} = 'REACTIVATION'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  - name: daily_gift_acquisitions
+    description: "Nombre d'acquisitions gift par jour"
+    type: simple
+    label: "Acquisitions Gift"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl2') }} = 'GIFT'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  - name: acquisition_revenue
+    description: "Revenu net généré par les acquisitions"
+    type: simple
+    label: "Revenu Acquisitions"
+    type_params:
+      measure: total_net_revenue
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} = 'ACQUISITION'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  - name: avg_acquisition_revenue
+    description: "Revenu moyen par acquisition"
+    type: simple
+    label: "Panier Moyen Acquisition"
+    type_params:
+      measure: avg_net_revenue
+    filter: |
+      {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} = 'ACQUISITION'
+      AND {{ Dimension('box_sales_semantic__day_in_cycle') }} > 0
+
+  # ===========================================
+  # METRICS GÉNÉRALES BOX SALES
+  # Implémentées dans: models/dwh/marts/metrics/metrics_box_sales_monthly.sql
+  # ===========================================
+
+  - name: total_revenue
+    description: "Revenu net total (HT)"
+    type: simple
+    label: "Revenu Net Total"
+    type_params:
+      measure: total_net_revenue
+
+  - name: subscription_count
+    description: "Nombre total de subscriptions"
+    type: simple
+    label: "Nombre de Subs"
+    type_params:
+      measure: nb_subscriptions
+
+  - name: unique_users
+    description: "Nombre d'utilisateurs uniques"
+    type: simple
+    label: "Utilisateurs Uniques"
+    type_params:
+      measure: nb_unique_users
+
+  - name: gross_profit
+    description: "Marge brute totale"
+    type: simple
+    label: "Marge Brute"
+    type_params:
+      measure: total_gross_profit
+
+  - name: total_discounts
+    description: "Montant total des réductions"
+    type: simple
+    label: "Réductions Totales"
+    type_params:
+      measure: total_discount
+
+  # ===========================================
+  # METRICS DÉRIVÉES (RATIOS)
+  # ===========================================
+
+  - name: gross_margin_rate
+    description: "Taux de marge brute (gross_profit / revenue)"
+    type: derived
+    label: "Taux de Marge Brute"
+    type_params:
+      expr: "gross_profit / NULLIF(total_revenue, 0)"
+      metrics:
+        - gross_profit
+        - total_revenue
+
+  - name: acquisition_conversion_rate
+    description: "Taux d'acquisition (acquisitions / total subs)"
+    type: derived
+    label: "Taux d'Acquisition"
+    type_params:
+      expr: "daily_acquisitions / NULLIF(subscription_count, 0)"
+      metrics:
+        - daily_acquisitions
+        - subscription_count

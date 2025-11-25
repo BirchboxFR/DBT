@@ -113,7 +113,7 @@ per_user_campaign AS (
    cast( MIN(CASE WHEN status = 'Open' THEN event_date END) as timestamp) AS date_open,
     cast(MIN(CASE WHEN status = 'Click' THEN event_date END)as timestamp) AS date_click
 FROM crm.splio_events
-WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 25 MONTH)
     --AND contactid = 'mathieu.helie@blissim.fr' 
     -- AND campaignid = '7rY0neRrJ'
 GROUP BY contactid, campaignid, campaignname

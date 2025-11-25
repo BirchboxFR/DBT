@@ -1,0 +1,133 @@
+version: 2
+
+models:
+  - name: metrics_acquisitions_daily
+    description: |
+      **Metrics d'acquisition quotidiennes - OPTIMISÉ POUR METABASE**
+
+      Table ultra-légère pour tracker les acquisitions jour par jour.
+      Répond à la question : "Combien d'acquisitions aujourd'hui ?"
+
+      **Optimisations** :
+      - Partitionnée par jour (scan seulement les jours nécessaires)
+      - Clusterisée par pays et type d'acquisition (queries ultra-rapides)
+      - Incrémental (recharge uniquement les 31 derniers jours)
+      - Pré-agrégée (10-50 lignes/jour vs millions dans box_sales)
+
+      **Coût estimé par requête : < 0.001€** (quasi gratuit)
+
+      **Cas d'usage** :
+      - Dashboard acquisition temps réel (31 derniers jours)
+      - Déclinable par pays (FR, DE, ES, IT, etc.)
+      - Déclinable par type (NEW NEW, REACTIVATION, GIFT)
+
+      Rafraîchissement : Toutes les 30 minutes via dbt run
+
+    columns:
+      - name: date
+        description: "Date d'acquisition (format: YYYY-MM-DD)"
+        tests:
+          - not_null
+
+      - name: dw_country_code
+        description: "Code pays de l'acquisition"
+        tests:
+          - not_null
+
+      - name: acquis_status_lvl2
+        description: "Type d'acquisition : NEW NEW, REACTIVATION, ou GIFT"
+        tests:
+          - not_null
+
+      - name: nb_acquisitions
+        description: "Nombre total d'acquisitions pour ce jour/pays/type"
+
+      - name: nb_new_new
+        description: "Nombre de nouvelles acquisitions (jamais abonnés)"
+
+      - name: nb_reactivations
+        description: "Nombre de réactivations (anciens clients)"
+
+      - name: nb_gifts
+        description: "Nombre d'acquisitions via gift"
+
+      - name: total_acquisition_revenue
+        description: "Revenu net total généré par les acquisitions"
+
+      - name: avg_revenue_per_acquisition
+        description: "Revenu moyen par acquisition"
+
+      - name: last_updated_at
+        description: "Timestamp de dernière mise à jour"
+
+  - name: metrics_box_sales_monthly
+    description: |
+      **Table de metrics agrégées mensuelle - OPTIMISÉE METABASE**
+
+      Cette table est conçue pour minimiser les coûts BigQuery :
+      - Partitionnée par mois (scan seulement ce dont vous avez besoin)
+      - Clusterisée par pays et statuts (queries ultra-rapides)
+      - Incrémental (recharge uniquement les 3 derniers mois)
+      - Volume : ~100-500 lignes/mois au lieu de millions
+
+      **Coût estimé par requête Metabase : < 0.01€**
+
+      Rafraîchissement : Toutes les 30 minutes via dbt run
+
+    columns:
+      - name: date
+        description: "Premier jour du mois (format: YYYY-MM-01)"
+        tests:
+          - not_null
+
+      - name: dw_country_code
+        description: "Code pays (FR, DE, ES, IT, etc.)"
+        tests:
+          - not_null
+
+      - name: subscription_count
+        description: "Nombre de subscriptions pour ce mois/pays/statut"
+
+      - name: unique_users
+        description: "Nombre d'utilisateurs uniques"
+
+      - name: net_revenue
+        description: "Revenu net total (HT) après réductions"
+
+      - name: gross_revenue
+        description: "Revenu brut total (HT) avant réductions"
+
+      - name: gross_profit
+        description: "Marge brute (net_revenue - coûts)"
+
+      - name: total_discounts
+        description: "Montant total des réductions"
+
+      - name: last_updated_at
+        description: "Timestamp de dernière mise à jour"
+
+  - name: metrics_box_sales_daily
+    description: |
+      **Table de metrics agrégées quotidienne**
+
+      Granularité jour pour analyses plus détaillées.
+      Moins de dimensions que la version monthly pour rester performant.
+
+      Rafraîchissement : Les 7 derniers jours à chaque run
+
+    columns:
+      - name: date
+        description: "Date complète (YYYY-MM-DD)"
+        tests:
+          - not_null
+
+      - name: dw_country_code
+        description: "Code pays"
+        tests:
+          - not_null
+
+      - name: subscription_count
+        description: "Nombre de subscriptions pour ce jour"
+
+      - name: net_revenue
+        description: "Revenu net du jour"
