@@ -50,6 +50,9 @@ WITH acquisitions AS (
         acquis_status_lvl1,
         acquis_status_lvl2,
 
+        -- Identifiants
+        user_id,
+
         -- Filtres métier
         day_in_cycle,
 
