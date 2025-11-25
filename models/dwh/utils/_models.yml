@@ -7,9 +7,11 @@ models:
       Table de référence contenant toutes les dates de 2015 à 2030.
       Utilisée par le semantic layer pour les agrégations temporelles.
     config:
-      # Indique à dbt que c'est le time spine pour MetricFlow
+      # Configuration MetricFlow time spine
       meta:
         is_metricflow_time_spine: true
+    time_spine:
+      standard_granularity_column: date_day
     columns:
       - name: date_day
         description: "Date unique (granularité jour)"

@@ -4,6 +4,8 @@ semantic_models:
       Semantic model pour les ventes de box.
       Permet d'analyser les revenus, marges, statuts d'acquisition et comportements clients.
     model: ref('box_sales')
+    defaults:
+      agg_time_dimension: date
 
     # Entités - Clés de jointure
     entities:
@@ -178,12 +180,12 @@ semantic_models:
         expr: CAST(box_id AS STRING)
         description: "ID de la box (dimension)"
 
-      - name: month
+      - name: month_number
         type: categorical
         expr: CAST(month AS STRING)
         description: "Mois (1-12)"
 
-      - name: year
+      - name: year_number
         type: categorical
         expr: CAST(year AS STRING)
         description: "Année"
