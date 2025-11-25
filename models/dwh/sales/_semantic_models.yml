@@ -1,0 +1,331 @@
+semantic_models:
+  - name: box_sales_semantic
+    description: |
+      Semantic model pour les ventes de box.
+      Permet d'analyser les revenus, marges, statuts d'acquisition et comportements clients.
+    model: ref('box_sales')
+
+    # Entités - Clés de jointure
+    entities:
+      - name: user_id
+        type: primary
+        expr: user_id
+
+      - name: box_id
+        type: foreign
+        expr: box_id
+
+      - name: order_id
+        type: foreign
+        expr: order_id
+
+      - name: sub_id
+        type: foreign
+        expr: sub_id
+
+    # Dimensions - Attributs pour filtrer et grouper
+    dimensions:
+      # Dimension temporelle principale
+      - name: date
+        type: time
+        type_params:
+          time_granularity: month
+        expr: date
+
+      - name: payment_date
+        type: time
+        type_params:
+          time_granularity: day
+        expr: payment_date
+
+      # Dimensions géographiques
+      - name: dw_country_code
+        type: categorical
+        expr: dw_country_code
+
+      - name: shipping_country
+        type: categorical
+        expr: shipping_country
+
+      # Dimensions de statut
+      - name: acquis_status_lvl1
+        type: categorical
+        expr: acquis_status_lvl1
+        description: "Niveau 1 du statut d'acquisition (LIVE, ACQUISITION)"
+
+      - name: acquis_status_lvl2
+        type: categorical
+        expr: acquis_status_lvl2
+        description: "Niveau 2 du statut d'acquisition (NEW NEW, REACTIVATION, GIFT, LIVE)"
+
+      - name: payment_status
+        type: categorical
+        expr: payment_status
+        description: "Statut de paiement (paid, forthcoming)"
+
+      - name: next_month_status
+        type: categorical
+        expr: next_month_status
+        description: "Statut du mois suivant (LIVE ou CHURN)"
+
+      - name: sub_payment_status
+        type: categorical
+        expr: sub_payment_status
+
+      # Dimensions de suspension/churn
+      - name: sub_suspended_reason_lvl1
+        type: categorical
+        expr: sub_suspended_reason_lvl1
+        description: "Raison principale de suspension (technical, self-willed, gift end)"
+
+      - name: sub_suspended_reason_lvl2
+        type: categorical
+        expr: sub_suspended_reason_lvl2
+        description: "Raison secondaire de suspension"
+
+      - name: sub_suspended_reason_lvl3
+        type: categorical
+        expr: sub_suspended_reason_lvl3
+        description: "Raison détaillée de suspension"
+
+      # Dimensions d'engagement
+      - name: committed
+        type: categorical
+        expr: committed
+        description: "Engagement du client (committed, not committed)"
+
+      - name: committment_status
+        type: categorical
+        expr: committment_status
+        description: "Statut d'engagement (End of committment, Middle of committment)"
+
+      - name: cannot_suspend
+        type: categorical
+        expr: CASE WHEN cannot_suspend = 1 THEN 'Yes' ELSE 'No' END
+        description: "Abonnement suspendable ou non"
+
+      # Dimensions de type d'abonnement
+      - name: gift
+        type: categorical
+        expr: CASE WHEN gift = 1 THEN 'Gift' ELSE 'Self' END
+        description: "Type d'abonnement (cadeau ou self)"
+
+      - name: yearly
+        type: categorical
+        expr: CASE WHEN yearly = 1 THEN 'Yearly' ELSE 'Monthly' END
+        description: "Abonnement annuel ou mensuel"
+
+      - name: is_mono
+        type: categorical
+        expr: CASE WHEN is_mono THEN 'Mono' ELSE 'Multi' END
+        description: "Box mono-marque ou multi-marques"
+
+      - name: mono_brand
+        type: categorical
+        expr: mono_brand
+        description: "Marque si box mono-marque"
+
+      # Dimensions de coupon
+      - name: coupon_type
+        type: categorical
+        expr: coupon_type
+        description: "Type de coupon marketing"
+
+      - name: discount_type
+        type: categorical
+        expr: discount_type
+        description: "Type de réduction (GWS, discount, Other)"
+
+      - name: coupon_engagement
+        type: categorical
+        expr: coupon_engagement
+        description: "Engagement lié au coupon"
+
+      # Dimensions CRM
+      - name: crm_acquisition
+        type: categorical
+        expr: CASE WHEN crm_acquisition THEN 'CRM' ELSE 'Non-CRM' END
+        description: "Acquisition via CRM"
+
+      - name: raffed
+        type: categorical
+        expr: CASE WHEN raffed = 1 THEN 'Referred' ELSE 'Not Referred' END
+        description: "Client parrainé"
+
+      # Dimensions opérationnelles
+      - name: reexp
+        type: categorical
+        expr: CASE WHEN reexp THEN 'Reexpedited' ELSE 'Normal' END
+        description: "Box réexpédiée"
+
+      - name: mini_reexp
+        type: categorical
+        expr: CASE WHEN mini_reexp THEN 'Mini Reexp' ELSE 'Normal' END
+        description: "Mini réexpédition"
+
+      # Dimensions numériques en tant que dimensions
+      - name: box_id_dim
+        type: categorical
+        expr: CAST(box_id AS STRING)
+        description: "ID de la box (dimension)"
+
+      - name: month
+        type: categorical
+        expr: CAST(month AS STRING)
+        description: "Mois (1-12)"
+
+      - name: year
+        type: categorical
+        expr: CAST(year AS STRING)
+        description: "Année"
+
+    # Mesures - Métriques agrégées
+    measures:
+      # Mesures de comptage
+      - name: nb_subscriptions
+        description: "Nombre de subscriptions (lignes)"
+        agg: count
+        expr: sub_id
+
+      - name: nb_unique_users
+        description: "Nombre d'utilisateurs uniques"
+        agg: count_distinct
+        expr: user_id
+
+      - name: nb_orders
+        description: "Nombre de commandes uniques"
+        agg: count_distinct
+        expr: order_id
+
+      # Mesures de revenus
+      - name: total_gross_revenue
+        description: "Revenu brut total (HT)"
+        agg: sum
+        expr: gross_revenue
+
+      - name: total_net_revenue
+        description: "Revenu net total après réductions (HT)"
+        agg: sum
+        expr: net_revenue
+
+      - name: avg_gross_revenue
+        description: "Revenu brut moyen par subscription"
+        agg: average
+        expr: gross_revenue
+
+      - name: avg_net_revenue
+        description: "Revenu net moyen par subscription"
+        agg: average
+        expr: net_revenue
+
+      # Mesures de réductions
+      - name: total_discount
+        description: "Montant total des réductions (HT)"
+        agg: sum
+        expr: discount
+
+      - name: avg_discount
+        description: "Réduction moyenne par subscription"
+        agg: average
+        expr: discount
+
+      # Mesures de TVA
+      - name: total_vat_gross_revenue
+        description: "TVA totale sur revenu brut"
+        agg: sum
+        expr: vat_on_gross_revenue
+
+      - name: total_vat_discount
+        description: "TVA totale sur réductions"
+        agg: sum
+        expr: vat_on_discount
+
+      - name: total_vat_shipping
+        description: "TVA totale sur livraison"
+        agg: sum
+        expr: vat_on_shipping
+
+      # Mesures de livraison
+      - name: total_shipping
+        description: "Coûts de livraison totaux (HT)"
+        agg: sum
+        expr: shipping
+
+      - name: avg_shipping
+        description: "Coût de livraison moyen"
+        agg: average
+        expr: shipping
+
+      # Mesures de coûts
+      - name: total_coop
+        description: "Coûts produits totaux"
+        agg: sum
+        expr: coop
+
+      - name: total_assembly_cost
+        description: "Coûts d'assemblage totaux"
+        agg: sum
+        expr: assembly_cost
+
+      - name: total_pack_cost
+        description: "Coûts d'emballage totaux"
+        agg: sum
+        expr: pack_cost
+
+      - name: total_print_cost
+        description: "Coûts d'impression totaux"
+        agg: sum
+        expr: print_cost
+
+      - name: total_consumable_cost
+        description: "Coûts de consommables totaux"
+        agg: sum
+        expr: consumable_cost
+
+      - name: total_shipping_cost
+        description: "Coûts de livraison totaux"
+        agg: sum
+        expr: shipping_cost
+
+      - name: total_gws_costs
+        description: "Coûts GWS totaux"
+        agg: sum
+        expr: gws_costs
+
+      # Mesures de marge
+      - name: total_gross_profit
+        description: "Marge brute totale"
+        agg: sum
+        expr: gross_profit
+
+      - name: avg_gross_profit
+        description: "Marge brute moyenne par subscription"
+        agg: average
+        expr: gross_profit
+
+      # Mesures de comportement client
+      - name: avg_consecutive_boxes
+        description: "Nombre moyen de boxes consécutives"
+        agg: average
+        expr: consecutive_boxes
+
+      - name: max_consecutive_boxes
+        description: "Maximum de boxes consécutives"
+        agg: max
+        expr: consecutive_boxes
+
+      - name: avg_total_boxes_so_far
+        description: "Nombre moyen de boxes reçues jusqu'à présent"
+        agg: average
+        expr: total_boxes_so_far
+
+      - name: max_total_boxes_so_far
+        description: "Maximum de boxes reçues par un utilisateur"
+        agg: max
+        expr: total_boxes_so_far
+
+      # Mesure de note
+      - name: avg_box_global_grade
+        description: "Note globale moyenne des boxes"
+        agg: average
+        expr: box_global_grade
