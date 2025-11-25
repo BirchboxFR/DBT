@@ -1,0 +1,120 @@
+metrics:
+  # ===========================================
+  # Metrics de Revenue
+  # ===========================================
+
+  - name: total_revenue
+    description: "Revenu net total (HT)"
+    type: simple
+    label: "Revenu Net Total"
+    type_params:
+      measure: total_net_revenue
+
+  - name: avg_revenue_per_sub
+    description: "Revenu net moyen par subscription"
+    type: simple
+    label: "Revenu Moyen par Sub"
+    type_params:
+      measure: avg_net_revenue
+
+  - name: gross_revenue
+    description: "Revenu brut total (HT)"
+    type: simple
+    label: "Revenu Brut"
+    type_params:
+      measure: total_gross_revenue
+
+  # ===========================================
+  # Metrics de Volume
+  # ===========================================
+
+  - name: subscription_count
+    description: "Nombre total de subscriptions"
+    type: simple
+    label: "Nombre de Subs"
+    type_params:
+      measure: nb_subscriptions
+
+  - name: unique_users
+    description: "Nombre d'utilisateurs uniques"
+    type: simple
+    label: "Utilisateurs Uniques"
+    type_params:
+      measure: nb_unique_users
+
+  - name: order_count
+    description: "Nombre de commandes"
+    type: simple
+    label: "Nombre de Commandes"
+    type_params:
+      measure: nb_orders
+
+  # ===========================================
+  # Metrics de Marge
+  # ===========================================
+
+  - name: gross_profit
+    description: "Marge brute totale"
+    type: simple
+    label: "Marge Brute"
+    type_params:
+      measure: total_gross_profit
+
+  - name: avg_gross_profit
+    description: "Marge brute moyenne par subscription"
+    type: simple
+    label: "Marge Moyenne"
+    type_params:
+      measure: avg_gross_profit
+
+  # ===========================================
+  # Metrics de Coûts
+  # ===========================================
+
+  - name: total_discounts
+    description: "Montant total des réductions"
+    type: simple
+    label: "Réductions Totales"
+    type_params:
+      measure: total_discount
+
+  - name: shipping_costs
+    description: "Coûts de livraison totaux"
+    type: simple
+    label: "Frais de Port"
+    type_params:
+      measure: total_shipping
+
+  # ===========================================
+  # Metrics Dérivées (Ratios)
+  # ===========================================
+
+  - name: discount_rate
+    description: "Taux de réduction (discount / gross_revenue)"
+    type: derived
+    label: "Taux de Réduction"
+    type_params:
+      expr: "total_discounts / NULLIF(gross_revenue, 0)"
+      metrics:
+        - total_discounts
+        - gross_revenue
+
+  - name: gross_margin_rate
+    description: "Taux de marge brute (gross_profit / revenue)"
+    type: derived
+    label: "Taux de Marge Brute"
+    type_params:
+      expr: "gross_profit / NULLIF(total_revenue, 0)"
+      metrics:
+        - gross_profit
+        - total_revenue
+
+  - name: average_basket
+    description: "Panier moyen (revenue / subscriptions)"
+    type: derived
+    label: "Panier Moyen"
+    type_params:
+      expr: "total_revenue / NULLIF(subscription_count, 0)"
+      metrics:
+        - total_revenue
+        - subscription_count
