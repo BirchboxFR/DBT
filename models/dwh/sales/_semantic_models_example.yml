@@ -1,0 +1,121 @@
+# EXEMPLE ÉDUCATIF - Montre comment les entités permettent les jointures
+# Ce fichier n'est PAS actif, juste pour documentation
+
+semantic_models:
+  # ========================================
+  # 1. Box Sales (ce qu'on a créé)
+  # ========================================
+  - name: box_sales_semantic
+    model: ref('box_sales')
+    entities:
+      - name: user_id
+        type: primary      # Cette table est centrée sur user_id
+        expr: user_id
+
+      - name: box_id
+        type: foreign      # Permet de joindre avec boxes_semantic
+        expr: box_id
+
+      - name: order_id
+        type: foreign      # Permet de joindre avec orders_semantic
+        expr: order_id
+
+    measures:
+      - name: total_revenue
+        agg: sum
+        expr: net_revenue
+
+  # ========================================
+  # 2. Customers (exemple hypothétique)
+  # ========================================
+  - name: customers_semantic
+    model: ref('customers')
+    entities:
+      - name: user_id
+        type: primary      # Clé primaire des customers
+        expr: user_id
+
+    dimensions:
+      - name: customer_age_group
+        type: categorical
+        expr: age_group
+
+      - name: customer_country
+        type: categorical
+        expr: country
+
+      - name: customer_lifetime_days
+        type: categorical
+        expr: TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), created_at, DAY)
+
+    measures:
+      - name: nb_customers
+        agg: count_distinct
+        expr: user_id
+
+  # ========================================
+  # 3. Boxes (exemple hypothétique)
+  # ========================================
+  - name: boxes_semantic
+    model: ref('boxes')
+    entities:
+      - name: box_id
+        type: primary      # Clé primaire des boxes
+        expr: id
+
+    dimensions:
+      - name: box_name
+        type: categorical
+        expr: name
+
+      - name: box_date
+        type: time
+        type_params:
+          time_granularity: month
+        expr: date
+
+    measures:
+      - name: nb_boxes
+        agg: count_distinct
+        expr: id
+
+# ========================================
+# COMMENT ÇA MARCHE ?
+# ========================================
+
+# Quand vous faites cette requête :
+# dbt sl query --metrics total_revenue,nb_customers --group-by customer_age_group
+
+# dbt va :
+# 1. Voir que total_revenue vient de box_sales_semantic
+# 2. Voir que nb_customers vient de customers_semantic
+# 3. Voir que customer_age_group vient de customers_semantic
+# 4. Identifier que les deux ont l'entité user_id
+# 5. Créer automatiquement cette jointure :
+
+# SELECT
+#   c.age_group as customer_age_group,
+#   SUM(bs.net_revenue) as total_revenue,
+#   COUNT(DISTINCT c.user_id) as nb_customers
+# FROM box_sales bs
+# LEFT JOIN customers c ON bs.user_id = c.user_id  -- ✨ JOINTURE AUTO !
+# GROUP BY c.age_group
+
+# ========================================
+# JOINTURE MULTI-TABLES
+# ========================================
+
+# Requête avec 3 tables :
+# dbt sl query --metrics total_revenue,nb_customers,nb_boxes --group-by box_name,customer_country
+
+# dbt va créer :
+# SELECT
+#   b.name as box_name,
+#   c.country as customer_country,
+#   SUM(bs.net_revenue) as total_revenue,
+#   COUNT(DISTINCT c.user_id) as nb_customers,
+#   COUNT(DISTINCT b.id) as nb_boxes
+# FROM box_sales bs
+# LEFT JOIN customers c ON bs.user_id = c.user_id      -- ✨ user_id
+# LEFT JOIN boxes b ON bs.box_id = b.id                -- ✨ box_id
+# GROUP BY b.name, c.country
