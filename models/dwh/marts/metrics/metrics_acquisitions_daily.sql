@@ -120,5 +120,3 @@ GROUP BY
 -- Limiter aux 24 derniers mois et jusqu'à aujourd'hui
 HAVING date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
    AND date <= CURRENT_DATE()
-
-ORDER BY date DESC, dw_country_code
