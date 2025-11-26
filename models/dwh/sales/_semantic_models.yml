@@ -194,7 +194,7 @@ semantic_models:
     measures:
       # Mesures de comptage
       - name: nb_subscriptions
-        description: "Nombre de subscriptions (lignes)"
+        description: "Nombre de subscriptions/acquis/acquisitions (lignes)"
         agg: count
         expr: sub_id
 
