@@ -190,6 +190,17 @@ semantic_models:
         expr: CAST(year AS STRING)
         description: "Année"
 
+      # Dimensions pour métriques de churn
+      - name: diff_current_box
+        type: categorical
+        expr: CAST(diff_current_box AS STRING)
+        description: "Différence entre box_id et current_box_id (pour analyser le churn)"
+
+      - name: self
+        type: categorical
+        expr: CASE WHEN self = 1 THEN 'Self' ELSE 'Not Self' END
+        description: "Abonnement self (non-gift)"
+
     # Mesures - Métriques agrégées
     measures:
       # Mesures de comptage

@@ -127,3 +127,66 @@ metrics:
       metrics:
         - daily_acquisitions
         - subscription_count
+
+  # ===========================================
+  # MÉTRIQUES DE CHURN
+  # Basées sur la requête: diff_current_box BETWEEN -24 AND 0, paid, self=1
+  # Utilisables par: date (mois), dw_country_code, sub_suspended_reason_lvl1
+  # ===========================================
+
+  - name: churn_total_base
+    description: "Base d'abonnements éligibles pour calcul churn (paid, self, sub_suspended_reason_lvl1 NOT NULL)"
+    type: simple
+    label: "Base Abonnements Churn"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
+      AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
+      AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} IS NOT NULL
+
+  - name: churn_count
+    description: "Nombre de churns (next_month_status = CHURN)"
+    type: simple
+    label: "Nombre de Churns"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__next_month_status') }} = 'CHURN'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
+      AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
+      AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} IS NOT NULL
+
+  - name: churn_rate
+    description: "Taux de churn mensuel (churn_count / churn_total_base)"
+    type: derived
+    label: "Taux de Churn"
+    type_params:
+      expr: "churn_count * 1.0 / NULLIF(churn_total_base, 0)"
+      metrics:
+        - churn_count
+        - churn_total_base
+
+  - name: churn_self_willed_count
+    description: "Nombre de churns volontaires (reason = self-willed)"
+    type: simple
+    label: "Churns Volontaires"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__next_month_status') }} = 'CHURN'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
+      AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
+      AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} = 'self-willed'
+
+  - name: churn_technical_count
+    description: "Nombre de churns techniques (reason = technical)"
+    type: simple
+    label: "Churns Techniques"
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('box_sales_semantic__next_month_status') }} = 'CHURN'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
+      AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
+      AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} = 'technical'
