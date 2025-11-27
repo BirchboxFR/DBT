@@ -288,7 +288,8 @@ FROM
         WHEN s.total_product = 0 AND gc.id IS NOT NULL AND pbp.sub_id IS NOT NULL THEN (gc.amount/gc.duration) -- if partial box paid, count only one box
         ELSE s.total_product 
   END AS total_product,
-  case when acqui.user_key is not null then true else false end as crm_acquisition,
+  case when acqui.user_key is not null then 'true' else false end as crm_acquisition,
+  case when acqui.user_key is not null then 'CRM' else 'OTHER' end as acquisition_attribution,
   o.dw_country_code AS store_code,
   COALESCE(tva.taux, 0) AS vat_rate,
   CASE WHEN s.sub_payment_status_id = 8 OR o.status_id = 3 THEN 0.0
