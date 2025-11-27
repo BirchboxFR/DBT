@@ -220,6 +220,7 @@ CASE
   WHEN t.dw_country_code = 'PL' THEN 'PLN'
   ELSE 'EUR'
 END AS currency,
+exr.rate as rate_to_eur,
 -- Local currency amounts (original values)
 t.total_product / (1+vat_rate/100) AS gross_revenue_local,
 t.total_product - t.total_product/(1+vat_rate/100) AS vat_on_gross_revenue_local,
