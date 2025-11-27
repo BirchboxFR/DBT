@@ -214,14 +214,30 @@ else'Unknown'end as acquis_status_lvl2,
 CASE WHEN cannot_suspend = 1 THEN 'committed' ELSE 'not committed' END AS committed,
 
 g.gws_costs,
-t.total_product / (1+vat_rate/100) AS gross_revenue,
-t.total_product - t.total_product/(1+vat_rate/100) AS vat_on_gross_revenue,
-t.total_discount / (1+vat_rate/100) AS discount,
-t.total_discount - t.total_discount / (1+vat_rate/100) AS vat_on_discount,
-t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100)) AS net_revenue,
-t.total_shipping/(1+vat_rate/100) AS shipping,
-t.total_shipping - t.total_shipping/(1+vat_rate/100) AS vat_on_shipping,
-t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100)) - (t.coop + t.assembly_cost + t.pack_cost + t.print_cost + t.consumable_cost + t.shipping_cost + COALESCE(g.gws_costs, 0)) AS gross_profit
+-- Currency mapping
+CASE
+  WHEN t.dw_country_code = 'SE' THEN 'SEK'
+  WHEN t.dw_country_code = 'PL' THEN 'PLN'
+  ELSE 'EUR'
+END AS currency,
+-- Local currency amounts (original values)
+t.total_product / (1+vat_rate/100) AS gross_revenue_local,
+t.total_product - t.total_product/(1+vat_rate/100) AS vat_on_gross_revenue_local,
+t.total_discount / (1+vat_rate/100) AS discount_local,
+t.total_discount - t.total_discount / (1+vat_rate/100) AS vat_on_discount_local,
+t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100)) AS net_revenue_local,
+t.total_shipping/(1+vat_rate/100) AS shipping_local,
+t.total_shipping - t.total_shipping/(1+vat_rate/100) AS vat_on_shipping_local,
+t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100)) - (t.coop + t.assembly_cost + t.pack_cost + t.print_cost + t.consumable_cost + t.shipping_cost + COALESCE(g.gws_costs, 0)) AS gross_profit_local,
+-- EUR amounts (converted for SE/PL, same for others)
+(t.total_product / (1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS gross_revenue,
+(t.total_product - t.total_product/(1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS vat_on_gross_revenue,
+(t.total_discount / (1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS discount,
+(t.total_discount - t.total_discount / (1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS vat_on_discount,
+(t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100))) * COALESCE(exr.rate_to_eur, 1.0) AS net_revenue,
+(t.total_shipping/(1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS shipping,
+(t.total_shipping - t.total_shipping/(1+vat_rate/100)) * COALESCE(exr.rate_to_eur, 1.0) AS vat_on_shipping,
+(t.total_product / (1+vat_rate/100) - (t.total_discount / (1+vat_rate/100)) - (t.coop + t.assembly_cost + t.pack_cost + t.print_cost + t.consumable_cost + t.shipping_cost + COALESCE(g.gws_costs, 0))) * COALESCE(exr.rate_to_eur, 1.0) AS gross_profit
 FROM
 (
   SELECT 
@@ -364,7 +380,14 @@ from`teamdata-291012.marketing.Marketing_cac_discount`
 group by 1,2) mcdso on mcdso.sub_offer_id=t.sub_offer_id and mcd.country=t.dw_country_code
 LEFT JOIN box_global_grades bgg ON bgg.dw_country_code = t.dw_country_code AND bgg.box_id = t.box_id AND bgg.coffret_id = t.coffret_id
 LEFT JOIN self_churn_reason scr ON scr.dw_country_code = t.dw_country_code AND scr.user_id = t.user_id AND scr.box_id = t.box_id+1
-LEFT JOIN {{ ref('box_mono') }}  cm on t.dw_country_code=cm.dw_country_code and t.box_id=cm.mono_box_id and t.coffret_id=cm.mono_coffret_id) full_table
+LEFT JOIN {{ ref('box_mono') }}  cm on t.dw_country_code=cm.dw_country_code and t.box_id=cm.mono_box_id and t.coffret_id=cm.mono_coffret_id
+LEFT JOIN {{ ref('exchange_rates_monthly') }} exr
+  ON CASE
+    WHEN t.dw_country_code = 'SE' THEN 'SEK'
+    WHEN t.dw_country_code = 'PL' THEN 'PLN'
+    ELSE 'EUR'
+  END = exr.currency
+  AND DATE_TRUNC(t.date, MONTH) = exr.year_month) full_table
 
 group by all) FT
 
