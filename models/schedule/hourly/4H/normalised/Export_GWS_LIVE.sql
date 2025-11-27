@@ -19,7 +19,8 @@ SELECT
     'Discount' as type,
     'BOX' as product_type,
     'ACQUIZ' as acquis_type,
-    shipping_Date as first_day
+    shipping_Date as first_day,
+    CASE WHEN bs.crm_acquisition THEN 'CRM' ELSE 'OTHER' END AS attribution
 FROM sales.box_sales bs 
 LEFT JOIN inter.coupons c 
     ON c.code = bs.coupon 
