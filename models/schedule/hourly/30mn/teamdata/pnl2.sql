@@ -340,7 +340,7 @@ GROUP BY dw_country_code, next_month_date
 UNION ALL
 
 -- boxes gross revenue
-SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'BOXES GROSS REVENUE' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.total_product/(1+vat_rate/100))  as value
+SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'BOXES GROSS REVENUE' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.gross_revenue)  as value
 FROM {{ ref('box_sales') }} bs
 WHERE 1=1
  AND bs.payment_status = 'paid'
@@ -350,7 +350,7 @@ GROUP BY bs.dw_country_code, bs.year, bs.month, bs.gift
 UNION ALL
 
 -- boxes discount
-SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'BOXES DISCOUNT' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.total_discount / (1+vat_rate/100))  as value
+SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'BOXES DISCOUNT' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.discount)  as value
 FROM {{ ref('box_sales') }} bs
 WHERE 1=1
  AND bs.payment_status = 'paid'
@@ -361,7 +361,7 @@ GROUP BY bs.dw_country_code, bs.year, bs.month, bs.gift
 UNION ALL
 
 -- boxes shipping
-SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'SHIPPING BOX' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.total_shipping/(1+vat_rate/100))  as value
+SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'SHIPPING BOX' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.shipping)  as value
 FROM {{ ref('box_sales') }} bs
 WHERE 1=1
  AND bs.payment_status = 'paid'
