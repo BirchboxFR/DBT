@@ -44,6 +44,13 @@
     )
 }}
 
-select * except(array_boxes) from {{ ref('customers') }}
+select
+  -- take all columns except the ones we will override
+  * except(box_net_revenue, array_boxes),
+
+  -- re-add box_net_revenue casted to NUMERIC (use CAST(...) if you want failure on bad values)
+  safe_cast(box_net_revenue as numeric) as box_net_revenue
+
+from {{ ref('customers') }}
 
 {% endsnapshot %}
