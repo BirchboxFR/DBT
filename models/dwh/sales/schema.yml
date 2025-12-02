@@ -68,8 +68,6 @@ models:
         description: "Indicateur d'abonnement cadeau (1 = cadeau, 0 = normal)."
       - name: yearly
         description: "Indicateur d'abonnement annuel actuel (1 = annuel, 0 = mensuel)."
-      - name: old_yearly
-        description: "Indicateur d'ancien abonnement annuel."
       - name: dquantity
         description: "Quantité d'engagement (nombre de mois)."
       - name: cannot_suspend
