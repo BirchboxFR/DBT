@@ -57,6 +57,28 @@ SELECT    concat(sq.dw_country_code,'_',cast(sr.user_id as string)) as ID,
            WHEN  sq.id = 79045  and sa.id is not  null THEN false ELSE null END) AS discovery_makeup,
 
 
+
+           MAX(CASE WHEN sa.id = 203061 and sq.id=81972 THEN true 
+              WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  waxing_razor,
+              
+          MAX(CASE WHEN sa.id = 203062 and sq.id=81972 THEN true 
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  waxing_depilatory_cream,
+                    
+          MAX(CASE WHEN sa.id = 203063 and sq.id=81972 THEN true 
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  electric_epilator,
+                    
+          MAX(CASE WHEN sa.id = 203064 and sq.id=81972 THEN true 
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  home_waxing,
+                    
+          MAX(CASE WHEN sa.id = 203065 and sq.id=81972 THEN true
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  salon_laser_waxing   ,
+                    
+          MAX(CASE WHEN sa.id = 203066 and sq.id=81972 THEN true
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  no_waxing,
+                    
+          MAX(CASE WHEN sa.id = 203067 and sq.id=81972 THEN true
+                    WHEN  sq.id =81972  and sa.id is not  null THEN false ELSE null END) AS  no_waxing_response  ,                                   
+
                  -- SHOP LOCATION AS "Le lieu où j'achète mes produits de beauté"
          MAX(CASE WHEN sq.id = 46860 and sa.id = 114657 THEN true 
               WHEN  sq.id = 46860  and sa.id is not  null THEN false ELSE null END) AS shop_perfumery,
