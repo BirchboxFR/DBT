@@ -208,8 +208,8 @@ models:
       - name: "user_id"
         description: "Identifiant interne de l’utilisateur (numérique)."
 
-      - name: "order_status"
-        description: "Statut de la commande (ex: paid, shipped, cancelled…)."
+      - name: "order_status order_status : Annulée,Offerte,refund,Validée"
+        description: "Statut de la commande Validée"
 
       - name: "is_active_sub"
         description: "Utilisateur abonné actif au moment de la commande (0/1)."
