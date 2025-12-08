@@ -32,7 +32,7 @@ WITH subs_with_real_coupon AS
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
       )
     ) AS coupon_filled,
-    attribution
+    acquisition_attribution AS attribution
     -- CASE WHEN bs.crm_acquisition THEN 'CRM' ELSE 'OTHER' END AS attribution
   FROM sales.box_sales bs
   JOIN inter.boxes b ON b.date = bs.date AND b.dw_country_code = bs.dw_country_code

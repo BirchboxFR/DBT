@@ -11,7 +11,8 @@
   )
 }}
 
-select dw_country_code,payment_date,date as month, acquis_status_lvl2,shipping_Date as first_day,count(distinct sub_id)nb_subs, attribution from sales.box_sales bs
+select dw_country_code,payment_date,date as month, acquis_status_lvl2,shipping_Date as first_day,count(distinct sub_id)nb_subs, acquisition_attribution AS attribution 
+from sales.box_sales bs
 join inter.boxes using(dw_country_code,date)
 where acquis_status_lvl1='ACQUISITION'
 and payment_status='paid'
