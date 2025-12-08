@@ -14,7 +14,7 @@
 WITH costs AS (
 SELECT e.*, b.shipping_date, b.closing_date
 FROM `teamdata-291012.Spreadsheet_synchro.input_special_marketing_expenses` e
-JOIN inter.boxes b ON b.dw_country_code = e.country AND b.date = e.box
+JOIN teamdata-291012.inter.boxes b ON b.dw_country_code = e.country AND b.date = e.box
 WHERE e.cost IS NOT NULL
 )
 
