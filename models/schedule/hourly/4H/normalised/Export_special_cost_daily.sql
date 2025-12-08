@@ -1,11 +1,11 @@
+
 {{
   config(
     materialized='table',
-    schema='marketing',
     partition_by={
       "field": "daily_date",
       "data_type": "date",
-      "granularity": "month"
+       "granularity": "month"
     },
     cluster_by=["dw_country_code"]
   )
