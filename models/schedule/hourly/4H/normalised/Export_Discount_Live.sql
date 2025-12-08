@@ -32,7 +32,8 @@ WITH subs_with_real_coupon AS
         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
       )
     ) AS coupon_filled,
-    CASE WHEN bs.crm_acquisition THEN 'CRM' ELSE 'OTHER' END AS attribution
+    attribution
+    -- CASE WHEN bs.crm_acquisition THEN 'CRM' ELSE 'OTHER' END AS attribution
   FROM sales.box_sales bs
   JOIN inter.boxes b ON b.date = bs.date AND b.dw_country_code = bs.dw_country_code
   LEFT JOIN `teamdata-291012.inter.raf_sub_link` rsl ON rsl.dw_country_code = bs.dw_country_code AND bs.sub_id = rsl.order_detail_sub_id
