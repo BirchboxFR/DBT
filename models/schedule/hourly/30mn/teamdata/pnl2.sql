@@ -359,6 +359,18 @@ GROUP BY bs.dw_country_code, bs.year, bs.month, bs.gift
 
 
 UNION ALL
+  
+-- boxes discount by acquis_status_lvl1 and yearly 
+SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' AS store,
+CONCAT('discount-box-','-',lower(acquis_status_lvl1),if(bs.yearly = 1, '-yearly', '')) as type, "" as codification, SUM(bs.discount)  as value
+FROM `teamdata-291012.sales.box_sales` bs
+WHERE 1=1
+ AND bs.payment_status = 'paid'
+ AND bs.box_id >= 112
+GROUP BY bs.dw_country_code, bs.year, bs.month,type
+
+
+UNION ALL
 
 -- boxes shipping
 SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' as store, 'SHIPPING BOX' as type, CASE WHEN bs.gift = 1 THEN 'GIFTCARD ACTIVATED' ELSE 'SELF' END AS product_codification, SUM(bs.shipping)  as value
