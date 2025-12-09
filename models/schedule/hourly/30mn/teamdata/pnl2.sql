@@ -362,7 +362,7 @@ UNION ALL
   
 -- boxes discount by acquis_status_lvl1 and yearly 
 SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE' AS store,
-CONCAT('discount-box-','-',lower(acquis_status_lvl1),if(bs.yearly = 1, '-yearly', '')) as type, "" as codification, SUM(bs.discount)  as value
+CONCAT('discount-box-',lower(acquis_status_lvl1),if(bs.yearly = 1, '-yearly', '')) as type, "" as codification, SUM(bs.discount)  as value
 FROM `teamdata-291012.sales.box_sales` bs
 WHERE 1=1
  AND bs.payment_status = 'paid'
