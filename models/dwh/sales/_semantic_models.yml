@@ -189,7 +189,14 @@ semantic_models:
         type: categorical
         expr: CAST(year AS STRING)
         description: "Année"
+      
+      - name: churn_month
+        type: time
+        expr: next_month_date
+        type_params:
+          time_granularity: month
 
+          
       # Dimensions pour métriques de churn
       - name: diff_current_box
         type: categorical
