@@ -144,6 +144,10 @@ metrics:
       {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
       AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
       AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} IS NOT NULL
+    # ✨ AJOUT
+    time_dimension:
+      dimension: next_month_date
+      grain: month
 
   - name: churn_count
     description: "Nombre de churns (next_month_status = CHURN)"
@@ -156,6 +160,10 @@ metrics:
       AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
       AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
       AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} IS NOT NULL
+    # ✨ AJOUT
+    time_dimension:
+      dimension: next_month_date
+      grain: month
 
   - name: churn_rate
     description: "Taux de churn mensuel (churn_count / churn_total_base)"
@@ -166,6 +174,10 @@ metrics:
       metrics:
         - churn_count
         - churn_total_base
+    # ✨ AJOUT (probablement pas nécessaire pour une métrique dérivée, mais pour être cohérent)
+    time_dimension:
+      dimension: next_month_date
+      grain: month
 
   - name: churn_self_willed_count
     description: "Nombre de churns volontaires (reason = self-willed)"
@@ -178,6 +190,10 @@ metrics:
       AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
       AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
       AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} = 'self-willed'
+    # ✨ AJOUT
+    time_dimension:
+      dimension: next_month_date
+      grain: month
 
   - name: churn_technical_count
     description: "Nombre de churns techniques (reason = technical)"
@@ -190,3 +206,7 @@ metrics:
       AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
       AND {{ Dimension('box_sales_semantic__self') }} = 'Self'
       AND {{ Dimension('box_sales_semantic__sub_suspended_reason_lvl1') }} = 'technical'
+    # ✨ AJOUT
+    time_dimension:
+      dimension: next_month_date
+      grain: month
