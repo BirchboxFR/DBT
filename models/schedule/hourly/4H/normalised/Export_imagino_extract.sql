@@ -25,6 +25,12 @@ message_variants AS (
 campaign_message_stats AS (
  SELECT 
    c.id AS campaign_id,
+   custom_Categorie_de_campagne,
+   custom_Categorie_de_Campagne_Lvl_2,
+   custom_Code_operation,
+   custom_typologie,
+   custom_country,
+
    JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') AS imo_variant,
    COUNTIF(m.status <> 'ignored') AS targeted,
    COUNT(DISTINCT IF(m.status = 'delivered', m.address, NULL))  AS delivered,
@@ -39,9 +45,7 @@ campaign_message_stats AS (
  JOIN cdpimagino.BQ_imagino_Message m
    ON m.activationId = c.id
  WHERE DATE(m.eventDate) >= '2024-01-01'
- GROUP BY 
-   c.id, c.name, c.startdate, c.created,
-   JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant')
+ GROUP BY ALL
 ),
 
 campaign_tracking_stats AS (
@@ -71,7 +75,11 @@ campaign_tracking_stats AS (
 
 SELECT
     'IMAGINO' AS source,
-
+custom_Categorie_de_campagne,
+   custom_Categorie_de_Campagne_Lvl_2,
+   custom_Code_operation,
+   custom_typologie,
+   custom_country,
     msg.campaign_id,
     msg.imo_variant,
     msg.targeted,
@@ -93,4 +101,5 @@ LEFT JOIN campaign_tracking_stats trk
         trk.imo_variant = msg.imo_variant
         OR (trk.imo_variant IS NULL AND msg.imo_variant IS NULL)
      )
+     group by all
     
