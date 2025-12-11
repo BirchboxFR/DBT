@@ -30,6 +30,10 @@ campaign_message_stats AS (
    custom_Code_operation,
    custom_typologie,
    custom_country,
+   type,
+custom_rampup,
+custom_Contenu_communication,
+workspaceId,
   channel,
    JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') AS imo_variant,
    COUNTIF(m.status <> 'ignored') AS targeted,
@@ -81,6 +85,10 @@ custom_Categorie_de_campagne,
    custom_typologie,
    custom_country,
    channel,
+type,
+custom_rampup,
+custom_Contenu_communication,
+workspaceId,
     msg.campaign_id,
     msg.imo_variant,
     msg.targeted,
@@ -88,6 +96,7 @@ custom_Categorie_de_campagne,
     msg.softBounce,
     msg.hardBounce,
     msg.name,
+    count(distinct ca.user_id) AS acquisitions,
     COALESCE(DATE(msg.startdate), DATE(msg.created)) AS startdate,
 
     COALESCE(trk.open_uniques, 0)  AS open_uniques,
@@ -96,11 +105,6 @@ custom_Categorie_de_campagne,
     COALESCE(trk.unsubscribes, 0)  AS unsubscribes
 
 FROM campaign_message_stats msg
-LEFT JOIN campaign_tracking_stats trk
-  ON trk.campaign_id = msg.campaign_id
- AND (
-        trk.imo_variant = msg.imo_variant
-        OR (trk.imo_variant IS NULL AND msg.imo_variant IS NULL)
-     )
-     group by all
-    
+LEFT JOIN campaign_tracking_stats trk ON trk.campaign_id = msg.campaign_id AND (trk.imo_variant = msg.imo_variant OR (trk.imo_variant IS NULL AND msg.imo_variant IS NULL))
+left join `normalised-417010.crm.crm_acquisitions` ca ON ca.campaign_name = msg.name and msg.imo_variant=ca.imo_variant
+group by all
