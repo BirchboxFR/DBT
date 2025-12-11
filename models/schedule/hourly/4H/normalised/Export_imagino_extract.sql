@@ -14,6 +14,7 @@
 WITH campaign_message_stats AS (
  SELECT 
    c.*,
+   JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') as imo_variant,
    count(CASE WHEN m.status <> 'ignored' then  m.address end ) as targeted,
    count(distinct case when m.status='delivered' then m.address end) as delivered,
    count(distinct case when m.status='softBounce' then m.address end) as softBounce,
