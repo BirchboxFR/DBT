@@ -30,6 +30,8 @@ campaign_message_stats AS (
    custom_Code_operation,
    custom_typologie,
    custom_country,
+   modified,
+   endDate, 
    type,
 custom_rampup,
 custom_Contenu_communication,
@@ -77,16 +79,19 @@ campaign_tracking_stats AS (
   GROUP BY c.id, mv.imo_variant
 )
 
-SELECT
+SELECT 
     'IMAGINO' AS source,
 custom_Categorie_de_campagne,
    custom_Categorie_de_Campagne_Lvl_2,
    custom_Code_operation,
-   custom_typologie,
-   custom_country,
+   custom_Typologie,
+   custom_Country,
    channel,
+   msg.modified,
+   msg.created,
+   endDate,
 type,
-custom_rampup,
+custom_RampUp,
 custom_Contenu_communication,
 workspaceId,
     msg.campaign_id,
