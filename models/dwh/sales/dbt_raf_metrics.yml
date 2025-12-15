@@ -1,0 +1,276 @@
+# ==========================================
+# MÉTRIQUES RAF (Refer-A-Friend / Parrainage)
+# ==========================================
+# À ajouter dans votre projet dbt à côté du semantic model box_sales_semantic
+# Termes: RAF, Parrainage, Parrain, Marraine, Filleul(e), Referer, Referred
+
+metrics:
+  # ========================================
+  # 1. ACQUISITIONS RAF
+  # ========================================
+
+  - name: raf_acquisitions
+    label: "Acquisitions RAF (Parrainages)"
+    description: |
+      Nombre de nouvelles acquisitions via parrainage (raffed = 1).
+      Inclut uniquement les nouvelles acquisitions payées (pas les LIVE).
+      Termes: parrainés, filleuls, referred clients
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: raf_daily_acquisitions
+    label: "Acquisitions RAF quotidiennes"
+    description: "Nombre d'acquisitions RAF par jour (basé sur payment_date)"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: raf_new_acquisitions
+    label: "Nouvelles acquisitions RAF (NEW NEW)"
+    description: "Acquisitions RAF de type NEW NEW uniquement (pas de réactivations)"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('acquis_status_lvl2') }} = 'NEW NEW'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: raf_reactivations
+    label: "Réactivations RAF"
+    description: "Réactivations d'anciens clients via parrainage"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('acquis_status_lvl2') }} = 'REACTIVATION'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  # ========================================
+  # 2. UTILISATEURS RAF
+  # ========================================
+
+  - name: raf_unique_users
+    label: "Nombre de filleuls uniques"
+    description: |
+      Nombre d'utilisateurs uniques parrainés.
+      Compte chaque filleul une seule fois même s'il a plusieurs boxes.
+    type: simple
+    type_params:
+      measure: nb_unique_users
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+
+  # Note: Pour compter les parrains, il faudrait une jointure avec raf_parent_id
+  # qui n'est pas dans le semantic model actuel. À ajouter si besoin.
+
+  
+
+  # ========================================
+  # 4. MARGES RAF
+  # ========================================
+
+  - name: raf_gross_profit
+    label: "Marge brute RAF"
+    description: "Marge brute totale générée par les clients parrainés"
+    type: simple
+    type_params:
+      measure: total_gross_profit
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: raf_avg_gross_profit
+    label: "Marge brute moyenne RAF"
+    description: "Marge brute moyenne par subscription des clients parrainés"
+    type: simple
+    type_params:
+      measure: avg_gross_profit
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+
+  # ========================================
+  # 6. CHURN RAF
+  # ========================================
+
+  - name: raf_churn_count
+    label: "Nombre de churns RAF"
+    description: |
+      Nombre de clients parrainés qui churn (next_month_status = 'CHURN').
+      Utilise next_month_date comme dimension temporelle.
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('next_month_status') }} = 'CHURN'
+
+  - name: raf_active_subscriptions
+    label: "Subscriptions RAF actives"
+    description: "Nombre de subscriptions actives de clients parrainés (LIVE)"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('acquis_status_lvl1') }} = 'LIVE'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  # ========================================
+  # 7. ENGAGEMENT RAF
+  # ========================================
+
+  - name: raf_avg_consecutive_boxes
+    label: "Moyenne de boxes consécutives RAF"
+    description: "Nombre moyen de boxes consécutives pour les clients parrainés"
+    type: simple
+    type_params:
+      measure: avg_consecutive_boxes
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+
+  - name: raf_avg_lifetime_boxes
+    label: "Moyenne de boxes à vie RAF"
+    description: "Nombre moyen de boxes reçues à vie par les clients parrainés"
+    type: simple
+    type_params:
+      measure: avg_total_boxes_so_far
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+
+  - name: raf_committed_rate
+    label: "Taux d'engagement RAF"
+    description: "Pourcentage de clients parrainés avec engagement (committed)"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('committed') }} = 'committed'
+
+  # ========================================
+  # 8. RÉDUCTIONS RAF
+  # ========================================
+
+  - name: raf_total_discount
+    label: "Réductions totales RAF"
+    description: "Montant total des réductions appliquées aux clients parrainés"
+    type: simple
+    type_params:
+      measure: total_discount
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: raf_avg_discount
+    label: "Réduction moyenne RAF"
+    description: "Réduction moyenne par subscription des clients parrainés"
+    type: simple
+    type_params:
+      measure: avg_discount
+    filter: |
+      {{ Dimension('raffed') }} = 'Referred'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+
+# ==========================================
+# MÉTRIQUES COMPLÉMENTAIRES NÉCESSAIRES
+# ==========================================
+# Ces métriques doivent être ajoutées pour les ratios RAF
+
+metrics:
+  - name: total_acquisitions
+    label: "Total acquisitions"
+    description: "Nombre total d'acquisitions (pour calculer les taux RAF)"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+  - name: total_active_subscriptions
+    label: "Total subscriptions actives"
+    description: "Nombre total de subscriptions actives"
+    type: simple
+    type_params:
+      measure: nb_subscriptions
+    filter: |
+      {{ Dimension('acquis_status_lvl1') }} = 'LIVE'
+      AND {{ Dimension('payment_status') }} = 'paid'
+
+
+# ==========================================
+# NOTES D'IMPLÉMENTATION
+# ==========================================
+#
+# 1. DIMENSION TEMPORELLE:
+#    - Pour acquisitions: utilisez {{ TimeDimension('payment_date', 'day') }}
+#    - Pour churn: utilisez {{ TimeDimension('churn_month', 'month') }}
+#
+# 2. DIMENSION RAF_PARENT_ID:
+#    Si vous voulez tracker les parrains, ajoutez cette dimension au semantic model:
+#
+#    - name: raf_parent_id
+#      type: foreign
+#      expr: raf_parent_id
+#      description: "ID du parrain (user_id du parent)"
+#
+#    Puis créez une métrique:
+#    - name: raf_parent_count
+#      label: "Nombre de parrains"
+#      type: simple
+#      type_params:
+#        measure:
+#          agg: count_distinct
+#          expr: raf_parent_id
+#      filter: |
+#        {{ Dimension('raffed') }} = 'Referred'
+#
+# 3. REQUÊTE SQL D'ORIGINE:
+#    Votre requête avec jointure parent/enfant peut être transformée en:
+#
+#    SELECT
+#      user_id as filleul_id,
+#      raf_parent_id as parrain_id,
+#      box_id,
+#      month,
+#      year,
+#      next_month_status
+#    FROM {{ ref('box_sales') }}
+#    WHERE raffed = 1
+#      AND year >= 2025
+#
+#    Pour les noms, il faudrait joindre avec customers via un semantic model séparé.
+#
+# 4. SYNONYMES À AJOUTER DANS FRANCK:
+#    Ajoutez dans config/metric_synonyms.json:
+#    {
+#      "raf": ["parrainage", "parrain", "marraine", "filleul", "filleule", "referer", "referred", "sponsorship"],
+#      "raf_acquisitions": ["acquisitions raf", "nouveaux parrainés", "filleuls", "clients parrainés"]
+#    }
+#
+# 5. TEMPORALITÉ:
+#    Ajoutez dans config/metric_temporal_config.json:
+#    {
+#      "raf_*": {
+#        "temporal_field": "payment_date",
+#        "granularity": "day"
+#      },
+#      "raf_churn_*": {
+#        "temporal_field": "next_month_date",
+#        "granularity": "month"
+#      }
+#    }

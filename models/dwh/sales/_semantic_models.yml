@@ -196,6 +196,11 @@ semantic_models:
         type_params:
           time_granularity: month
 
+      - name: raf_parent_id
+        type: foreign
+        expr: raf_parent_id
+        description: "ID du parrain (user_id du parent)"
+
           
       # Dimensions pour métriques de churn
       - name: diff_current_box
