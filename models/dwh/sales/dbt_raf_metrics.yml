@@ -19,9 +19,9 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: raf_daily_acquisitions
     label: "Acquisitions RAF quotidiennes"
@@ -30,9 +30,9 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: raf_new_acquisitions
     label: "Nouvelles acquisitions RAF (NEW NEW)"
@@ -41,9 +41,9 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('acquis_status_lvl2') }} = 'NEW NEW'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__acquis_status_lvl2') }} = 'NEW NEW'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: raf_reactivations
     label: "Réactivations RAF"
@@ -52,9 +52,9 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('acquis_status_lvl2') }} = 'REACTIVATION'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__acquis_status_lvl2') }} = 'REACTIVATION'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   # ========================================
   # 2. UTILISATEURS RAF
@@ -69,7 +69,7 @@ metrics:
     type_params:
       measure: nb_unique_users
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
 
   # Note: Pour compter les parrains, il faudrait une jointure avec raf_parent_id
   # qui n'est pas dans le semantic model actuel. À ajouter si besoin.
@@ -87,8 +87,8 @@ metrics:
     type_params:
       measure: total_gross_profit
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: raf_avg_gross_profit
     label: "Marge brute moyenne RAF"
@@ -97,8 +97,8 @@ metrics:
     type_params:
       measure: avg_gross_profit
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
 
   # ========================================
@@ -114,8 +114,8 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('next_month_status') }} = 'CHURN'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__next_month_status') }} = 'CHURN'
 
   - name: raf_active_subscriptions
     label: "Subscriptions RAF actives"
@@ -124,9 +124,9 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('acquis_status_lvl1') }} = 'LIVE'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} = 'LIVE'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   # ========================================
   # 7. ENGAGEMENT RAF
@@ -139,7 +139,7 @@ metrics:
     type_params:
       measure: avg_consecutive_boxes
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
 
   - name: raf_avg_lifetime_boxes
     label: "Moyenne de boxes à vie RAF"
@@ -148,7 +148,7 @@ metrics:
     type_params:
       measure: avg_total_boxes_so_far
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
 
   - name: raf_committed_rate
     label: "Taux d'engagement RAF"
@@ -157,8 +157,8 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('committed') }} = 'committed'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__committed') }} = 'committed'
 
   # ========================================
   # 8. RÉDUCTIONS RAF
@@ -171,8 +171,8 @@ metrics:
     type_params:
       measure: total_discount
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: raf_avg_discount
     label: "Réduction moyenne RAF"
@@ -181,8 +181,8 @@ metrics:
     type_params:
       measure: avg_discount
     filter: |
-      {{ Dimension('raffed') }} = 'Referred'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__raffed') }} = 'Referred'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
 
   - name: total_acquisitions
@@ -192,8 +192,8 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('acquis_status_lvl1') }} <> 'LIVE'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} <> 'LIVE'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
 
   - name: total_active_subscriptions
     label: "Total subscriptions actives"
@@ -202,5 +202,5 @@ metrics:
     type_params:
       measure: nb_subscriptions
     filter: |
-      {{ Dimension('acquis_status_lvl1') }} = 'LIVE'
-      AND {{ Dimension('payment_status') }} = 'paid'
+      {{ Dimension('box_sales_semantic__acquis_status_lvl1') }} = 'LIVE'
+      AND {{ Dimension('box_sales_semantic__payment_status') }} = 'paid'
