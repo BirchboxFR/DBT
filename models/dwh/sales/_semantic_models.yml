@@ -14,6 +14,11 @@ semantic_models:
         expr: sub_id
         description: "Clé primaire unique - une ligne = un abonnement pour une box"
 
+      - name: raf_parent_id
+        type: foreign
+        expr: raf_parent_id
+        description: "ID du parrain (user_id du parent)"
+
       - name: user_key
         type: foreign
         expr: user_key
@@ -195,12 +200,6 @@ semantic_models:
         expr: next_month_date
         type_params:
           time_granularity: month
-
-      - name: raf_parent_id
-        type: foreign
-        expr: raf_parent_id
-        description: "ID du parrain (user_id du parent)"
-
           
       # Dimensions pour métriques de churn
       - name: diff_current_box
