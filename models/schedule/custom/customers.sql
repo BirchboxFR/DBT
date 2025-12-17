@@ -418,7 +418,7 @@ ac.dw_country_code,
        ac.user_id,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
        else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
-       ccd.cluster,
+       ccd.cluster as cluster_group,
        uuid,
         case when ucs.consent_status then true else false end as user_consent_optin_email,
        case when ac.user_id=3065143 then TRUE else ud.optin end as optin,
