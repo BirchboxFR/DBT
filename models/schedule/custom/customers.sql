@@ -418,6 +418,7 @@ ac.dw_country_code,
        ac.user_id,
        case when ac.user_id is not null then concat(ac.dw_country_code,'_',ac.user_id)
        else  concat(ac.dw_country_code,'_',lower(ac.email)) end as user_key,
+       ccd.cluster,
        uuid,
         case when ucs.consent_status then true else false end as user_consent_optin_email,
        case when ac.user_id=3065143 then TRUE else ud.optin end as optin,
@@ -685,4 +686,5 @@ LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.us
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
+left join user.customers_clustered ccd on ccd.user_key= ac.dw_country_code||'_'||cast(ac.user_id as string)
 --where ac.email='mathieu.helie@blissim.fr'
