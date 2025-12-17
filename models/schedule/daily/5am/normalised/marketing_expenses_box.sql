@@ -2,6 +2,7 @@ SELECT channel,-- string_agg( distinct Traffic_source ) traffic_source,Campaign_
 channel_type,
 Traffic_source,
 product_type,
+b.date,
 cac_data ='1' as is_cac_eligible,
 case when market='France' then 'FR' when market='Spain' then 'ES' when market ='Germany' then 'DE' WHEN market = 'Poland' THEN 'PL' WHEN market = 'Sweden' THEN 'SE' end as dw_country_code,cac_data,
 EXTRACT(YEAR FROM b.date) year,
