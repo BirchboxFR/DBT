@@ -17,6 +17,7 @@ WITH subs_with_real_coupon AS
   bs.discount,
   bs.sub_id,
   bs.date AS month,
+  acquis_status_lvl2,
   CASE WHEN day_in_cycle >=0 THEN b.shipping_date ELSE date(payment_date) END as date,
     bs.dw_country_code,
     b.shipping_date AS first_date,
@@ -47,8 +48,11 @@ ELSE 'DISCOUNT' END AS type,
  'BOX' as product_type,
     'ACQUIZ' as acquis_type,
     first_date as first_day, 
-    attribution
+    attribution,
+    acquis_status_lvl2
 FROM subs_with_real_coupon
 WHERE discount > 0
 GROUP BY ALL
+
+
 
