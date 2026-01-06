@@ -1,0 +1,10 @@
+version: 2
+
+seeds:
+  - name: exchange_rates_monthly
+    config:
+      column_types:
+        currency: STRING
+        rate_to_eur: FLOAT64
+        year_month: DATE
+        source: STRING
