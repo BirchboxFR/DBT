@@ -7,6 +7,8 @@ with GIft as (
 SELECT date,
 case when store_code = 'FR' then 'BirchboxFR'
 when store_code = 'DE' then 'BlissimDE'
+when store_code = 'SE' then 'BlissimSE'
+when store_code = 'PL' then 'BlissimPL'
 when store_code = 'ES' then 'BlissimES'
 when store_code = 'IT' then 'BlissimIT'
 when store_code = 'Store' then 'BirchboxFR_Store01'
@@ -54,6 +56,8 @@ shop as (
 SELECT case when store_code = 'FR' then 'BirchboxFR'
 when store_code = 'DE' then 'BlissimDE'
 when store_code = 'ES' then 'BlissimES'
+when store_code = 'SE' then 'BlissimSE'
+when store_code = 'PL' then 'BlissimPL'
 when store_code = 'IT' then 'BlissimIT'
 when store_code = 'Store' then 'BirchboxFR_Store01'
 else 'Unknown store' end as merchantAccountCode,
@@ -72,6 +76,8 @@ case when store_code = 'FR' then 'BirchboxFR'
 when store_code = 'DE' then 'BlissimDE'
 when store_code = 'ES' then 'BlissimES'
 when store_code = 'IT' then 'BlissimIT'
+when store_code = 'SE' then 'BlissimSE'
+when store_code = 'PL' then 'BlissimPL'
 when store_code = 'Store' then 'BirchboxFR_Store01'
 else 'Unknown store' end as merchantAccountCode,
  ifnull(SUM(gross_revenue + vat_on_gross_revenue - (discount + vat_on_discount) + shipping + vat_on_shipping),0) AS cash_box
