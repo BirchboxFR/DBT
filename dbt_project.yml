@@ -132,20 +132,6 @@ seeds:
     +delimiter: ";"
     +encoding: UTF-8
 
-    referentiel:
-      insee_iris_csp:
-        +column_types:
-          IRIS: string
-          COM: string
-          TYP_IRIS: string
-          LAB_IRIS: string
-          C20_ACT1564: float64
-          C20_ACT1564_CS1: float64
-          C20_ACT1564_CS2: float64
-          C20_ACT1564_CS3: float64
-          C20_ACT1564_CS4: float64
-          C20_ACT1564_CS5: float64
-          C20_ACT1564_CS6: float64
 
 
                    
