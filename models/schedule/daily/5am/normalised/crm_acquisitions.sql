@@ -26,7 +26,7 @@ campaign_ranked AS (
      campaign.campaign_name,
     campaign.startdate,
     imo_variant,
-    campaign.custom_Categorie_de_campagne,
+    custom_Categorie_de_campagne,
     campaign.opened,
     a.campaign_date,
     a.user_key IS NOT NULL as acquis,
@@ -40,7 +40,7 @@ campaign_ranked AS (
   LEFT JOIN acquisitions_cycle a 
     ON a.user_key = c.user_key 
     AND campaign.startdate BETWEEN DATE_SUB(DATE(a.payment_date), INTERVAL 2 DAY) AND DATE(a.payment_date)
-  WHERE campaign.custom_Categorie_de_campagne in ('BOX_Disclose','BOX_GWS','BOX_Promo','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT','WELCOME_PACK_ACHAT_SHOP')
+  WHERE (upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%' or upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%' )
     AND campaign.opened = true 
     AND a.user_key IS NOT NULL 
 )
@@ -53,7 +53,7 @@ SELECT
   campaign_id,
   campaign_name,
   imo_variant,
-  custom_Categorie_de_campagne,
+  custom_Categorie_de_campagne
   startdate,
   opened,
   campaign_date,
