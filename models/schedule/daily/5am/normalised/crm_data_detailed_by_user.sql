@@ -26,6 +26,7 @@ WITH base_messages AS (
     c.startdate,
     m.address,
     m.status,
+    c.custom_Categorie_de_campagne,
     m.eventDate,
     JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') as imo_variant
   FROM `cdpimagino.imaginoreplicatedcampaign` c
@@ -39,6 +40,7 @@ latest_message AS (
   SELECT
     campaign_id,
     campaign_name,
+    custom_Categorie_de_campagne,
     imo_variant,
     address,
     (ARRAY_AGG(STRUCT(status, eventDate, created, startdate)
@@ -74,6 +76,7 @@ per_user_campaign AS (
     lm.campaign_id,
     lm.campaign_name,
     imo_variant,
+    custom_Categorie_de_campagne,
     DATE(COALESCE(lm.startdate, lm.created)) AS startdate,
     -- Flags message
     TRUE                                  AS targeted,
@@ -100,6 +103,7 @@ per_user_campaign AS (
     campaignid,
     campaignname,
     '' AS imo_variant,
+    '' AS custom_Categorie_de_campagne,
     MIN(event_date) AS event_date,
     TRUE AS targeted,
     MAX(CASE WHEN status = 'Done' THEN TRUE END) AS delivered,
@@ -129,6 +133,7 @@ SELECT
     STRUCT(
       campaign_id,
       campaign_name,imo_variant,
+      custom_Categorie_de_campagne,
       startdate,
       targeted,
       delivered,
