@@ -141,7 +141,7 @@ self_churn_reason AS
            sol.sub_id
 ),
 box_global_grades AS (
-SELECT p.dw_country_code, p.box_id, p.coffret_id,  max(global_grade) AS global_grade,look_and_feel_grade,
+SELECT p.dw_country_code, p.box_id, p.coffret_id,  max(global_grade) AS global_grade,max(look_and_feel_grade) AS look_and_feel_grade,
 FROM `teamdata-291012.Spreadsheet_synchro.raw_doc_compo` c
 JOIN {{ ref('products') }} p ON p.sku = c.sku_compo
 GROUP BY p.dw_country_code, p.box_id, p.coffret_id,look_and_feel_grade
