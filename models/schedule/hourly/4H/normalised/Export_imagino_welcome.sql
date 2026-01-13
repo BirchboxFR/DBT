@@ -17,7 +17,7 @@ WITH Tracking AS (
 
 SELECT 
 	FORMAT_DATETIME('%F', m.eventdate) AS EVENTDATE -- Format date YYYY-MM-DD
-	,m.activationId,
+	,m.activationId,c.name AS CAMPAIGN_NAME,
   c.custom_Categorie_de_campagne,
   c.custom_Categorie_de_Campagne_Lvl_2
 	,COUNT(distinct m.id) AS Targeted_WithIgnored
