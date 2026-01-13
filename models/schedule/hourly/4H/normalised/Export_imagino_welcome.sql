@@ -11,24 +11,25 @@ WITH Tracking AS (
 		,MIN(CASE WHEN t.type ="click" AND t.url LIKE "%unsub%"THEN t.eventDate ELSE null END) AS FIRST_UNSUB_DATE
 	FROM cdpimagino.imaginoreplicatedtracking t
 	WHERE 
-		t.activationId = 'FR_Welcome_Jj_SansAchat'
+		t.activationId like '%elcome%'
 	GROUP BY ALL
 )
 
 SELECT 
 	FORMAT_DATETIME('%F', m.eventdate) AS EVENTDATE -- Format date YYYY-MM-DD
-	,m.activationId
-	,COUNT(distinct id) AS Targeted_WithIgnored
+	,m.activationId,
+  c.custom_Categorie_de_campagne,
+  c.custom_Categorie_de_Campagne_Lvl_2
+	,COUNT(distinct m.id) AS Targeted_WithIgnored
 	,SUM( CASE WHEN m.status != "ignored"  THEN 1 ELSE 0 END) AS TARGETED_withoutIgnored
 	,SUM( CASE WHEN m.status = "delivered"  THEN 1 ELSE 0 END) AS DELIVERED
 	,SUM( CASE WHEN t.LAST_OPEN_DATE IS NOT NULL THEN 1 ELSE 0 END) AS DISCTINT_OPEN
 	,SUM( CASE WHEN t.LAST_CLICK_DATE IS NOT NULL THEN 1 ELSE 0 END) AS DISCTINT_CLICK
 	,SUM( CASE WHEN t.LAST_UNSUB_DATE IS NOT NULL THEN 1 ELSE 0 END) AS DISCTINT_UNSUB
 FROM cdpimagino.imaginoreplicatedmessage m
-LEFT JOIN Tracking t ON 
-	t.messageId = m.id
-	AND t.activationId = m.activationId
-WHERE m.activationId = 'FR_Welcome_Jj_SansAchat'
+LEFT JOIN Tracking t ON t.messageId = m.id AND t.activationId = m.activationId
+LEFT JOIN cdpimagino.imaginoreplicatedCampaign c ON  c.id = m.activationId
+WHERE m.activationId like '%elcome%'
 	AND m.address != ""
 	--AND DATE (m.eventdate) = '2026-01-05'
 	--AND m.contactData LIKE "%journeyId%"
