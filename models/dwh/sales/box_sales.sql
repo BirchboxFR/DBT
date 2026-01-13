@@ -141,10 +141,10 @@ self_churn_reason AS
            sol.sub_id
 ),
 box_global_grades AS (
-SELECT p.dw_country_code, p.box_id, p.coffret_id,  max(global_grade) AS global_grade
+SELECT p.dw_country_code, p.box_id, p.coffret_id,  max(global_grade) AS global_grade,look_and_feel_grade,
 FROM `teamdata-291012.Spreadsheet_synchro.raw_doc_compo` c
 JOIN {{ ref('products') }} p ON p.sku = c.sku_compo
-GROUP BY p.dw_country_code, p.box_id, p.coffret_id
+GROUP BY p.dw_country_code, p.box_id, p.coffret_id,look_and_feel_grade
 )
 SELECT FT.*,
 ROW_NUMBER() OVER(PARTITION BY user_id, sequence_group ORDER BY box_id) AS consecutive_boxes from (
@@ -195,6 +195,7 @@ CASE
   END
 AS sub_suspended_reason_lvl3,
 bgg.global_grade AS box_global_grade,
+bgg.look_and_feel_grade,
 
 
 mcd.type as coupon_type,   -- new coupon_typet.box_id
