@@ -1,0 +1,1 @@
+SELECT * FROM `normalised-417010.product.brands_enriched_table`
