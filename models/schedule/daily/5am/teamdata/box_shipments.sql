@@ -17,8 +17,8 @@ first_shipping_mode AS
   FROM inter.b2c_exported_orders bec 
   LEFT JOIN inter.shipping_modes sm ON sm.b2c_method = bec.carrier_code AND sm.dw_country_code = bec.dw_country_code AND sm.id NOT IN (44,66,54) AND bec.recipient_address_country = sm.country
   WHERE bec.reference NOT LIKE '%REEXP%'
-  AND sub_id = 1541
-  AND bec.dw_country_code = 'PL'
+  -- AND sub_id = 1541
+  -- AND bec.dw_country_code = 'PL'
   GROUP BY ALL
 ),
 pot_box_shipments AS 
