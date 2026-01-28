@@ -690,6 +690,19 @@ WHERE 1=1
 AND bs.box_id >= 112
 GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
 
+UNION ALL
+
+-- unit COGS BOX by year
+SELECT bs.dw_country_code, bs.year, NULL, bs.dw_country_code, 
+concat('unit-cogs-box-',CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END,'-',LOWER(bs.dw_country_code)), 
+CONCAT('box-', CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END), 
+SAFE_DIVIDE(SUM(iic.euro_purchase_price), COUNT(DISTINCT bs.sub_id)) as value
+FROM {{ ref('kit_details') }} kd
+JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = kd.component_sku
+JOIN {{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
+WHERE 1=1
+AND bs.box_id >= 112
+GROUP BY bs.dw_country_code, bs.year,  iic.logistic_category
 
 
 UNION ALL
