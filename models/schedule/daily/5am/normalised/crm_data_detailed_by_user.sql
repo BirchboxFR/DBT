@@ -24,6 +24,7 @@ WITH base_messages AS (
     c.name AS campaign_name,
     c.created,
     c.startdate,
+    c.custom_country,
     m.address,
     m.status,
     c.custom_Categorie_de_campagne,
@@ -42,6 +43,7 @@ latest_message AS (
     campaign_name,
     custom_Categorie_de_campagne,
     imo_variant,
+    custom_country,
     address,
     (ARRAY_AGG(STRUCT(status, eventDate, created, startdate)
                ORDER BY eventDate DESC LIMIT 1))[OFFSET(0)].status    AS last_msg_status,
@@ -76,6 +78,7 @@ per_user_campaign AS (
     lm.campaign_id,
     lm.campaign_name,
     imo_variant,
+    custom_country,
     custom_Categorie_de_campagne,
     DATE(COALESCE(lm.startdate, lm.created)) AS startdate,
     -- Flags message
@@ -103,6 +106,7 @@ per_user_campaign AS (
     campaignid,
     campaignname,
     '' AS imo_variant,
+    '' AS custom_country,
     '' AS custom_Categorie_de_campagne,
     MIN(event_date) AS event_date,
     TRUE AS targeted,
@@ -120,13 +124,14 @@ FROM crm.splio_events
 WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 25 MONTH)
     --AND contactid = 'mathieu.helie@blissim.fr' 
     -- AND campaignid = '7rY0neRrJ'
-GROUP BY contactid, campaignid, campaignname
+GROUP BY all
 )
 
 SELECT
   'IMAGINO' AS source,
   address,
   user_key,
+  custom_country,
     DATE(MAX(startdate)) AS last_activity_date,
   -- Toutes les campagnes reçues avec leurs indicateurs
   ARRAY_AGG(
@@ -166,7 +171,7 @@ SELECT
 FROM per_user_campaign
 inner join user.customers on customers.email=per_user_campaign.address
 
-GROUP BY address,user_key
+GROUP BY address,user_key,custom_country
 
 
 

@@ -23,7 +23,7 @@
     {%- set cdpimagino_tmp_tables = ['device_by_user_id'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
-    {%- set crm_tmp_tables = ['Export_imagino_welcome','Export_acquisition_by_campaign','crm_acquisitions','crm_data_detailed_by_user','crm_zapier','Export_imagino_extract','optin_variations'] -%}
+    {%- set crm_tmp_tables = ['crm_shop_acquisitions','Export_imagino_welcome','Export_acquisition_by_campaign','crm_acquisitions','crm_data_detailed_by_user','crm_zapier','Export_imagino_extract','optin_variations'] -%}
     {%- set archives_tmp_tables = ['archives_payments'] -%}
     {%- set predictive_tmp_tables = ['ltv','ml_ltv_predictions','stg_customers_to_predict'] -%}
     {%- set catalog_tmp_tables = ['brands_enriched','flag_materialized','projects_materialized','work_orders_materialized'] -%}
