@@ -106,7 +106,7 @@ per_user_campaign AS (
     campaignid,
     campaignname,
     '' AS imo_variant,
-    '' AS custom_country,
+    'FR' AS custom_country,
     '' AS custom_Categorie_de_campagne,
     MIN(event_date) AS event_date,
     TRUE AS targeted,
