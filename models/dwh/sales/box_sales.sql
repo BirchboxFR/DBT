@@ -263,6 +263,7 @@ FROM
   extract(year FROM b.date) AS year,
   o.coupon_code_id,
   COALESCE(coupons_parents.code, c.code) AS coupon_code,
+  CASE WHEN s.box_id = d.sub_start_box THEN   COALESCE(coupons_parents.sub_engagement_period, c.sub_engagement_period) ELSE COALESCE(so_parents.sub_engagement_period, so.sub_engagement_period) END AS coupon_engagement_period,
   s.sub_offer_id,
   COALESCE(so_parents.code, so.code) AS sub_offer_code,
   CASE WHEN s.box_id = d.sub_start_box THEN  COALESCE(coupons_parents.code, c.code) ELSE COALESCE(so_parents.code, so.code) END AS coupon,
