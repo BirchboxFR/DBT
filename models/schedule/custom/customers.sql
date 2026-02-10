@@ -42,6 +42,7 @@ user_data AS (
              OR COALESCE(uc_whatsapp.consent_status, FALSE)
            THEN TRUE ELSE FALSE
          END AS optin,
+         uc_email.optin_date as email_optin_date,
         user_birthday as user_birthday_raw,
          -- optins par canal
          COALESCE(uc_email.consent_status, FALSE)     AS optin_email,
@@ -421,6 +422,7 @@ ac.dw_country_code,
        ccd.cluster as cluster_group,
        uuid,
         case when ucs.consent_status then true else false end as user_consent_optin_email,
+        case when ucs.consent_status then email_optin_date else null  end as user_consent_optin_email_date,
        case when ac.user_id=3065143 then TRUE else ud.optin end as optin,
        case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
         case when ac.user_id=3065143 then TRUE
