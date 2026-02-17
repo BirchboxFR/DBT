@@ -424,7 +424,9 @@ ac.dw_country_code,
         case when ucs.consent_status then true else false end as user_consent_optin_email,
         case when ucs.consent_status then optin_date else null  end as user_consent_optin_email_date,
        case when ac.user_id=3065143 then TRUE else ud.optin end as optin,
-       case when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
+       case 
+       when ac.user_id is null and cd.ltm_nb_email>0 then true 
+       when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
         case when ac.user_id=3065143 then TRUE
         when
         ucs.consent_status then true else false end as optin_email,
