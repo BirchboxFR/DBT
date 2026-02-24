@@ -102,16 +102,18 @@ workspaceId,
     msg.hardBounce,
     msg.name,
     count(distinct ca.user_id) AS acquisitions,
+    count(distinct cas.user_id) AS acquisitions_shop,
     COALESCE(DATE(msg.startdate), DATE(msg.created)) AS startdate,
-
+    sum(cas.net_revenue) AS net_revenue_shop,
     COALESCE(trk.open_uniques, 0)  AS open_uniques,
     COALESCE(trk.click_uniques, 0) AS click_uniques,
-    COALESCE(trk.clicks, 0)        AS clicks,
-    COALESCE(trk.unsubscribes, 0)  AS unsubscribes
+      COALESCE(trk.clicks, 0)        AS clicks,
+      COALESCE(trk.unsubscribes, 0)  AS unsubscribes
 
 FROM campaign_message_stats msg
 LEFT JOIN campaign_tracking_stats trk ON trk.campaign_id = msg.campaign_id AND (trk.imo_variant = msg.imo_variant OR (trk.imo_variant IS NULL AND msg.imo_variant IS NULL))
 left join `normalised-417010.crm.crm_acquisitions` ca ON ca.campaign_name = msg.name and coalesce(msg.imo_variant,'')=coalesce(ca.imo_variant,'')
  -- where msg.name='ACQUISITION_BOX_DECEMBRE_CHURNEVER_EM_PRODUITS_DE_LA_BOX'
+left join `normalised-417010.crm.crm_shop_acquisitions` cas ON cas.campaign_name = msg.name and coalesce(msg.imo_variant,'')=coalesce(cas.imo_variant,'')
 
 group by all
