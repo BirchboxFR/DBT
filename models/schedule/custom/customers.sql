@@ -430,6 +430,9 @@ ac.dw_country_code,
         case when ac.user_id=3065143 then TRUE
         when
         ucs.consent_status then true else false end as optin_email,
+        b.status as email_status,
+        b.eventdate as email_status_eventdate,
+         case when b.status='bounce' then true else false end as is_bounce,
        ud.optin_partner,
        ud.optin_sms,
        ud.optin_whatsapp,
@@ -691,4 +694,6 @@ LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id A
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
 left join user.customers_clustered ccd on ccd.user_key= ac.dw_country_code||'_'||cast(ac.user_id as string)
+LEFT JOIN (SELECT address,status, eventdate FROM `teamdata-291012.cdpimagino.BQ_imagino_Address_Status`
+  QUALIFY eventdate = MAX(eventdate) OVER (PARTITION BY address)) b ON ac.email = b.address
 -- where ac.email='zimnitzki_t_1993ae_hn@wintopia-mail.de'
