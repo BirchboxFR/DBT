@@ -27,7 +27,31 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   SELECT
     '{{ country.code }}' AS dw_country_code,
     CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
+    _airbyte_raw_id,
+    _airbyte_extracted_at,
+    _airbyte_meta,
+    _airbyte_generation_id,
+    alias,
+    created,
+    updated,
+    user_id,
+    remember,
+    atos_alias,
+    card_number,
+    card_validity,
+    _ab_cdc_cursor,
+    _ab_cdc_log_pos,
+    _ab_cdc_log_file,
+    _ab_cdc_deleted_at,
+    _ab_cdc_updated_at,
+    flagged_for_update,
+    payment_gateway_id,
+    first_psp_reference,
+    last_fail_reason_id,
+    recurring_reference,
+    card_holder_fullname,
+    brand,
+    last_four
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
     AND b._airbyte_extracted_at >= {{ window_start }}
@@ -39,7 +63,31 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   SELECT
     '{{ country.code }}' AS dw_country_code,
     CAST(b.id AS INT64) AS id,
-    b.* EXCEPT(id)
+    _airbyte_raw_id,
+    _airbyte_extracted_at,
+    _airbyte_meta,
+    _airbyte_generation_id,
+    alias,
+    created,
+    updated,
+    user_id,
+    remember,
+    atos_alias,
+    card_number,
+    card_validity,
+    _ab_cdc_cursor,
+    _ab_cdc_log_pos,
+    _ab_cdc_log_file,
+    _ab_cdc_deleted_at,
+    _ab_cdc_updated_at,
+    flagged_for_update,
+    payment_gateway_id,
+    first_psp_reference,
+    last_fail_reason_id,
+    recurring_reference,
+    card_holder_fullname,
+    brand,
+    last_four
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
   {{ "UNION ALL" if not loop.last }}
