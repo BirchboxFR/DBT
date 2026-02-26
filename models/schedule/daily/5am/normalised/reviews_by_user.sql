@@ -1,12 +1,10 @@
 {{ config(
-    materialized='incremental',
-    unique_key=['review_id', 'product_name'],
+  materialized='table',
     partition_by={
       "field": "box_date",
       "data_type": "date"
     },
-    cluster_by=['review_date', 'dw_country_code', 'brand_name'],
-    on_schema_change='sync_all_columns'
+    cluster_by=['review_date', 'dw_country_code', 'brand_name']
 ) }}
 
 
