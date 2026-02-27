@@ -538,6 +538,13 @@ GROUP BY dw_country_code, year, month, product_codification
 
 UNION ALL
 
+-- avg box order weight
+SELECT dw_country_code, year, month, NULL AS store, CONCAT('avg_box_weight-', LOWER(dw_country_code)), 'BOX' AS product_codification, avg(order_weight)
+FROM ops.box_shipments
+GROUP BY dw_country_code, year, month, product_codification
+
+UNION ALL
+
 -- COGS shipping (theoretical)
 SELECT dw_country_code,
        year,
