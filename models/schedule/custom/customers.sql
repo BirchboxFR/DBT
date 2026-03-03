@@ -429,16 +429,16 @@ ac.dw_country_code,
        when ud.optin and cd.ltm_nb_email>0 then true else false end optin_ctc,
 
         CASE 
-            WHEN ucs.consent_status AND b.status IS NULL 
-                AND (
-                    DATE(cd.date_last_open_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-                    OR DATE(cd.date_last_click_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-                 
-                OR (ucs.consent_status AND DATE(optin_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH))
-                OR DATE(registration_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH) )ou 
-            THEN TRUE 
-            ELSE FALSE 
-        END AS optin_active_email,
+          WHEN ucs.consent_status AND b.status IS NULL 
+              AND (
+                  DATE(cd.date_last_open_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                  OR DATE(cd.date_last_click_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                  OR DATE(optin_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                  OR DATE(registration_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+              )
+          THEN TRUE 
+          ELSE FALSE 
+      END AS optin_active_email,
 
         case when ac.user_id=3065143 then TRUE
         when
