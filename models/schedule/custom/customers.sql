@@ -433,8 +433,8 @@ ac.dw_country_code,
               AND (
                   DATE(cd.date_last_open_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
                   OR DATE(cd.date_last_click_email) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-                  OR DATE(optin_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-                  OR DATE(registration_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                  OR DATE(optin_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+                  OR DATE(registration_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
               )
           THEN TRUE 
           ELSE FALSE 
