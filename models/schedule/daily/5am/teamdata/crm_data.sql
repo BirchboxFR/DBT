@@ -53,7 +53,7 @@ FROM (
         COUNTIF(lower(t.type) = 'open' AND date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_open_email,
         COUNTIF(date(eventdate) >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) AS ltm_nb_email
     FROM cdpimagino.imaginoreplicatedcampaign c
-    LEFT JOIN cdpimagino.BQ_imagino_Tracking t ON t.activationid = c.id
+    LEFT JOIN cdpimagino.imaginoreplicatedtracking t ON t.activationid = c.id
     GROUP BY ALL
 ) 
 WHERE dw_country_code IS NOT NULL 
