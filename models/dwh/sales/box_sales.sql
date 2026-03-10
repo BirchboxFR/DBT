@@ -51,7 +51,7 @@ group by all
 ),
 ranked_sub_history AS
 (
-  SELECT o.dw_country_code, o.user_id, sh.box_id, FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S',sh.timestamp) AS d,
+  SELECT o.dw_country_code, o.user_id, sh.box_id, FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S',sh.timestamp) AS d,date(sh.timestamp) as churn_date,
   CASE 
     WHEN ssr.value IN ('Too many fails','Card expired', 'Breakage') THEN 'technical'
     WHEN ssr.value IN ('Self suspended', 'Paused', 'Paused for gift') THEN 'self-willed'
@@ -85,7 +85,7 @@ sub_history_reasons AS
 adyen_ranked AS
 (
   SELECT an.dw_country_code, o.user_id, s.box_id, 
-  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S',an.eventDate) as d,
+  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S',an.eventDate) as d,date(an.eventDate) as churn_date,
   'technical' AS sub_suspended_reason_lvl1,
   CASE WHEN an.reason LIKE '%xpired%' THEN 'expired card' ELSE 'breakage' END AS sub_suspended_reason_lvl2,
   an.reason AS sub_suspended_reason_lvl3,
@@ -117,6 +117,7 @@ all_reasons_ranked AS
 (
   SELECT all_reasons.dw_country_code, all_reasons.user_id, all_reasons.box_id, all_reasons.sub_suspended_reason_lvl1, all_reasons.sub_suspended_reason_lvl2, 
   CASE WHEN sub_suspended_reason_lvl3 = 'reason from survey' THEN ssr.survey_reason ELSE sub_suspended_reason_lvl3 END AS sub_suspended_reason_lvl3,
+  churn_date,
   ROW_NUMBER() OVER (PARTITION BY all_reasons.user_id, all_reasons.box_id, all_reasons.dw_country_code ORDER BY d DESC) AS row_num
   FROM all_reasons
   LEFT JOIN sub_suspend_survey_reason ssr ON ssr.dw_country_code = all_reasons.dw_country_code AND ssr.user_id = all_reasons.user_id AND ssr.box_id = all_reasons.box_id
@@ -179,6 +180,9 @@ cASE
     -- Compte cumulatif des box pour l'utilisateur
     ROW_NUMBER() OVER(PARTITION BY t.user_id ORDER BY t.box_id) AS total_boxes_so_far,
 
+cASE 
+  WHEN lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1 THEN NULL
+  ELSE scr.churn_date end as churn_date,
 CASE 
   WHEN lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1 THEN NULL
   WHEN t.gift = 1  THEN 'gift end'
