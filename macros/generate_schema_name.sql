@@ -21,6 +21,7 @@
     {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
     {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set geo_tmp_tables = ['prompts_list'] -%}
+    {%- set box_tmp_tables = [' sku_by_user_by_box'] -%}
     {%- set cdpimagino_tmp_tables = ['device_by_user_id'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
@@ -54,6 +55,8 @@
         marketing
     {%- elif node.name in accounting_tmp_tables -%}
         accounting
+    {%- elif node.name in box_tmp_tables -%}
+        box
     {%- elif node.name in blissim_analytics_tmp_tables -%}
         blissim_analytics
     {%- elif node.name in inter_all_tables -%}
