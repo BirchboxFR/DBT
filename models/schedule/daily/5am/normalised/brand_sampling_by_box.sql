@@ -2,7 +2,7 @@
   config(
     materialized='table',
     partition_by={
-      "field": "box_month",
+      "field": "box_date",
       "data_type": "date",
       "granularity": "month"
     }
