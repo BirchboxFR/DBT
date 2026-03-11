@@ -21,7 +21,7 @@
     {%- set reviews_tmp_tables = ['reviews_by_user'] -%}
     {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set geo_tmp_tables = ['prompts_list'] -%}
-    {%- set box_tmp_tables = ['sku_by_user_by_box'] -%}
+    {%- set box_tmp_tables = ['sku_by_user_by_box','brand_sampling_by_box'] -%}
     {%- set cdpimagino_tmp_tables = ['device_by_user_id'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
