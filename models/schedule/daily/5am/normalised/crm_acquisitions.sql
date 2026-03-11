@@ -40,7 +40,7 @@ campaign_ranked AS (
   INNER JOIN user.customers c ON c.email = u.address
   LEFT JOIN acquisitions_cycle a ON a.user_key = c.user_key  AND campaign.startdate BETWEEN DATE_SUB(DATE(a.payment_date), INTERVAL 2 DAY) AND DATE(a.payment_date) and u.custom_country = c.dw_country_code and u.custom_country = a.dw_country_code
   WHERE ((upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%' or upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%' ) -- france uniquement 
-  OR campaign.custom_Categorie_de_campagne in ('BOX_Promo','BOX_Disclose','BOX_Ouverture','WELCOME_PACK','WELCOME_PACK_ACHAT_SHOP','BOX_GWS','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT') )
+  OR campaign.custom_Categorie_de_campagne in ('MIXTE_LTE_BOX','MIXTE_BOX_SHOP','BOX_Promo','BOX_Disclose','BOX_Ouverture','WELCOME_PACK','WELCOME_PACK_ACHAT_SHOP','BOX_GWS','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT') )
     AND campaign.opened = true 
     AND a.user_key IS NOT NULL 
 )
