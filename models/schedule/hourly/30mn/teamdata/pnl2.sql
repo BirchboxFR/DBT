@@ -821,6 +821,8 @@ SELECT CASE
   WHEN Market = 'Germany' THEN 'DE' 
   WHEN Market = 'Spain' THEN 'ES'
   WHEN Market = 'Italy' THEN 'IT'
+  WHEN Market = 'Poland' THEN 'PL'
+  WHEN Market = 'Sweden' THEN 'SE'
   ELSE 'FR' END AS country,
 extract(year from b.date) as y, 
 Extract(month from b.date) AS m,
