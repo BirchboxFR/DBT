@@ -43,7 +43,7 @@ campaign_ranked AS (
     (upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%' 
   or upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%' ) -- france uniquement 
   OR campaign.custom_Categorie_de_campagne in ('BOX_Promo','BOX_Disclose','BOX_Ouverture','WELCOME_PACK','WELCOME_PACK_ACHAT_SHOP','BOX_GWS','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT')
-  OR campaign.custom_Categorie_de_Campagne_Lvl_2  in ('MIXTE_LTE_BOX','MIXTE_BOX_SHOP'
+  OR campaign.custom_Categorie_de_Campagne_Lvl_2  in ('MIXTE_LTE_BOX','MIXTE_BOX_SHOP')
    )
     AND campaign.opened = true 
     AND a.user_key IS NOT NULL 
