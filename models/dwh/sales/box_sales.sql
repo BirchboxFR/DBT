@@ -169,7 +169,7 @@ OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order b
 then 0 else 1 end as churn_next_month,
 case when (lead(t.box_id) over (partition by t.user_id,t.dw_country_code order by t.box_id) - t.box_id IN (0,1) -- next box by user is the next box
 OR lead(t.box_id) over (partition by t.order_detail_id,t.dw_country_code order by t.box_id) - t.box_id = 1) 
-AND cannot_suspend =1 
+AND lead(cannot_suspend) over (partition by t.user_id, t.dw_country_code order by t.box_id) = 1
   -- next box in the subscription (by order_detail)
 then 1 else 0 end as next_month_committment,
 cASE
