@@ -146,7 +146,8 @@ CASE WHEN box_cat.alloc_cat = 'monthly' THEN 0 ELSE 1 END AS nb_dailies,
 CASE WHEN box_cat.alloc_cat = 'monthly' THEN 0 -- picking_daily_multi.price 
 WHEN COALESCE(gct.nb_gws,0) = 0 THEN picking_daily_mono.price ELSE picking_daily_multi.price + COALESCE(gct.nb_gws,0)*picking_daily_art_supp.price END AS picking_cost,
 bs.shipping_country,
-COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost
+COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost,
+CONCAT(bs.dw_country_code, '-SUB-',bs.sub_id ) AS log_order_name
 
 FROM sales.box_sales as bs
 LEFT JOIN first_shipping_mode sm1 ON sm1.sub_id = bs.sub_id AND sm1.dw_country_code = bs.dw_country_code
@@ -210,7 +211,8 @@ CASE WHEN box_cat.alloc_cat = 'monthly' THEN 0 ELSE 1 END AS nb_dailies,
 CASE -- WHEN box_cat.alloc_cat = 'monthly' THEN 0 
 WHEN COALESCE(gct.nb_gws,0) = 0 THEN picking_daily_mono.price ELSE picking_daily_multi.price + COALESCE(gct.nb_gws,0)*picking_daily_art_supp.price END AS picking_cost,
 s.shipping_country,
-COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost
+COALESCE(gct.gws_costs,0) + COALESCE(box_costs.euro_purchase_price,0) AS product_cost,
+CONCAT(t.dw_country_code, '-REEXP-SUB-',t.link_id ) AS log_order_name
 
 FROM inter.tags t
 JOIN inter.order_detail_sub s ON s.id = t.link_id AND s.dw_country_code = t.dw_country_code
@@ -283,7 +285,8 @@ COALESCE(iic.weight/1000,0.2) AS order_weight, -- avg weight 200g
 0 AS nb_dailies,
 0 AS picking_cost, -- to be done
 bs.shipping_country,
-iic.euro_purchase_price AS product_cost
+iic.euro_purchase_price AS product_cost,
+CONCAT(mr.dw_country_code, '-REEXP-MINI-',mr.sub_id, '-', mr.id ) AS log_order_name
 
 FROM inter.mini_reexp mr
 JOIN inter.boxes b ON b.id = mr.box_id AND mr.dw_country_code = b.dw_country_code
