@@ -205,7 +205,7 @@ bgg.global_grade AS box_global_grade,
 bgg.look_and_feel_grade,
 
 
-mcd.type as coupon_type,   -- new coupon_typet.box_id
+CASE WHEN t.box_id = t.sub_start_box THEN mcd.type ELSE NULL END as coupon_type,
 case when t.box_id - lag(t.box_id) over (partition by t.user_id, t.dw_country_code order by t.box_id, t.order_detail_id )  IN (0,1) 
 OR
 t.box_id - lag(t.box_id) over (partition by t.order_detail_id, t.dw_country_code order by t.box_id, t.order_detail_id )  = 1
