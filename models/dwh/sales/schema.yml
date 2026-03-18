@@ -11,7 +11,7 @@ models:
       - name: user_key
         description: "Clé unique de l'utilisateur au format pays/user_id (ex : FR_12345). Utilisée pour les jointures avec les tables user."
       - name: dw_country_code
-        description: "Code pays de l'utilisateur (FR, DE, ES, IT, BE, PT, etc.)."
+        description: "Code pays de l'utilisateur (FR, DE, ES, IT, PL, SE)."
       - name: sub_id
         description: "Identifiant unique de l'abonnement."
       - name: order_detail_id
