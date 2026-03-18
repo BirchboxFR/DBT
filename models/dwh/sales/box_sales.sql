@@ -132,11 +132,14 @@ self_churn_reason AS
  gws_costs_table AS (
   SELECT sol.dw_country_code,
          sol.sub_id,
-         COALESCE(SUM(c.purchase_price * d.quantity), 0) AS gws_costs
+         COALESCE(SUM(c.purchase_price * d.quantity), 0) AS gws_costs,
+         MAX(br.name) AS coupon_brand 
   FROM {{ ref('sub_order_link') }} sol
   INNER JOIN {{ ref('orders') }} o ON sol.dw_country_code = o.dw_country_code AND sol.order_id = o.id
   INNER JOIN {{ ref('order_details') }} d ON o.dw_country_code = d.dw_country_code AND o.id = d.order_id
   INNER JOIN {{ ref('catalog') }} c ON d.dw_country_code = c.dw_country_code AND d.product_id = c.product_id
+  LEFT JOIN {{ ref('products') }} p ON p.id = d.product_id AND p.dw_country_code = d.dw_country_code  
+  LEFT JOIN {{ ref('brands') }} br ON br.post_id = p.brand_id AND br.dw_country_code = p.dw_country_code  
   WHERE d.special_type = 'GWS' and status
   GROUP BY sol.dw_country_code,
            sol.sub_id
@@ -205,7 +208,7 @@ bgg.global_grade AS box_global_grade,
 bgg.look_and_feel_grade,
 
 
-mcd.type as coupon_type,   -- new coupon_typet.box_id
+CASE WHEN t.box_id = t.sub_start_box THEN mcd.type ELSE mcdso.type END AS coupon_type,  -- new coupon_typet.box_id
 case when t.box_id - lag(t.box_id) over (partition by t.user_id, t.dw_country_code order by t.box_id, t.order_detail_id )  IN (0,1) 
 OR
 t.box_id - lag(t.box_id) over (partition by t.order_detail_id, t.dw_country_code order by t.box_id, t.order_detail_id )  = 1
@@ -222,6 +225,7 @@ else'Unknown'end as acquis_status_lvl2,
 CASE WHEN cannot_suspend = 1 THEN 'committed' ELSE 'not committed' END AS committed,
 
 g.gws_costs,
+g.coupon_brand,
 -- Currency mapping
 CASE
   WHEN t.dw_country_code = 'SE' THEN 'SEK'
