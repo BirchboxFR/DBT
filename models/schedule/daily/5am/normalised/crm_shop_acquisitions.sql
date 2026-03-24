@@ -5,7 +5,7 @@ WITH acquisitions_cycle AS (
     ss.dw_country_code,
     ss.order_date,
    sum(net_revenue) AS net_revenue,
-   sum(case when product_codification ='LTE' then net_revenue else 0 end) as LTE_net_revenue,
+   sum(case when product_codification in('LTE','SPLENDIST','CALENDAR') then net_revenue else 0 end) as LTE_net_revenue,
    sum(case when product_codification ='ESHOP' then net_revenue else 0 end) as ESHOP_net_revenue
   FROM `teamdata-291012.sales.shop_sales` ss
   WHERE 1=1
