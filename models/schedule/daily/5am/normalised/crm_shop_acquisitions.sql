@@ -5,6 +5,8 @@ WITH acquisitions_cycle AS (
     ss.dw_country_code,
     ss.order_date,
    sum(net_revenue) AS net_revenue,
+   sum(case when product_codification ='LTE' then net_revenue else 0 end) as LTE_net_revenue,
+   sum(case when product_codification ='ESHOP' then net_revenue else 0 end) as ESHOP_net_revenue
   FROM `teamdata-291012.sales.shop_sales` ss
   WHERE 1=1
     and order_Status='Validée'
@@ -23,6 +25,8 @@ campaign_ranked AS (
     imo_variant,
     custom_Categorie_de_campagne,
     sum(a.net_revenue) AS net_revenue,
+    sum(a.LTE_net_revenue) AS LTE_net_revenue,
+    sum(a.ESHOP_net_revenue) AS ESHOP_net_revenue,
     campaign.opened,
     a.order_date,
     a.user_key IS NOT NULL as acquis,
@@ -56,7 +60,9 @@ SELECT
   opened,
   order_date,
   acquis,
-  net_revenue
+  net_revenue,
+  LTE_net_revenue,
+  ESHOP_net_revenue
 FROM campaign_ranked
 WHERE rn = 1  -- Une seule ligne par user_key + campaign_date (mois)
   
