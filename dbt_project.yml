@@ -119,6 +119,8 @@ models:
         4H:
           normalised:
             +database: normalised-417010
+          teamdata:
+            +database: teamdata-291012
       custom:
         history_table:
           normalised:
