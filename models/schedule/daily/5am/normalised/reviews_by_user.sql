@@ -28,6 +28,10 @@ ifnull(s.component_brand_name,b.name) as brand_name,ri.inventory_item_id,compone
 b.id as brand_id,r.ip,
 category_lvl_1,category_lvl_2,category_lvl_3,
 rimini.priority,
+ps.positive_summary,
+ps.negative_summary,
+ps.key_themes,
+ps.improvement_suggestions,
 ifnull(s.ean,ii.ean)ean,
 ifnull(s.product_name,ii.name)product_name,
 max(product_nice_name) as product_nice_name,
@@ -72,6 +76,7 @@ LEFT JOIN `teamdata-291012.bdd_prod_sublissim.review_additional_field` raf ON ra
 GROUP BY 
 review_id
 ) subquery on r.id = subquery.review_id
+left join `normalised-417010.reviews.product_summaries` ps on ps.fz_sku=iifz.sku 
 
 where (s.box_id <= (select id from `teamdata-291012.inter.boxes` where shipping_status_id=2 and dw_country_code='FR') or s.box_id is null)
 AND DATE(r.created_at) >= DATE_ADD(ifnull(DATE(bo.date),'2000-01-01'), INTERVAL -8 DAY)
