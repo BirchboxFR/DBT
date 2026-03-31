@@ -27,6 +27,8 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   SELECT
     '{{ country.code }}' AS dw_country_code,
     CAST(b.id AS INT64) AS id,
+    case when user_id is not null then concat('{{ country.code }}' ,'_',user_id)
+       else  null end as  user_key,
     b.* EXCEPT(id)
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
@@ -39,6 +41,9 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   SELECT
     '{{ country.code }}' AS dw_country_code,
     CAST(b.id AS INT64) AS id,
+    case when user_id is not null then concat('{{ country.code }}' ,'_',user_id)
+       else  null end as  user_key,
+     b.* EXCEPT(id)
     b.* EXCEPT(id)
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
