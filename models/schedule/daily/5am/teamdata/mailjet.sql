@@ -24,16 +24,16 @@ status_pivoted AS (
     CampaignID,
     Subject,
     -- Extraire les dates pour chaque statut (utiliser la plus ancienne date si plusieurs occurrences)
-    MIN(CASE WHEN Status = 'sent' THEN _airbyte_extracted_at END) as sent_date,
-    MIN(CASE WHEN Status = 'opened' THEN _airbyte_extracted_at END) as opened_date,
-    MIN(CASE WHEN Status = 'clicked' THEN _airbyte_extracted_at END) as clicked_date,
-    MIN(CASE WHEN Status = 'bounce' THEN _airbyte_extracted_at END) as bounce_date,
-    MIN(CASE WHEN Status = 'blocked' THEN _airbyte_extracted_at END) as blocked_date,
-    MIN(CASE WHEN Status = 'spam' THEN _airbyte_extracted_at END) as spam_date,
-    MIN(CASE WHEN Status = 'unsub' THEN _airbyte_extracted_at END) as unsub_date,
+    MAX(CASE WHEN Status = 'sent' THEN _airbyte_extracted_at END) as sent_date,
+    MAX(CASE WHEN Status = 'opened' THEN _airbyte_extracted_at END) as opened_date,
+    MAX(CASE WHEN Status = 'clicked' THEN _airbyte_extracted_at END) as clicked_date,
+    MAX(CASE WHEN Status = 'bounce' THEN _airbyte_extracted_at END) as bounce_date,
+    MAX(CASE WHEN Status = 'blocked' THEN _airbyte_extracted_at END) as blocked_date,
+    MAX(CASE WHEN Status = 'spam' THEN _airbyte_extracted_at END) as spam_date,
+    MAX(CASE WHEN Status = 'unsub' THEN _airbyte_extracted_at END) as unsub_date,
     -- Dernier statut observé (le plus récent)
     ARRAY_AGG(Status ORDER BY _airbyte_extracted_at DESC)[OFFSET(0)] as last_status,
-    MIN(ArrivedAt) as arrived_at,
+    MAX(ArrivedAt) as arrived_at,
     MAX(_airbyte_extracted_at) as last_extracted_at
   FROM 
     message_with_status
