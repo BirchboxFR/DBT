@@ -66,8 +66,8 @@ campaign_tracking_stats AS (
     mv.imo_variant,
 
     COUNT(DISTINCT IF(t.type = 'open',  t.address, NULL)) AS open_uniques,
-    COUNT(DISTINCT IF(t.type = 'click', t.address, NULL)) AS click_uniques,
-    COUNT(            IF(t.type = 'click', t.address, NULL)) AS clicks,
+COUNT(DISTINCT IF(t.type = 'click' AND t.url NOT LIKE '%unsubscribe%', t.address, NULL)) AS click_uniques,
+COUNT(            IF(t.type = 'click' AND t.url NOT LIKE '%unsubscribe%', t.address, NULL)) AS clicks,
     COUNT(DISTINCT IF(t.url LIKE '%unsubscribe%', t.address, NULL)) AS unsubscribes
 
   FROM cdpimagino.imaginoreplicatedcampaign c
