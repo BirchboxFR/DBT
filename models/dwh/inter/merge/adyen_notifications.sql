@@ -22,7 +22,7 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
 
 {# ---------- BUILD ---------- #}
 {%- if is_incremental() -%}
-  {# INCRÉMENTAL : actifs + fenêtre pour le pruning source #}
+
   {%- for country in countries %}
   SELECT
     '{{ country.code }}' AS dw_country_code,
@@ -31,10 +31,26 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
     AND b._airbyte_extracted_at >= {{ window_start }}
-  {{ "UNION ALL" if not loop.last }}
+  UNION ALL
   {%- endfor %}
+
+
+  SELECT
+    'FR' AS dw_country_code,
+    CAST(a.id AS INT64) AS id,
+    a.* EXCEPT(id)
+  FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2024` AS a
+  WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
+  UNION ALL
+  SELECT
+    'FR' AS dw_country_code,
+    CAST(a.id AS INT64) AS id,
+    a.* EXCEPT(id)
+  FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2025` AS a
+  WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
+
 {%- else -%}
-  {# PREMIER RUN ou FULL REFRESH : pas de fenêtre, on charge tous les actifs #}
+
   {%- for country in countries %}
   SELECT
     '{{ country.code }}' AS dw_country_code,
@@ -42,6 +58,22 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
     b.* EXCEPT(id)
   FROM `teamdata-291012.{{ country.dataset }}.{{ source_table }}` AS b
   WHERE NULLIF(b._ab_cdc_deleted_at, '') IS NULL
-  {{ "UNION ALL" if not loop.last }}
+  UNION ALL
   {%- endfor %}
-{%- endif -%}
+
+  {# ARCHIVES FR : 2024 + 2025 #}
+  SELECT
+    'FR' AS dw_country_code,
+    CAST(a.id AS INT64) AS id,
+    a.* EXCEPT(id)
+  FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2024` AS a
+  WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
+  UNION ALL
+  SELECT
+    'FR' AS dw_country_code,
+    CAST(a.id AS INT64) AS id,
+    a.* EXCEPT(id)
+  FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2025` AS a
+  WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
+
+{%- endif %}
