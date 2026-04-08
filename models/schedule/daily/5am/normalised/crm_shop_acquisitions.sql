@@ -41,7 +41,7 @@ campaign_ranked AS (
   WHERE (
    ( upper(campaign.campaign_name) LIKE '%SHOP%'  or upper(campaign.campaign_name)LIKE '%LTE%')
     or upper(campaign.custom_Categorie_de_Campagne_Lvl_2) LIKE '%MIXTE%' 
-    or (upper(campaign.campaign_id) LIKE '%SHOP%' or  upper(campaign.campaign_id) LIKE '%LTE%' )
+    or (upper(campaign.campaign_id) LIKE '%SHOP%' or  upper(campaign.campaign_id) LIKE '%LTE%' ))
     AND campaign.opened = true 
     AND a.user_key IS NOT NULL 
     group by all
