@@ -22,13 +22,14 @@
     {%- set mailjet_tmp_tables = ['mailjet'] -%}
     {%- set geo_tmp_tables = ['prompts_list'] -%}
     {%- set box_tmp_tables = ['sku_by_user_by_box','brand_sampling_by_box'] -%}
+    {%- set shop_tmp_tables = ['sku_by_user_by_lte'] -%}
     {%- set cdpimagino_tmp_tables = ['device_by_user_id'] -%}
     {%- set survey_tmp_tables = ['archives_survey_answers'] -%}
     {%- set pnl_tmp_tables = ['pnl2','export_pnl_live_materialized'] -%}
     {%- set crm_tmp_tables = ['crm_shop_acquisitions','Export_imagino_welcome','Export_acquisition_by_campaign','crm_acquisitions','crm_data_detailed_by_user','crm_zapier','Export_imagino_extract','optin_variations'] -%}
     {%- set archives_tmp_tables = ['archives_payments'] -%}
     {%- set predictive_tmp_tables = ['ltv','ml_ltv_predictions','stg_customers_to_predict'] -%}
-    {%- set catalog_tmp_tables = ['brands_enriched','flag_materialized','projects_materialized','work_orders_materialized'] -%}
+    {%- set catalog_tmp_tables = ['loyalty_products_online','brands_enriched','flag_materialized','projects_materialized','work_orders_materialized'] -%}
     {%- set history_table_tmp_tables = ['catalog__stock','pnl__export_pnl_live','catalog__bank'] -%}
     
 
@@ -57,6 +58,8 @@
         accounting
     {%- elif node.name in box_tmp_tables -%}
         box
+    {%- elif node.name in shop_tmp_tables -%}
+        shop
     {%- elif node.name in blissim_analytics_tmp_tables -%}
         blissim_analytics
     {%- elif node.name in inter_all_tables -%}
