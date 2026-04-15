@@ -1,6 +1,6 @@
 
   SELECT c.dw_country_code,
-  points_category.meta_value ,
+  safe_cast(points_category.meta_value  as int64)meta_value,
   c.stock,
   loyalty_type.meta_value AS loyalty_type,
   value.meta_value AS value,
@@ -24,4 +24,5 @@
   AND c.stock > 0
   AND display.meta_value = '1'
   GROUP BY all
+  having meta_value >70
 order by meta_value desc
