@@ -1,5 +1,5 @@
 select date_trunc(date(d.created_at),month)date,p.sku,
-p.name,product_id, p.brand_id,b.name as brand_name,count(distinct sub_id) nb,min(order_id) from sales.box_sales bs
+p.name,product_id, p.brand_id,b.name as brand_name,count(distinct sub_id) nb from sales.box_sales bs
 left join inter.order_details d using(order_id,dw_country_code)
 left join inter.products p on p.id=d.product_id and p.dw_country_code=d.dw_country_code
 left join inter.brands b on b.post_id=p.brand_id and b.dw_country_code=d.dw_country_code
