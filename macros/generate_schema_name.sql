@@ -7,7 +7,7 @@
     {%- set snippets_tmp_tables = ['current_box'] -%}
     {%- set allocation_tmp_tables = ['index_user_samples','box_choose'] -%}
     {%- set payment_tmp_tables = ['adyen_notifications_authorization'] -%}
-    {%- set product_tmp_tables = ['gws_by_month','catalog', 'algolia_product_categories', 'categories','kit_costs','all_kits','nice_names','codification_bundle_product','stock','stock_bs','stock_store','kit_details','reviews','product_classes','product_classes_3m'] -%}
+    {%- set product_tmp_tables = ['products_box_by_month','gws_by_month','catalog', 'algolia_product_categories', 'categories','kit_costs','all_kits','nice_names','codification_bundle_product','stock','stock_bs','stock_store','kit_details','reviews','product_classes','product_classes_3m'] -%}
     {%- set marketing_tmp_tables = ['predictive_ltv_conversion_upload','Export_predictive_ltv_per_campaign_agg','Export_predictive_ltv_per_campaign','Export_Yearly_Live','Export_GWS_LIVE','Export_Acquisition_Daily','Export_Discount_Live','marketing_expenses_box','Export_special_cost_daily'] -%}
     {%- set accounting_tmp_tables = ['reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
