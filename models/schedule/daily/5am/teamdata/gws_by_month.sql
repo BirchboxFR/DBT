@@ -14,4 +14,4 @@ and d.special_type='GWS'
 --and p.id=72969
 and product_id<>1 and lower(p.name) not like '%flyer%' and lower(p.name) not like '%box%'
 group by all
-having date>='2024-01-01' and nb>100
+having date>='2024-01-01' --and nb>100
