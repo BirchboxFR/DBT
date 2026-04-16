@@ -14,8 +14,11 @@
   )
 }}
 
-select distinct ss.user_key,year,month,ss.product_codification,ss.dw_country_code,ss.product_id, ss.product_name lte_name,lower(c.product_nice_name) product_name,  c.brand_full_name as brand_name ,user_id,c.sku,c.category_lvl_1,c.category_lvl_2,c.category_lvl_3 from sales.shop_sales ss
+select distinct ss.user_key,year,month,
+product_categories_lvl1,product_categories_lvl2,product_categories_lvl3,
+ss.product_codification,ss.dw_country_code,ss.product_id, ss.product_name lte_name,lower(c.product_nice_name) product_name,  c.brand_full_name as brand_name ,user_id,c.sku,c.category_lvl_1,c.category_lvl_2,c.category_lvl_3 from sales.shop_sales ss
 inner join `teamdata-291012.inter.lte_kits` l on l.lte_product_id=ss.product_id and l.dw_country_code=ss.dw_country_code
 inner join product.catalog c on c.product_id=l.product_id and c.dw_country_code=l.dw_country_code
+inner join inter.products p on p.id=c.product_id and p.dw_country_code=c.dw_country_code
 --inner join product.catalog enfant on enfant.product_id=c.product_id and enfant.dw_country_code=ss.dw_country_code
 where product_codification in ('LTE','SPLENDIST','CALENDAR')

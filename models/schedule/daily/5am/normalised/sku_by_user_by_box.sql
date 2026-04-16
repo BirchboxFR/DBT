@@ -42,7 +42,9 @@ SELECT
     when fz.sku = 'POL-NUITPOLAIRE-ESHOP' then 'POL-CREMEREVITALISANT-ESHOP' 
     else fz.sku 
   end as fz_sku,
+  fz.product_categories_lvl1,
   fz.product_categories_lvl2,
+  fz.product_categories_lvl3,
   component_codification_lvl2,
   kt.box_date,
   kt.box_month,
