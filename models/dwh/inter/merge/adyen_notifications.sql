@@ -65,14 +65,14 @@ TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {{ window_hours }} HOUR)
   SELECT
     'FR' AS dw_country_code,
     CAST(a.id AS INT64) AS id,
-    a.* EXCEPT(id)
+    a.* EXCEPT(id),'','',''
   FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2024` AS a
   WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
   UNION ALL
   SELECT
     'FR' AS dw_country_code,
     CAST(a.id AS INT64) AS id,
-    a.* EXCEPT(id)
+    a.* EXCEPT(id),'','',''
   FROM `teamdata-291012.inter_archives.wp_jb_adyen_notifications_2025` AS a
   WHERE NULLIF(a._ab_cdc_deleted_at, '') IS NULL
 
