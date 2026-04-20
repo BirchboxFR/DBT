@@ -3,7 +3,7 @@
   safe_cast(points_category.meta_value  as int64)meta_value,
   c.stock,
   loyalty_type.meta_value AS loyalty_type,
-  value.meta_value AS value,
+  safe_cast(value.meta_value as int64)AS value,
   c.thumb_url AS image,
   c.product_id,
   c.sku, 
