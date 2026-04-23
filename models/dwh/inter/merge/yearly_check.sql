@@ -37,6 +37,26 @@ WITH source_data AS (
             FROM {{ this }}
         )
     {% endif %}
+
+        UNION ALL
+
+    -- Données Pologne
+    SELECT 
+        id,
+        created_at,
+        updated_at,
+        next_box_sub_id,
+        current_box_sub_id,
+        'ES' as dw_country_code,
+        `_ab_cdc_updated_at` as source_updated_at
+    FROM `teamdata-291012.bdd_prod_pl.wp_jb_yearly_check`
+    WHERE `_ab_cdc_deleted_at` IS NULL
+    {% if is_incremental() %}
+        AND `_ab_cdc_updated_at` >= (
+            SELECT COALESCE(MAX(source_updated_at), '1900-01-01') 
+            FROM {{ this }}
+        )
+    {% endif %}
 )
 
 SELECT 
