@@ -47,7 +47,7 @@ WITH source_data AS (
         updated_at,
         next_box_sub_id,
         current_box_sub_id,
-        'ES' as dw_country_code,
+        'PL' as dw_country_code,
         `_ab_cdc_updated_at` as source_updated_at
     FROM `teamdata-291012.bdd_prod_pl.wp_jb_yearly_check`
     WHERE `_ab_cdc_deleted_at` IS NULL
