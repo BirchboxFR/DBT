@@ -841,14 +841,18 @@ GROUP BY country, y, m, store, type, product_codification
 
 UNION ALL
 
-SELECT 'FR', extract(year from month) AS y, extract(month from month) AS m, NULL AS store, 'ASILAGE', 'REVENUE', SUM(COALESCE(revenue,0))
-FROM teamdata-291012.Spreadsheet_synchro.asilage
-WHERE revenue IS NOT NULL
+-- asilage turnover
+SELECT country,year, month, NULL AS store, 'ASILAGE', 'REVENUE',SUM(turnover) AS value
+FROM `teamdata-291012.box_campaigns.asilage_deals` 
+WHERE deal_status = 'CLOSED'
+AND turnover > 0
 GROUP BY ALL
 
 UNION ALL
 
-SELECT 'FR', extract(year from month) AS y, extract(month from month) AS m, NULL AS store, 'ASILAGE', 'COGS', SUM(COALESCE(cogs,0))
-FROM teamdata-291012.Spreadsheet_synchro.asilage
-WHERE revenue IS NOT NULL
+-- asilage COGS
+SELECT country,year, month, NULL AS store, 'ASILAGE', 'COGS',SUM(COALESCE(total_cogs,0)) AS value
+FROM `teamdata-291012.box_campaigns.asilage_deals` 
+WHERE deal_status = 'CLOSED'
+AND turnover > 0
 GROUP BY ALL
