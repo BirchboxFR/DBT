@@ -8,7 +8,6 @@
   materialized='incremental',
   incremental_strategy='merge',
   unique_key=['dw_country_code','id'],
-  partition_by={"field": "_airbyte_extracted_at", "data_type": "timestamp", "granularity": "day"},
   cluster_by=["dw_country_code","id"]
 ) }}
 
