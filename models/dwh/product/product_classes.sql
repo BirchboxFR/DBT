@@ -31,7 +31,7 @@ raw_valid_products AS (
   LEFT JOIN real_parents rp ON p.id = rp.parent_product_id
   WHERE p.product_codification_id = 0
   AND p.attr_not_sold_anymore = 0
-  AND b.attr_is_inactive = 0
+  AND b.attr_is_active = 1
   AND rp.parent_product_id IS NULL
   AND p.sku IS NOT NULL
   AND po.post_status = 'publish'
