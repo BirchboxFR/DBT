@@ -53,7 +53,8 @@ SELECT
   kit_brand_name,
   component_brand_name,
   ean,
-  ii.euro_purchase_price AS component_purchase_price
+  ii.euro_purchase_price AS component_purchase_price,
+  ii.logistic_category AS component_logistic_category
 
 from `teamdata-291012.sales.box_sales` bs
 left join `teamdata-291012.product.kit_details` kt 
