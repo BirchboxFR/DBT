@@ -16,37 +16,57 @@ WITH acquisitions_cycle AS (
     AND bs.gift = 0
 ),
 
+customers_unified AS (
+  SELECT *, email                      AS match_key, 'email' AS match_type
+  FROM user.customers
+
+  UNION ALL
+
+  SELECT *, billing_phone_standardized AS match_key, 'sms'   AS match_type
+  FROM user.customers
+  WHERE billing_phone_standardized IS NOT NULL
+),
+
 campaign_ranked AS (
   SELECT DISTINCT
     c.user_key,
     u.address,
     c.user_id,
     c.dw_country_code,
-    custom_country,
+    u.custom_country,
     campaign.campaign_id,
-     campaign.campaign_name,
+    campaign.campaign_name,
     campaign.startdate,
-    imo_variant,
-    custom_Categorie_de_campagne,
+    campaign.imo_variant,
+    campaign.custom_Categorie_de_campagne,
     campaign.opened,
     a.campaign_date,
-    a.user_key IS NOT NULL as acquis,
+    a.user_key IS NOT NULL AS acquis,
     ROW_NUMBER() OVER (
       PARTITION BY c.user_key, a.campaign_date 
       ORDER BY campaign.startdate DESC
-    ) as rn
+    ) AS rn
   FROM `normalised-417010.crm.crm_data_detailed_by_user` u,
-  UNNEST(campaigns) as campaign
-  INNER JOIN user.customers c ON c.email = u.address
-  LEFT JOIN acquisitions_cycle a ON a.user_key = c.user_key  AND campaign.startdate BETWEEN DATE_SUB(DATE(a.payment_date), INTERVAL 2 DAY) AND DATE(a.payment_date) and u.custom_country = c.dw_country_code and u.custom_country = a.dw_country_code
+  UNNEST(campaigns) AS campaign
+  INNER JOIN customers_unified c
+    ON  c.match_key  = u.address
+    AND c.match_type = u.channel  -- 'email' ou 'sms'
+  LEFT JOIN acquisitions_cycle a
+    ON  a.user_key        = c.user_key
+    AND campaign.startdate BETWEEN DATE_SUB(DATE(a.payment_date), INTERVAL 2 DAY) AND DATE(a.payment_date)
+    AND u.custom_country  = c.dw_country_code
+    AND u.custom_country  = a.dw_country_code
   WHERE (
-    (upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%' 
-  or upper(campaign.campaign_id) LIKE 'ACQUISITION_BOX%' ) -- france uniquement 
-  OR campaign.custom_Categorie_de_campagne in ('BOX_Promo','BOX_Disclose','BOX_Ouverture','WELCOME_PACK','WELCOME_PACK_ACHAT_SHOP','BOX_GWS','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT')
-  OR campaign.custom_Categorie_de_Campagne_Lvl_2  in ('MIXTE_LTE_BOX','MIXTE_BOX_SHOP')
-   )
-    AND campaign.opened = true 
-    AND a.user_key IS NOT NULL 
+      upper(campaign.campaign_name) LIKE 'ACQUISITION_BOX%'
+    OR upper(campaign.campaign_id)  LIKE 'ACQUISITION_BOX%'
+    OR campaign.custom_Categorie_de_campagne IN (
+        'BOX_Promo','BOX_Disclose','BOX_Ouverture','WELCOME_PACK',
+        'WELCOME_PACK_ACHAT_SHOP','BOX_GWS','BOX_Relance_ouverture','WELCOME_PACK_SANS_ACHAT'
+      )
+    OR campaign.custom_Categorie_de_Campagne_Lvl_2 IN ('MIXTE_LTE_BOX','MIXTE_BOX_SHOP')
+  )
+    AND campaign.opened = true
+    AND a.user_key IS NOT NULL
 )
 
 SELECT 
@@ -57,12 +77,11 @@ SELECT
   campaign_id,
   campaign_name,
   imo_variant,
-  custom_Categorie_de_campagne
+  custom_Categorie_de_campagne,  -- virgule manquante dans ton original ici
   startdate,
   opened,
   campaign_date,
   acquis
 FROM campaign_ranked
-WHERE rn = 1  -- Une seule ligne par user_key + campaign_date (mois)
-  
+WHERE rn = 1
 ORDER BY campaign_date
