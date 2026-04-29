@@ -25,7 +25,7 @@ WITH base_messages AS (
     c.startdate,
     c.custom_country,
     m.address,
-    m.channel,
+    c.channel,
     m.status,
     c.custom_Categorie_de_campagne,
     c.custom_Categorie_de_Campagne_Lvl_2,
