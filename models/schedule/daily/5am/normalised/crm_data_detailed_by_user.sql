@@ -46,7 +46,7 @@ WITH base_messages AS (
   JOIN `cdpimagino.BQ_imagino_Message` m
     ON m.activationId = c.id
   WHERE DATE(m.eventDate) >= '2024-01-01'
-  and c.name='ACQUISITION_BOX_Offre_Fin_de_Mois_SMS_2804_CHURNEVER'
+  -- and c.name='ACQUISITION_BOX_Offre_Fin_de_Mois_SMS_2804_CHURNEVER'
 ),
 
 -- On garde le "dernier statut message" par (campaign_id, address)
