@@ -10,46 +10,33 @@
     partition_by = {
       "field": "last_activity_date",
       "data_type": "date",
-      "granularity": "month"  
+      "granularity": "month"
     },
-    cluster_by = ["address"], 
+    cluster_by = ["address"],
     on_schema_change = 'sync',
     description = "Table des campagnes reçues par utilisateur dans Imagino, avec statut message et interactions (open/click/unsubscribe)."
 ) }}
 
-
--- 1 ligne = 1 user (address)
--- Colonnes clés :
---   campaigns                -> toutes les campagnes reçues (avec flags delivered/softBounce/hardBounce + opened/clicked/unsubscribed + nb de clics)
---   opened_campaigns         -> sous-liste des campagnes avec au moins une ouverture
---   clicked_campaigns        -> sous-liste des campagnes avec au moins un clic
---   unsubscribed_campaigns   -> sous-liste des campagnes où l'utilisateur s'est désinscrit (lien contenant 'unsubscribe')
-
-
-
-
 WITH base_messages AS (
   SELECT
-    c.id AS campaign_id,
-    c.name AS campaign_name,
+    c.id                              AS campaign_id,
+    c.name                            AS campaign_name,
     c.created,
     c.startdate,
     c.custom_country,
     m.address,
-    channel,
+    m.channel,
     m.status,
     c.custom_Categorie_de_campagne,
-    custom_Categorie_de_Campagne_Lvl_2,
+    c.custom_Categorie_de_Campagne_Lvl_2,
     m.eventDate,
-    JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') as imo_variant
+    JSON_EXTRACT_SCALAR(m.contactData, '$.imo_variant') AS imo_variant
   FROM `cdpimagino.imaginoreplicatedcampaign` c
   JOIN `cdpimagino.BQ_imagino_Message` m
     ON m.activationId = c.id
   WHERE DATE(m.eventDate) >= '2024-01-01'
-  -- and c.name='ACQUISITION_BOX_Offre_Fin_de_Mois_SMS_2804_CHURNEVER'
 ),
 
--- On garde le "dernier statut message" par (campaign_id, address)
 latest_message AS (
   SELECT
     campaign_id,
@@ -67,142 +54,140 @@ latest_message AS (
     (ARRAY_AGG(STRUCT(status, eventDate, created, startdate)
                ORDER BY eventDate DESC LIMIT 1))[OFFSET(0)].startdate AS startdate
   FROM base_messages
-  GROUP BY all
+  GROUP BY ALL
 ),
 
--- Stats de tracking par (campaign_id, address)
 tracking AS (
   SELECT
-    t.activationid AS campaign_id,
+    t.activationid                              AS campaign_id,
     t.address,
-    COUNTIF(t.type = 'open')  > 0 AS opened,
-    COUNTIF(t.type = 'click') > 0 AS clicked,
-    COUNTIF(t.type = 'click')     AS clicks,
-    case when t.type = 'open' then t.eventDate end as date_open,
-    case when t.type = 'click' then t.eventDate end as date_click,
+    COUNTIF(t.type = 'open')  > 0              AS opened,
+    COUNTIF(t.type = 'click') > 0              AS clicked,
+    COUNTIF(t.type = 'click')                  AS clicks,
+    CASE WHEN t.type = 'open'  THEN t.eventDate END AS date_open,
+    CASE WHEN t.type = 'click' THEN t.eventDate END AS date_click,
     COUNTIF(LOWER(t.url) LIKE '%unsubscribe%') > 0 AS unsubscribed
   FROM `cdpimagino.BQ_imagino_Tracking` t
   WHERE DATE(t.eventDate) >= '2024-01-01'
-  GROUP BY all
+  GROUP BY ALL
 ),
 
--- Jointure message (statut dernier) + tracking
 per_user_campaign AS (
+
+  -- Imagino
   SELECT
     lm.address,
     lm.campaign_id,
     lm.campaign_name,
-    imo_variant,
-    channel,
-    custom_country,
-    custom_Categorie_de_campagne,
-    custom_Categorie_de_Campagne_Lvl_2,
-    DATE(COALESCE(lm.startdate, lm.created)) AS startdate,
-    -- Flags message
-    TRUE                                  AS targeted,
-    (lm.last_msg_status = 'delivered')    AS delivered,
-    (lm.last_msg_status = 'softBounce')   AS softBounce,
-    (lm.last_msg_status = 'hardBounce')   AS hardBounce,
-    -- Tracking
-    COALESCE(tr.opened, FALSE)            AS opened,
-    COALESCE(tr.clicked, FALSE)           AS clicked,
-    COALESCE(tr.clicks, 0)                AS clicks,
-    COALESCE(tr.unsubscribed, FALSE)      AS unsubscribed,
-
-    tr.date_open     AS date_open,
-    tr.date_click     AS date_click
+    lm.imo_variant,
+    lm.channel,
+    lm.custom_country,
+    lm.custom_Categorie_de_campagne,
+    lm.custom_Categorie_de_Campagne_Lvl_2,
+    DATE(COALESCE(lm.startdate, lm.created))  AS startdate,
+    TRUE                                       AS targeted,
+    (lm.last_msg_status = 'delivered')         AS delivered,
+    (lm.last_msg_status = 'softBounce')        AS softBounce,
+    (lm.last_msg_status = 'hardBounce')        AS hardBounce,
+    COALESCE(tr.opened,      FALSE)            AS opened,
+    COALESCE(tr.clicked,     FALSE)            AS clicked,
+    COALESCE(tr.clicks,      0)                AS clicks,
+    COALESCE(tr.unsubscribed, FALSE)           AS unsubscribed,
+    tr.date_open,
+    tr.date_click
   FROM latest_message lm
   LEFT JOIN tracking tr
-    ON tr.campaign_id = lm.campaign_id
-   AND tr.address     = lm.address
-----splio
-   union all
+    ON  tr.campaign_id = lm.campaign_id
+    AND tr.address     = lm.address
 
-   SELECT 
-    contactid AS email, 
-    campaignid,
-    campaignname,
-    '' AS imo_variant,
-    '',
-    'FR' AS custom_country,
-    '' AS custom_Categorie_de_campagne,
-    '' AS custom_Categorie_de_Campagne_Lvl_2,
-    MIN(event_date) AS event_date,
-    TRUE AS targeted,
-    MAX(CASE WHEN status = 'Done' THEN TRUE END) AS delivered,
-    NULL AS softBounce,
-    NULL AS hardBounce,
-    -- Tracking
-    MAX(CASE WHEN status = 'Open' THEN TRUE END) AS opened,
-    MAX(CASE WHEN status = 'Click' THEN TRUE END) AS clicked,
-    SUM(CASE WHEN status = 'Click' THEN 1 ELSE 0 END) AS clicks,
-    MAX(CASE WHEN status = 'Unsubscribe' THEN TRUE END) AS unsubscribed,
-   cast( MIN(CASE WHEN status = 'Open' THEN event_date END) as timestamp) AS date_open,
-    cast(MIN(CASE WHEN status = 'Click' THEN event_date END)as timestamp) AS date_click
-FROM crm.splio_events
-WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 25 MONTH)
-    --AND contactid = 'mathieu.helie@blissim.fr' 
-    -- AND campaignid = '7rY0neRrJ'
-GROUP BY all
+  UNION ALL
+
+  -- Splio
+  SELECT
+    contactid                                                          AS address,
+    campaignid                                                         AS campaign_id,
+    campaignname                                                       AS campaign_name,
+    ''                                                                 AS imo_variant,
+    'email'                                                            AS channel,
+    'FR'                                                               AS custom_country,
+    ''                                                                 AS custom_Categorie_de_campagne,
+    ''                                                                 AS custom_Categorie_de_Campagne_Lvl_2,
+    MIN(event_date)                                                    AS startdate,
+    TRUE                                                               AS targeted,
+    MAX(CASE WHEN status = 'Done'        THEN TRUE END)                AS delivered,
+    NULL                                                               AS softBounce,
+    NULL                                                               AS hardBounce,
+    MAX(CASE WHEN status = 'Open'        THEN TRUE END)                AS opened,
+    MAX(CASE WHEN status = 'Click'       THEN TRUE END)                AS clicked,
+    SUM(CASE WHEN status = 'Click'       THEN 1 ELSE 0 END)           AS clicks,
+    MAX(CASE WHEN status = 'Unsubscribe' THEN TRUE END)                AS unsubscribed,
+    CAST(MIN(CASE WHEN status = 'Open'   THEN event_date END) AS TIMESTAMP) AS date_open,
+    CAST(MIN(CASE WHEN status = 'Click'  THEN event_date END) AS TIMESTAMP) AS date_click
+  FROM crm.splio_events
+  WHERE event_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 25 MONTH)
+  GROUP BY ALL
+),
+
+customers_unified AS (
+  SELECT *, email                       AS match_key, 'email' AS match_type
+  FROM user.customers
+
+  UNION ALL
+
+  SELECT *, billing_phone_standardized  AS match_key, 'sms'   AS match_type
+  FROM user.customers
+  WHERE billing_phone_standardized IS NOT NULL
 )
 
 SELECT
-  'IMAGINO' AS source,
-  address,
-  user_key,
-  channel,
-  custom_country,
-    DATE(MAX(startdate)) AS last_activity_date,
-  -- Toutes les campagnes reçues avec leurs indicateurs
+  'IMAGINO'                        AS source,
+  puc.address,
+  cu.user_key,
+  puc.channel,
+  puc.custom_country,
+  DATE(MAX(puc.startdate))         AS last_activity_date,
+
   ARRAY_AGG(
     STRUCT(
-      campaign_id,
-      campaign_name,imo_variant,
-      custom_Categorie_de_campagne,
-      custom_Categorie_de_Campagne_Lvl_2,
-      startdate,
-      targeted,
-      delivered,
-      softBounce,
-      hardBounce,
-      opened,
-      clicked,
-      clicks,
-      unsubscribed
+      puc.campaign_id,
+      puc.campaign_name,
+      puc.imo_variant,
+      puc.custom_Categorie_de_campagne,
+      puc.custom_Categorie_de_Campagne_Lvl_2,
+      puc.startdate,
+      puc.targeted,
+      puc.delivered,
+      puc.softBounce,
+      puc.hardBounce,
+      puc.opened,
+      puc.clicked,
+      puc.clicks,
+      puc.unsubscribed
     )
-    ORDER BY startdate DESC, campaign_id
+    ORDER BY puc.startdate DESC, puc.campaign_id
   ) AS campaigns,
 
-  -- Sous-listes utiles
-  ARRAY_AGG(IF(opened,
-    STRUCT(campaign_id, campaign_name, date_open,imo_variant), NULL) IGNORE NULLS
-    ORDER BY startdate DESC, campaign_id
+  ARRAY_AGG(
+    IF(puc.opened, STRUCT(puc.campaign_id, puc.campaign_name, puc.date_open, puc.imo_variant), NULL)
+    IGNORE NULLS
+    ORDER BY puc.startdate DESC, puc.campaign_id
   ) AS opened_campaigns,
 
-  ARRAY_AGG(IF(clicked,
-    STRUCT(campaign_id, campaign_name, date_click, clicks,imo_variant), NULL) IGNORE NULLS
-    ORDER BY startdate DESC, campaign_id
+  ARRAY_AGG(
+    IF(puc.clicked, STRUCT(puc.campaign_id, puc.campaign_name, puc.date_click, puc.clicks, puc.imo_variant), NULL)
+    IGNORE NULLS
+    ORDER BY puc.startdate DESC, puc.campaign_id
   ) AS clicked_campaigns,
 
-  ARRAY_AGG(IF(unsubscribed,
-    STRUCT(campaign_id, campaign_name, startdate,imo_variant), NULL) IGNORE NULLS
-    ORDER BY startdate DESC, campaign_id
+  ARRAY_AGG(
+    IF(puc.unsubscribed, STRUCT(puc.campaign_id, puc.campaign_name, puc.startdate, puc.imo_variant), NULL)
+    IGNORE NULLS
+    ORDER BY puc.startdate DESC, puc.campaign_id
   ) AS unsubscribed_campaigns
 
-FROM per_user_campaign
-inner join user.customers on (
-  case 
-    when per_user_campaign.channel = 'sms' 
-    then customers.billing_phone_standardized
-    else customers.email
-  end = per_user_campaign.address
-)
-GROUP BY address,user_key,custom_country,channel
+FROM per_user_campaign puc
+INNER JOIN customers_unified cu
+  ON  cu.match_key  = puc.address
+  AND cu.match_type = puc.channel
 
-
-
-
-
-
-
-
+GROUP BY puc.address, cu.user_key, puc.custom_country, puc.channel
