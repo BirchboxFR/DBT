@@ -18,6 +18,16 @@
 ) }}
 
 
+-- 1 ligne = 1 user (address)
+-- Colonnes clés :
+--   campaigns                -> toutes les campagnes reçues (avec flags delivered/softBounce/hardBounce + opened/clicked/unsubscribed + nb de clics)
+--   opened_campaigns         -> sous-liste des campagnes avec au moins une ouverture
+--   clicked_campaigns        -> sous-liste des campagnes avec au moins un clic
+--   unsubscribed_campaigns   -> sous-liste des campagnes où l'utilisateur s'est désinscrit (lien contenant 'unsubscribe')
+
+
+
+
 WITH base_messages AS (
   SELECT
     c.id AS campaign_id,
@@ -26,6 +36,7 @@ WITH base_messages AS (
     c.startdate,
     c.custom_country,
     m.address,
+    channel,
     m.status,
     c.custom_Categorie_de_campagne,
     custom_Categorie_de_Campagne_Lvl_2,
@@ -35,6 +46,7 @@ WITH base_messages AS (
   JOIN `cdpimagino.BQ_imagino_Message` m
     ON m.activationId = c.id
   WHERE DATE(m.eventDate) >= '2024-01-01'
+  and c.name='ACQUISITION_BOX_Offre_Fin_de_Mois_SMS_2804_CHURNEVER'
 ),
 
 -- On garde le "dernier statut message" par (campaign_id, address)
@@ -42,6 +54,7 @@ latest_message AS (
   SELECT
     campaign_id,
     campaign_name,
+    channel,
     custom_Categorie_de_campagne,
     custom_Categorie_de_Campagne_Lvl_2,
     imo_variant,
@@ -80,6 +93,7 @@ per_user_campaign AS (
     lm.campaign_id,
     lm.campaign_name,
     imo_variant,
+    channel,
     custom_country,
     custom_Categorie_de_campagne,
     custom_Categorie_de_Campagne_Lvl_2,
@@ -109,6 +123,7 @@ per_user_campaign AS (
     campaignid,
     campaignname,
     '' AS imo_variant,
+    '',
     'FR' AS custom_country,
     '' AS custom_Categorie_de_campagne,
     '' AS custom_Categorie_de_Campagne_Lvl_2,
@@ -135,6 +150,7 @@ SELECT
   'IMAGINO' AS source,
   address,
   user_key,
+  channel,
   custom_country,
     DATE(MAX(startdate)) AS last_activity_date,
   -- Toutes les campagnes reçues avec leurs indicateurs
@@ -174,9 +190,18 @@ SELECT
   ) AS unsubscribed_campaigns
 
 FROM per_user_campaign
-inner join user.customers on customers.email=per_user_campaign.address
+inner join user.customers on (
+  case 
+    when per_user_campaign.channel = 'sms' 
+    then customers.billing_phone_standardized
+    else customers.email
+  end = per_user_campaign.address
+)
+GROUP BY address,user_key,custom_country,channel
 
-GROUP BY address,user_key,custom_country
+
+
+
 
 
 
