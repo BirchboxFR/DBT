@@ -52,13 +52,15 @@ SELECT
   fz.name as product_name,
   kit_brand_name,
   component_brand_name,
-  ean
+  ean,
+  ii.euro_purchase_price AS component_purchase_price
 
 from `teamdata-291012.sales.box_sales` bs
 left join `teamdata-291012.product.kit_details` kt 
   using(box_id, dw_country_code, coffret_id)
 left join `teamdata-291012.inter.sample_product_link` spl on spl.sample_id = component_product_id and spl.dw_country_code = bs.dw_country_code
 left join `teamdata-291012.inter.products` fz on fz.id = spl.product_id and fz.dw_country_code = spl.dw_country_code
+LEFT JOIN (SELECT sku, euro_purchase_price FROM `teamdata-291012.catalog.inventory_item_catalog`) ii ON kt.component_sku = ii.sku
 inner join (
   select user_id, email, dw_country_code 
   from `teamdata-291012.user.customers`
