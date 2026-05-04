@@ -38,6 +38,8 @@ green AS (
     dam.analytic,
     dg.store_code,
     dg.shipping_country_classification,
+    CAST(NULL AS STRING) AS famille_de_categorie,
+    CAST(NULL AS STRING) AS categorie,
     'green' AS source
   FROM data_gift dg
   INNER JOIN `teamdata-291012.accounting.model` dam
@@ -63,6 +65,8 @@ blue AS (
     analytic,
     store_code,
     shipping_country_classification,
+    famille_de_categorie,
+    categorie,
     'blue' AS source
   FROM green
   CROSS JOIN params p
@@ -106,6 +110,8 @@ expired_cards AS (
     dam.analytic,
     shop.store_code,
     CAST(NULL AS STRING) AS shipping_country_classification,
+    CAST(NULL AS STRING) AS famille_de_categorie,
+    CAST(NULL AS STRING) AS categorie,
     'expired' AS source
   FROM data_expired shop
   INNER JOIN `teamdata-291012.accounting.model` dam
@@ -165,6 +171,8 @@ white AS (
     dam.analytic,
     da.store_code,
     da.shipping_country_classification,
+    CAST(NULL AS STRING) AS famille_de_categorie,
+    CAST(NULL AS STRING) AS categorie,
     'white' AS source
   FROM data_activation da
   LEFT JOIN `teamdata-291012.accounting.model` dam
@@ -229,6 +237,8 @@ totals AS (
     CAST(NULL AS STRING) AS analytic,
     store_code,
     CAST(NULL AS STRING) AS shipping_country_classification,
+    CAST(NULL AS STRING) AS famille_de_categorie,
+    CAST(NULL AS STRING) AS categorie,
     source
   FROM (
     SELECT *,
@@ -254,6 +264,8 @@ SELECT
   ecriture,
   debit,
   credit,
+  famille_de_categorie,
+  categorie,
   analytic
 FROM (
   SELECT * FROM base
