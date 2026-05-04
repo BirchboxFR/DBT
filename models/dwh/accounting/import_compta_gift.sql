@@ -38,8 +38,8 @@ green AS (
     dam.analytic,
     dg.store_code,
     dg.shipping_country_classification,
-    CAST(NULL AS STRING) AS famille_de_categorie,
-    CAST(NULL AS STRING) AS categorie,
+    ana.famille AS famille_de_categorie,
+    ana.categorie,
     'green' AS source
   FROM data_gift dg
   INNER JOIN `teamdata-291012.accounting.model` dam
@@ -47,6 +47,9 @@ green AS (
     AND dg.product_codification = dam.product_codification
     AND dam.shipping_country IS NULL
     AND dam.type IN ('SALES', 'DISCOUNT_WOUT_PTS')
+  LEFT JOIN `teamdata-291012.accounting.analytics` ana
+    ON ana.code = dam.analytic
+    AND STARTS_WITH(dam.account, '7')
   CROSS JOIN params p
 ),
 
@@ -110,8 +113,8 @@ expired_cards AS (
     dam.analytic,
     shop.store_code,
     CAST(NULL AS STRING) AS shipping_country_classification,
-    CAST(NULL AS STRING) AS famille_de_categorie,
-    CAST(NULL AS STRING) AS categorie,
+    ana.famille AS famille_de_categorie,
+    ana.categorie,
     'expired' AS source
   FROM data_expired shop
   INNER JOIN `teamdata-291012.accounting.model` dam
@@ -119,6 +122,9 @@ expired_cards AS (
     AND shop.product_codification = dam.product_codification
     AND dam.shipping_country IS NULL
     AND dam.type IN ('EXPIRATION', 'DISCOUNT_EXPIRATION')
+  LEFT JOIN `teamdata-291012.accounting.analytics` ana
+    ON ana.code = dam.analytic
+    AND STARTS_WITH(dam.account, '7')
   CROSS JOIN params p
 ),
 
@@ -171,8 +177,8 @@ white AS (
     dam.analytic,
     da.store_code,
     da.shipping_country_classification,
-    CAST(NULL AS STRING) AS famille_de_categorie,
-    CAST(NULL AS STRING) AS categorie,
+    ana.famille AS famille_de_categorie,
+    ana.categorie,
     'white' AS source
   FROM data_activation da
   LEFT JOIN `teamdata-291012.accounting.model` dam
@@ -191,6 +197,9 @@ white AS (
         OR dam.shipping_country IS NULL AND da.shipping_country_classification = 'HUE'
       )
     )
+  LEFT JOIN `teamdata-291012.accounting.analytics` ana
+    ON ana.code = dam.analytic
+    AND STARTS_WITH(dam.account, '7')
   CROSS JOIN params p
 ),
 
