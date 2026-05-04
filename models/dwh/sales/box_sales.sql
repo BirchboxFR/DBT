@@ -302,9 +302,13 @@ FROM
         ELSE s.total_product 
   END AS total_product,
   case when acqui.user_key is not null then true else false end as crm_acquisition,
-  case WHEN DATE_DIFF(CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END, date(b.shipping_date), DAY) + 1 < 0 THEN 'BEFORE CYCLE' 
-  when acqui.user_key is not null then 'CRM' 
-  else 'OTHER' end as acquisition_attribution,
+  CASE
+  WHEN t.box_id - lag(t.box_id) over (partition by t.user_id, t.dw_country_code order by t.box_id, t.order_detail_id) IN (0,1)
+    OR t.box_id - lag(t.box_id) over (partition by t.order_detail_id, t.dw_country_code order by t.box_id, t.order_detail_id) = 1 THEN 'LIVE'
+  WHEN DATE_DIFF(CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END, date(b.shipping_date), DAY) + 1 < 0 THEN 'BEFORE CYCLE'
+  WHEN acqui.user_key IS NOT NULL THEN 'CRM'
+  ELSE 'OTHER'
+END AS acquisition_attribution,
   o.dw_country_code AS store_code,
   COALESCE(tva.taux, 0) AS vat_rate,
   CASE WHEN s.sub_payment_status_id = 8 OR o.status_id = 3 THEN 0.0
