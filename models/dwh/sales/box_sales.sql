@@ -303,8 +303,8 @@ FROM
   END AS total_product,
   case when acqui.user_key is not null then true else false end as crm_acquisition,
   CASE
-  WHEN t.box_id - lag(t.box_id) over (partition by t.user_id, t.dw_country_code order by t.box_id, t.order_detail_id) IN (0,1)
-    OR t.box_id - lag(t.box_id) over (partition by t.order_detail_id, t.dw_country_code order by t.box_id, t.order_detail_id) = 1 THEN 'LIVE'
+  WHEN s.box_id - lag(s.box_id) over (partition by o.user_id, s.dw_country_code order by s.box_id, s.order_detail_id) IN (0,1)
+    OR s.box_id - lag(s.box_id) over (partition by s.order_detail_id, s.dw_country_code order by s.box_id, s.order_detail_id) = 1 THEN 'LIVE'
   WHEN DATE_DIFF(CASE WHEN an.eventDate IS NULL THEN date(s.last_payment_date) ELSE date(an.eventDate) END, date(b.shipping_date), DAY) + 1 < 0 THEN 'BEFORE CYCLE'
   WHEN acqui.user_key IS NOT NULL THEN 'CRM'
   ELSE 'OTHER'
