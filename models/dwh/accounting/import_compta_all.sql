@@ -1,5 +1,5 @@
-SELECT * FROM {{ ref('import_compta_box') }}
+SELECT *,'BOX' FROM {{ ref('import_compta_box') }}
 UNION ALL
-SELECT * FROM {{ ref('import_compta_shop') }}
+SELECT *,'SHOP' FROM {{ ref('import_compta_shop') }}
 UNION ALL
-SELECT * FROM {{ ref('import_compta_gift') }}
+SELECT *'GIFT' FROM {{ ref('import_compta_gift') }}
