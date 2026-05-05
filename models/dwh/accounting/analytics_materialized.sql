@@ -1,0 +1,1 @@
+ select * from teamdata-291012.accounting.analytics

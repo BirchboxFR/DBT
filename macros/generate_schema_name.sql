@@ -9,7 +9,7 @@
     {%- set payment_tmp_tables = ['adyen_notifications_authorization'] -%}
     {%- set product_tmp_tables = ['products_shop_by_month','products_lte_by_month','products_box_by_month','gws_by_month','catalog', 'algolia_product_categories', 'categories','kit_costs','all_kits','nice_names','codification_bundle_product','stock','stock_bs','stock_store','kit_details','reviews','product_classes','product_classes_3m'] -%}
     {%- set marketing_tmp_tables = ['predictive_ltv_conversion_upload','Export_predictive_ltv_per_campaign_agg','Export_predictive_ltv_per_campaign','Export_Yearly_Live','Export_GWS_LIVE','Export_Acquisition_Daily','Export_Discount_Live','marketing_expenses_box','Export_special_cost_daily'] -%}
-    {%- set accounting_tmp_tables = ['import_compta_box','import_compta_shop','import_compta_gift','import_compta_all','reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
+    {%- set accounting_tmp_tables = ['analytics_materialized','import_compta_box','import_compta_shop','import_compta_gift','import_compta_all','reconciliation_live','shop_detailed','box_turnover','box_detailed'] -%}
     {%- set blissim_analytics_tmp_tables = ['monthly_rank_brands'] -%}
     {%- set sublissim_tmp_tables = ['kit_dedup'] -%}
     {%- set inter_tmp_tables = ['order_detail_sub_merged','order_details_merged','survey_surveys','choose_users','products','users','tags','comments','products_stock_log','product_warehouse_location','kit_links','products_bundle_component','posts','adyen_notifications','products_stock_log','orders','order_details','order_detail_sub','sub_offers','coupons','sub_order_link','gift_cards','sub_history','sub_suspend_survey_result','sub_suspend_survey_result_answer','inventory_items','partial_cancelations'] -%}
