@@ -25,7 +25,7 @@ green AS (
     1 AS ordre_ecriture,
     dam.account,
     CASE WHEN dg.store_code = 'Store' THEN '411STORE' ELSE '411ESHOP' END AS account_,
-    '0226GIFT' AS numero_piece,
+    CONCAT('0226GIFT-', dg.store_code) AS numero_piece,
     dam.type,
     CONCAT(dg.store_code, ' ', dam.type_nice_name, ' Gift 0226') AS ecriture,
     p.last_day AS date,
@@ -59,7 +59,7 @@ blue AS (
     2 AS ordre_ecriture,
     account,
     account_,
-    '0226PCAGIFT' AS numero_piece,
+    CONCAT('0226PCAGIFT-', store_code) AS numero_piece,
     type,
     CONCAT('PCA ', ecriture) AS ecriture,
     p.first_day AS date,
@@ -100,7 +100,7 @@ expired_cards AS (
     3 AS ordre_ecriture,
     dam.account,
     CASE WHEN shop.store_code = 'Store' THEN '411STORE' ELSE '411ESHOP' END AS account_,
-    'X0226EXPGIFT' AS numero_piece,
+    CONCAT('X0226EXPGIFT-', shop.store_code) AS numero_piece,
     dam.type,
     CONCAT(shop.store_code, ' expired Gift 0226') AS ecriture,
     p.first_day AS date,
@@ -163,7 +163,7 @@ white AS (
     3 AS ordre_ecriture,
     dam.account,
     CASE WHEN da.store_code = 'Store' THEN '411STORE' ELSE '411ESHOP' END AS account_,
-    'X0226PCAGIFT' AS numero_piece,
+    CONCAT('X0226PCAGIFT-', da.store_code) AS numero_piece,
     dam.type,
     CONCAT('Ext. PCA ', da.store_code, ' ', dam.type_nice_name, ' Gift ', da.shipping_country_classification, ' 0226') AS ecriture,
     p.first_day AS date,
@@ -223,17 +223,15 @@ totals AS (
     END AS account,
     CAST(NULL AS STRING) AS account_,
     CASE ordre_ecriture
-      WHEN 1 THEN '0226GIFT'
-      WHEN 2 THEN '0226PCAGIFT'
+      WHEN 1 THEN CONCAT('0226GIFT-', store_code)
+      WHEN 2 THEN CONCAT('0226PCAGIFT-', store_code)
       WHEN 3 THEN
-        CASE WHEN source = 'expired' THEN 'X0226EXPGIFT' ELSE 'X0226PCAGIFT' END
+        CASE WHEN source = 'expired' THEN CONCAT('X0226EXPGIFT-', store_code) ELSE CONCAT('X0226PCAGIFT-', store_code) END
     END AS numero_piece,
     CAST(NULL AS STRING) AS type,
     CASE ordre_ecriture
-      WHEN 1 THEN
-        CASE WHEN store_group = 'UE' THEN 'Sales Gift UE 0226' ELSE 'Sales Gift 0226' END
-      WHEN 2 THEN
-        CASE WHEN store_group = 'UE' THEN 'PCA Sales Gift UE 0226' ELSE 'PCA Sales Gift 0226' END
+      WHEN 1 THEN CONCAT(store_code, ' Sales Gift 0226')
+      WHEN 2 THEN CONCAT('PCA ', store_code, ' Sales Gift 0226')
       WHEN 3 THEN
         CASE
           WHEN source = 'expired' THEN CONCAT(store_code, ' expired Gift 0226')

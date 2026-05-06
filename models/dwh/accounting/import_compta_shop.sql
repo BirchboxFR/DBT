@@ -9,10 +9,29 @@ WITH params AS (
 ),
 
 base AS (
-  SELECT * EXCEPT(year, month)
-  FROM accounting.shop_detailed
-  WHERE year = 2026
-    AND month = 2
+  SELECT
+    sd.journal,
+    sd.date,
+    sd.type,
+    sd.p_codification,
+    sd.store_code,
+    sd.shipping_country,
+    sd.shipping_country_classification,
+    sd.vat_rate,
+    sd.v,
+    sd.account,
+    sd.ecriture,
+    sd.analytic,
+    sd.debit,
+    sd.credit,
+    ana.famille,
+    ana.categorie
+  FROM accounting.shop_detailed sd
+  LEFT JOIN `teamdata-291012.accounting.analytics` ana
+    ON ana.code = sd.analytic
+    AND STARTS_WITH(sd.account, '7')
+  WHERE sd.year = 2026
+    AND sd.month = 2
 
   UNION ALL
 
@@ -22,10 +41,10 @@ base AS (
     'TOTAL' AS type,
     'TOTAL' AS p_codification,
     store_code,
-    NULL AS shipping_country,
+    CAST(NULL AS STRING) AS shipping_country,
     shipping_country_classification,
-    NULL AS vat_rate,
-    NULL AS v,
+    CAST(NULL AS NUMERIC) AS vat_rate,
+    CAST(NULL AS FLOAT64) AS v,
     CASE WHEN store_code IN ('FR', 'DE', 'ES', 'IT') THEN '411ESHOP' ELSE '411STORE' END AS account,
     CONCAT(
       'Sales ',
@@ -33,11 +52,13 @@ base AS (
         WHEN store_code IN ('FR', 'DE', 'ES', 'IT') THEN CONCAT('Eshop ', shipping_country_classification)
         WHEN store_code = 'Store' THEN 'Store '
       END,
-      '0226'
+      ' 0226'
     ) AS ecriture,
-    NULL AS analytic,
+    CAST(NULL AS STRING) AS analytic,
     SUM(credit - debit) AS debit,
-    NULL AS credit
+    CAST(NULL AS FLOAT64) AS credit,
+    CAST(NULL AS STRING) AS famille,
+    CAST(NULL AS STRING) AS categorie
   FROM accounting.shop_detailed
   WHERE year = 2026
     AND month = 2
@@ -48,6 +69,7 @@ SELECT
   FORMAT_DATE('%d %m %Y', date) AS date,
   'VT' AS journal,
   account,
+  CONCAT('0226ESHOP', store_code, '-', shipping_country_classification) AS numero_piece,
   CONCAT(
     store_code, ' ',
     REGEXP_REPLACE(
@@ -64,14 +86,12 @@ SELECT
       CASE WHEN store_code = 'Store' THEN ' STORE ' ELSE ' ESHOP ' END
     )
   ) AS ecriture,
-  CONCAT('0226ESHOP', store_code, '-', shipping_country_classification) AS numero_piece,
   SUM(debit) AS debit,
   SUM(credit) AS credit,
   famille AS famille_de_categorie,
   categorie,
   analytic
 FROM base
-LEFT JOIN `teamdata-291012.accounting.analytics` ana ON ana.code = analytic
 GROUP BY journal, store_code, date, shipping_country_classification, account, analytic, famille, categorie
 ORDER BY
   CASE store_code
@@ -81,6 +101,15 @@ ORDER BY
   CASE shipping_country_classification
     WHEN 'FR' THEN 1 WHEN 'DE' THEN 2 WHEN 'ES' THEN 3
     WHEN 'IT' THEN 4 WHEN 'EU' THEN 5 WHEN 'HUE' THEN 6
+  END,
+  CASE
+    WHEN STARTS_WITH(account, '701') THEN 1
+    WHEN STARTS_WITH(account, '707') THEN 2
+    WHEN STARTS_WITH(account, '708') THEN 3
+    WHEN STARTS_WITH(account, '709') THEN 4
+    WHEN STARTS_WITH(account, '4457') THEN 5
+    WHEN STARTS_WITH(account, '411') THEN 6
+    ELSE 7
   END,
   CASE MAX(p_codification)
     WHEN 'BYOB' THEN 1 WHEN 'CALENDAR' THEN 2 WHEN 'ESHOP' THEN 3
