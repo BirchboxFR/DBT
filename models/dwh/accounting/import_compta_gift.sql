@@ -239,7 +239,9 @@ totals AS (
         CASE
           WHEN source = 'expired' THEN CONCAT(store_code, ' expired Gift 0226')
           ELSE CONCAT('Ext. PCA ', store_code, ' Sales Gift ',
-            CASE WHEN shipping_country_classification = 'EU' THEN 'AT' ELSE shipping_country_classification END,
+            CASE WHEN MAX(shipping_country_classification) = 'EU' THEN 'AT'
+                 ELSE MAX(shipping_country_classification)
+            END,
             ' 0226')
         END
     END AS ecriture,
@@ -248,7 +250,7 @@ totals AS (
     GREATEST(SUM(debit) - SUM(credit), 0) AS credit,
     CAST(NULL AS STRING) AS analytic,
     store_code,
-    CAST(NULL AS STRING) AS shipping_country_classification,
+    CASE WHEN source = 'white' THEN MAX(shipping_country_classification) ELSE NULL END AS shipping_country_classification,
     CAST(NULL AS STRING) AS famille_de_categorie,
     CAST(NULL AS STRING) AS categorie,
     source
@@ -265,8 +267,7 @@ totals AS (
     store_code,
     store_group,
     ordre_ecriture,
-    source,
-    shipping_country_classification
+    source
 )
 
 SELECT
