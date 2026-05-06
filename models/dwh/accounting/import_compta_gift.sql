@@ -232,7 +232,7 @@ totals AS (
         CASE WHEN source = 'expired' THEN CONCAT('X0226EXPGIFT-', store_code) ELSE CONCAT('X0226PCAGIFT-', store_code) END
     END AS numero_piece,
     CAST(NULL AS STRING) AS type,
-       CASE ordre_ecriture
+    CASE ordre_ecriture
       WHEN 1 THEN CONCAT(store_code, ' Sales Gift 0226')
       WHEN 2 THEN CONCAT('PCA ', store_code, ' Sales Gift 0226')
       WHEN 3 THEN
@@ -265,7 +265,8 @@ totals AS (
     store_code,
     store_group,
     ordre_ecriture,
-    source
+    source,
+    shipping_country_classification
 )
 
 SELECT
