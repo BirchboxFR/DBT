@@ -165,8 +165,11 @@ white AS (
     CASE WHEN da.store_code = 'Store' THEN '411STORE' ELSE '411ESHOP' END AS account_,
     CONCAT('X0226PCAGIFT-', da.store_code) AS numero_piece,
     dam.type,
-    CONCAT('Ext. PCA ', da.store_code, ' ', dam.type_nice_name, ' Gift ', da.shipping_country_classification, ' 0226') AS ecriture,
-    p.first_day AS date,
+    CONCAT('Ext. PCA ', da.store_code, ' ', dam.type_nice_name, ' Gift ', 
+  CASE WHEN da.shipping_country_classification = 'EU' THEN 'AT' 
+       ELSE da.shipping_country_classification 
+  END, ' 0226') AS ecriture,
+  p.first_day AS date,
     CASE WHEN dam.type = 'DISCOUNT_ACTIVATION' THEN da.discount
          WHEN dam.type IN ('ACTIVATION', 'VAT') THEN 0
     END AS debit,
@@ -229,13 +232,15 @@ totals AS (
         CASE WHEN source = 'expired' THEN CONCAT('X0226EXPGIFT-', store_code) ELSE CONCAT('X0226PCAGIFT-', store_code) END
     END AS numero_piece,
     CAST(NULL AS STRING) AS type,
-    CASE ordre_ecriture
+       CASE ordre_ecriture
       WHEN 1 THEN CONCAT(store_code, ' Sales Gift 0226')
       WHEN 2 THEN CONCAT('PCA ', store_code, ' Sales Gift 0226')
       WHEN 3 THEN
         CASE
           WHEN source = 'expired' THEN CONCAT(store_code, ' expired Gift 0226')
-          ELSE CONCAT('Ext. PCA ', store_code, ' Sales Gift 0226')
+          ELSE CONCAT('Ext. PCA ', store_code, ' Sales Gift ',
+            CASE WHEN shipping_country_classification = 'EU' THEN 'AT' ELSE shipping_country_classification END,
+            ' 0226')
         END
     END AS ecriture,
     MAX(date) AS date,
