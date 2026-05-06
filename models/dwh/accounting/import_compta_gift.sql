@@ -165,11 +165,11 @@ white AS (
     CASE WHEN da.store_code = 'Store' THEN '411STORE' ELSE '411ESHOP' END AS account_,
     CONCAT('X0226PCAGIFT-', da.store_code) AS numero_piece,
     dam.type,
-    CONCAT('Ext. PCA ', da.store_code, ' ', dam.type_nice_name, ' Gift ', 
-  CASE WHEN da.shipping_country_classification = 'EU' THEN 'AT' 
-       ELSE da.shipping_country_classification 
-  END, ' 0226') AS ecriture,
-  p.first_day AS date,
+    CONCAT('Ext. PCA ', da.store_code, ' ', dam.type_nice_name, ' Gift ',
+      CASE WHEN da.store_code = 'DE' AND da.shipping_country_classification = 'EU' THEN 'AT'
+           ELSE da.shipping_country_classification
+      END, ' 0226') AS ecriture,
+    p.first_day AS date,
     CASE WHEN dam.type = 'DISCOUNT_ACTIVATION' THEN da.discount
          WHEN dam.type IN ('ACTIVATION', 'VAT') THEN 0
     END AS debit,
@@ -238,11 +238,7 @@ totals AS (
       WHEN 3 THEN
         CASE
           WHEN source = 'expired' THEN CONCAT(store_code, ' expired Gift 0226')
-          ELSE CONCAT('Ext. PCA ', store_code, ' Sales Gift ',
-            CASE WHEN MAX(shipping_country_classification) = 'EU' THEN 'AT'
-                 ELSE MAX(shipping_country_classification)
-            END,
-            ' 0226')
+          ELSE CONCAT('Ext. PCA ', store_code, ' Activ. Gift 0226')
         END
     END AS ecriture,
     MAX(date) AS date,
@@ -250,7 +246,7 @@ totals AS (
     GREATEST(SUM(debit) - SUM(credit), 0) AS credit,
     CAST(NULL AS STRING) AS analytic,
     store_code,
-    CASE WHEN source = 'white' THEN MAX(shipping_country_classification) ELSE NULL END AS shipping_country_classification,
+    CAST(NULL AS STRING) AS shipping_country_classification,
     CAST(NULL AS STRING) AS famille_de_categorie,
     CAST(NULL AS STRING) AS categorie,
     source
