@@ -658,6 +658,8 @@ ac.dw_country_code,
        fos.device AS first_order_device,
        nb_shop_orders,
        cpb.balance,
+       ch.balance_yesterday,
+       cpb.balance - ch.balance_yesterday AS balance_delta_vs_yesterday,
        cpb.points_soon_to_expire,
        case when nb_shop_orders = 1 then '1'
        when nb_shop_orders between 2 and 5 then '2-5'
@@ -715,6 +717,14 @@ LEFT JOIN gp_box ON gp_box.dw_country_code = ac.dw_country_code AND gp_box.user_
 LEFT JOIN gp_shop ON gp_shop.dw_country_code = ac.dw_country_code AND gp_shop.user_id = ac.user_id
 LEFT JOIN `teamdata-291012.predictive_ltv.ltv` ltv ON ltv.user_id = ac.user_id AND ac.dw_country_code = 'FR'
 LEFT JOIN user.customers_points_balance cpb on cpb.user_id=ac.user_id and cpb.dw_country_code=ac.dw_country_code
+LEFT JOIN (
+  SELECT user_id, dw_country_code, balance AS balance_yesterday
+  FROM `normalised-417010.user.customers_history`
+  WHERE dbt_valid_from <= TIMESTAMP_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY), INTERVAL 1 DAY)
+    AND (dbt_valid_to > TIMESTAMP_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY), INTERVAL 1 DAY)
+         OR dbt_valid_to IS NULL)
+  QUALIFY ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY dbt_valid_from DESC) = 1
+) ch ON ch.user_id = ac.user_id and ch.dw_country_code = ac.dw_country_code
 LEFT JOIN inter.user_consent ucs on lower(ucs.user_email)=ac.email and ucs.dw_country_code=ac.dw_country_code and consent_topic_id=3
 left join user.customers_clustered ccd on ccd.user_key= ac.dw_country_code||'_'||cast(ac.user_id as string)
 LEFT JOIN (SELECT address, status, eventdate
