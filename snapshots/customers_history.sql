@@ -11,7 +11,7 @@
         'billing_adress','user_consent_optin_email','optin','optin_ctc',
         'optin_email','optin_partner','optin_sms','optin_whatsapp','skin_type',
         'skin_complexion','hair_type','hair_color','beauty_budget','skin_tone',
-        'box_sub_status','current_sub_type','current_is_committed',balance,
+        'box_sub_status','current_sub_type','current_is_committed','balance',
         'current_coupon_code','next_box_churn','is_admin','is_shopper',
         'is_shopper_fullsize','is_ever_gifted','is_raffer'
       ]
