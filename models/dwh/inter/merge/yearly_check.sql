@@ -78,6 +78,8 @@ WITH source_data AS (
         )
     {% endif %}
 
+    UNION ALL
+    
      -- Données Allemagne
     SELECT 
         id,
