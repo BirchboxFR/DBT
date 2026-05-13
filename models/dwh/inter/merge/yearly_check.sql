@@ -79,7 +79,7 @@ WITH source_data AS (
     {% endif %}
 
     UNION ALL
-    
+
      -- Données Allemagne
     SELECT 
         id,
@@ -89,7 +89,7 @@ WITH source_data AS (
         current_box_sub_id,
         'DE' as dw_country_code,
         `_ab_cdc_updated_at` as source_updated_at
-    FROM `teamdata-291012.prod_se.wp_jb_yearly_check`
+    FROM `teamdata-291012.prod_de.wp_jb_yearly_check`
     WHERE `_ab_cdc_deleted_at` IS NULL
     {% if is_incremental() %}
         AND `_ab_cdc_updated_at` >= (
