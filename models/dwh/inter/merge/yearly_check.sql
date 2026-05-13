@@ -67,9 +67,27 @@ WITH source_data AS (
         updated_at,
         next_box_sub_id,
         current_box_sub_id,
-        'PL' as dw_country_code,
+        'SE' as dw_country_code,
         `_ab_cdc_updated_at` as source_updated_at
     FROM `teamdata-291012.bdd_prod_se.wp_jb_yearly_check`
+    WHERE `_ab_cdc_deleted_at` IS NULL
+    {% if is_incremental() %}
+        AND `_ab_cdc_updated_at` >= (
+            SELECT COALESCE(MAX(source_updated_at), '1900-01-01') 
+            FROM {{ this }}
+        )
+    {% endif %}
+
+     -- Données Allemagne
+    SELECT 
+        id,
+        created_at,
+        updated_at,
+        next_box_sub_id,
+        current_box_sub_id,
+        'DE' as dw_country_code,
+        `_ab_cdc_updated_at` as source_updated_at
+    FROM `teamdata-291012.prod_se.wp_jb_yearly_check`
     WHERE `_ab_cdc_deleted_at` IS NULL
     {% if is_incremental() %}
         AND `_ab_cdc_updated_at` >= (
