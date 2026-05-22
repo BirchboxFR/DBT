@@ -609,16 +609,17 @@ GROUP BY dw_country_code, y, m
 UNION ALL
 
 -- COGS Coop - products cost for the box
-SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE', 'COGS - Product cost', 'BOX', SUM(c.euro_purchase_price*kl.quantity) as total_purchase_prices
-FROM {{ ref('kit_links') }} kl
-JOIN {{ ref('products') }} p ON p.id = kl.kit_id AND p.dw_country_code = kl.dw_country_code
-JOIN {{ ref('catalog') }} as c ON c.product_id = kl.product_id AND c.dw_country_code = kl.dw_country_code 
-JOIN {{ ref('boxes') }} b ON b.id = p.box_id AND b.dw_country_code = p.dw_country_code
-JOIN {{ ref('box_sales') }} bs ON bs.box_id = p.box_id AND bs.coffret_id = p.coffret_id AND bs.dw_country_code = p.dw_country_code
-WHERE 1=1
-AND c.product_codification_id = 30
-AND bs.box_id >= 112
-GROUP BY bs.dw_country_code, bs.year, bs.month
+SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE', 'COGS - Product cost', 'BOX', SUM(iic.euro_purchase_price*k.quantity) as total_purchase_prices
+FROM sales.box_sales bs
+JOIN inter.products p ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
+JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii ON ii.sku = p.sku
+JOIN `teamdata-291012.bdd_prod_sublissim.kit` k ON k.parent_inventory_item_id = ii.id
+JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii_component ON ii_component.id = k.child_inventory_item_id
+JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = ii_component.sku
+WHERE bs.box_id >= 112
+AND ii_component.logistic_category_id = 1
+
+GROUP BY ALL
 
 
 UNION ALL
@@ -689,10 +690,16 @@ UNION ALL
 SELECT bs.dw_country_code, bs.year, bs.month, bs.dw_country_code, 
 concat('unit-cogs-box-',CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END,'-',LOWER(bs.dw_country_code)), 
 CONCAT('box-', CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END), 
-SAFE_DIVIDE(SUM(iic.euro_purchase_price), COUNT(DISTINCT bs.sub_id)) as value
-FROM {{ ref('kit_details') }} kd
-JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = kd.component_sku
-JOIN {{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
+SAFE_DIVIDE(
+  SUM(iic.euro_purchase_price), 
+  COUNT(DISTINCT bs.sub_id) * CASE WHEN bs.month = 7 THEN 2 ELSE 1 END
+) AS value
+FROM sales.box_sales bs
+JOIN inter.products p ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
+JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii ON ii.sku = p.sku
+JOIN `teamdata-291012.bdd_prod_sublissim.kit` k ON k.parent_inventory_item_id = ii.id
+JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii_component ON ii_component.id = k.child_inventory_item_id
+JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = ii_component.sku
 WHERE 1=1
 AND bs.box_id >= 112
 GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
