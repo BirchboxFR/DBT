@@ -613,7 +613,7 @@ SELECT bs.dw_country_code, bs.year, bs.month, 'ONLINE', 'COGS - Product cost', '
 FROM sales.box_sales bs
 JOIN inter.products p ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
 JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii ON ii.sku = p.sku
-JOIN `teamdata-291012.bdd_prod_sublissim.kit` k ON k.parent_inventory_item_id = ii.id
+JOIN `teamdata-291012.bdd_prod_sublissim.kit_dedup` k ON k.parent_inventory_item_id = ii.id
 JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii_component ON ii_component.id = k.child_inventory_item_id
 JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = ii_component.sku
 WHERE bs.box_id >= 112
@@ -697,7 +697,7 @@ SAFE_DIVIDE(
 FROM sales.box_sales bs
 JOIN inter.products p ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
 JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii ON ii.sku = p.sku
-JOIN `teamdata-291012.bdd_prod_sublissim.kit` k ON k.parent_inventory_item_id = ii.id
+JOIN `teamdata-291012.bdd_prod_sublissim.kit_dedup` k ON k.parent_inventory_item_id = ii.id
 JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii_component ON ii_component.id = k.child_inventory_item_id
 JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = ii_component.sku
 WHERE 1=1
