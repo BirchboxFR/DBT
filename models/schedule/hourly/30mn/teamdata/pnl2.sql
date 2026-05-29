@@ -708,13 +708,13 @@ UNION ALL
 
 -- unit COGS BOX by year
 SELECT
-  dw_country_code,
-  year,
+  m.dw_country_code,
+  m.year,
   NULL,
-  dw_country_code,
-  CONCAT('unit-cogs-box-', CASE WHEN logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE logistic_category END, '-', LOWER(dw_country_code)),
-  CONCAT('box-', CASE WHEN logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE logistic_category END),
-  SAFE_DIVIDE(SUM(total_cost), SUM(nb_boxes)) AS value
+  m.dw_country_code,
+  CONCAT('unit-cogs-box-', CASE WHEN m.logistic_category = 'product' THEN 'coop' WHEN m.logistic_category = 'consumable item' THEN 'shipper' ELSE m.logistic_category END, '-', LOWER(m.dw_country_code)),
+  CONCAT('box-', CASE WHEN m.logistic_category = 'product' THEN 'coop' WHEN m.logistic_category = 'consumable item' THEN 'shipper' ELSE m.logistic_category END),
+  SAFE_DIVIDE(SUM(m.total_cost), SUM(m.nb_boxes)) AS value
 FROM (
   SELECT
     bs.dw_country_code,
@@ -728,8 +728,8 @@ FROM (
   JOIN {{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
   WHERE bs.box_id >= 112
   GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
-)
-GROUP BY dw_country_code, year, logistic_category
+) m
+GROUP BY m.dw_country_code, m.year, m.logistic_category
 
 UNION ALL
 
