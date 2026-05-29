@@ -589,6 +589,7 @@ SELECT dw_country_code, extract(year from date) as y, extract(month from date) a
 concat('coop-save-pipe-wout_acquisbox-',LOWER(dw_country_code)) AS type, NULL, save_pipe_coop AS value
 FROM allocation.campaign_recap
 WHERE LOWER(project_name) NOT LIKE '%acqui%'
+AND LOWER(project_name) NOT LIKE '%back%up%'
 
 UNION ALL
 
@@ -597,6 +598,7 @@ SELECT dw_country_code, extract(year from date) as y, extract(month from date) a
 concat('coop-save-pipe-acquisbox-only-',LOWER(dw_country_code)) AS type, NULL, save_pipe_coop AS value
 FROM allocation.campaign_recap
 WHERE LOWER(project_name) LIKE '%acqui%'
+AND LOWER(project_name) NOT LIKE '%back%up%'
 
 UNION ALL
 
@@ -604,6 +606,7 @@ UNION ALL
 SELECT dw_country_code, extract(year from date) as y, extract(month from date) as m,  NULL, 
 concat('coop-save-pipe-total-',LOWER(dw_country_code)) AS type, NULL, SAFE_DIVIDE(SUM(SAFE_DIVIDE(TOTAL_Sourced_Volume,nb_products_by_box)*save_pipe_coop),SUM(SAFE_DIVIDE(TOTAL_Sourced_Volume,nb_products_by_box))) AS value
 FROM allocation.campaign_recap
+WHERE LOWER(project_name) NOT LIKE '%back%up%'
 GROUP BY dw_country_code, y, m
 
 UNION ALL
