@@ -692,7 +692,7 @@ concat('unit-cogs-box-',CASE WHEN iic.logistic_category = 'product' THEN 'coop' 
 CONCAT('box-', CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END), 
 SAFE_DIVIDE(
   SUM(iic.euro_purchase_price), 
-  COUNT(DISTINCT bs.sub_id) * CASE WHEN bs.month = 7 THEN 2 ELSE 1 END
+  COUNT(DISTINCT bs.sub_id) * CASE WHEN bs.month = 7 THEN 1 ELSE 1 END -- on ne prend pas en compte la double pour diviser par 2 le unit cost
 ) AS value
 FROM sales.box_sales bs
 JOIN inter.products p ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
@@ -707,17 +707,46 @@ GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
 UNION ALL
 
 -- unit COGS BOX by year
-SELECT bs.dw_country_code, bs.year, NULL, bs.dw_country_code, 
-concat('unit-cogs-box-',CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END,'-',LOWER(bs.dw_country_code)), 
-CONCAT('box-', CASE WHEN iic.logistic_category = 'product' THEN 'coop' WHEN logistic_category = 'consumable item' THEN 'shipper' ELSE iic.logistic_category END), 
-SAFE_DIVIDE(SUM(iic.euro_purchase_price), COUNT(DISTINCT bs.sub_id)) as value
-FROM {{ ref('kit_details') }} kd
-JOIN `teamdata-291012.catalog.inventory_item_catalog` iic ON iic.sku = kd.component_sku
-JOIN {{ ref('box_sales') }} bs ON bs.box_id = kd.box_id AND bs.coffret_id = kd.coffret_id AND bs.dw_country_code = kd.dw_country_code
-WHERE 1=1
-AND bs.box_id >= 112
-GROUP BY bs.dw_country_code, bs.year,  iic.logistic_category
-
+SELECT
+  dw_country_code,
+  year,NULL,
+  CONCAT(
+    'unit-cogs-box-',
+    CASE WHEN logistic_category = 'product' THEN 'coop' 
+         WHEN logistic_category = 'consumable item' THEN 'shipper' 
+         ELSE logistic_category END,
+    '-', LOWER(dw_country_code)
+  )                                                AS metric_id,
+  CONCAT(
+    'box-',
+    CASE WHEN logistic_category = 'product' THEN 'coop' 
+         WHEN logistic_category = 'consumable item' THEN 'shipper' 
+         ELSE logistic_category END
+  )                                                AS metric_label,
+  SAFE_DIVIDE(SUM(total_cost), SUM(nb_boxes))      AS value
+FROM (
+  SELECT 
+    bs.dw_country_code, 
+    bs.year, 
+    bs.month, 
+    iic.logistic_category,
+    SUM(iic.euro_purchase_price)                                                AS total_cost,
+    COUNT(DISTINCT bs.sub_id) * CASE WHEN bs.month = 7 THEN 2 ELSE 1 END       AS nb_boxes
+  FROM sales.box_sales bs
+  JOIN inter.products p 
+    ON p.box_id = bs.box_id AND p.coffret_id = bs.coffret_id AND p.dw_country_code = bs.dw_country_code
+  JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii 
+    ON ii.sku = p.sku
+  JOIN `teamdata-291012.bdd_prod_sublissim.kit_dedup` k 
+    ON k.parent_inventory_item_id = ii.id
+  JOIN `teamdata-291012.bdd_prod_sublissim.inventory_item` ii_component 
+    ON ii_component.id = k.child_inventory_item_id
+  JOIN `teamdata-291012.catalog.inventory_item_catalog` iic 
+    ON iic.sku = ii_component.sku
+  WHERE bs.box_id >= 112
+  GROUP BY bs.dw_country_code, bs.year, bs.month, iic.logistic_category
+)
+GROUP BY dw_country_code, year, logistic_category
 
 UNION ALL
 
