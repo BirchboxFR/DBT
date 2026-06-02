@@ -5,10 +5,11 @@ models:
     description: "Table des ventes partielles de box"
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - sub_id
-            - dw_country_code
-          severity: warn
+          arguments:
+            combination_of_columns:
+              - sub_id
+              - dw_country_code
           config:
+            severity: warn
             store_failures: true
             name: "Doublons partial_box_paid"
