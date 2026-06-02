@@ -60,11 +60,13 @@ snapshots:
 # Configuration des modèles
 models:
   warehouse:
-    +store_failures_as: table
+    +meta:
+      store_failures_as: table
     dwh:
       +query_tag: "no_cache"
       +materialized: table
-      +region: europe-west1
+      +meta:
+        region: europe-west1
       +schema: dwh_schema
       sales:
         +persist_docs:
@@ -87,9 +89,9 @@ models:
         materialized_views:
           refresh_4h:
             +materialized: materialized_view
-            ++enable_refresh: true
-            ++max_staleness: 'INTERVAL "0:30:0" HOUR TO SECOND'
-            ++refresh_interval_minutes: 360
+            +enable_refresh: true
+            +max_staleness: 'INTERVAL "0:30:0" HOUR TO SECOND'
+            +refresh_interval_minutes: 360
         merge:
           +materialized: incremental
           +on_schema_change: sync_all_columns
@@ -102,7 +104,8 @@ models:
           normalised:
             +database: normalised-417010
       hourly:
-        30mn:
+        +meta:
+          30mn:
         1H:
           normalised:
             +database: normalised-417010
