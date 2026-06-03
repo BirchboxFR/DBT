@@ -80,7 +80,7 @@ SELECT
   campaign_id,
   campaign_name,
   imo_variant,
-  custom_Categorie_de_campagne
+  custom_Categorie_de_campagne,
   startdate,
   opened,
   campaign_date,
