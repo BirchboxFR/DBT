@@ -6,7 +6,8 @@ WITH acquisitions_cycle AS (
     ss.order_date,
     SUM(net_revenue) AS net_revenue,
     SUM(CASE WHEN product_codification IN ('LTE','SPLENDIST','CALENDAR') THEN net_revenue ELSE 0 END) AS LTE_net_revenue,
-    SUM(CASE WHEN product_codification = 'ESHOP' THEN net_revenue ELSE 0 END) AS ESHOP_net_revenue
+    SUM(CASE WHEN product_codification = 'ESHOP' THEN net_revenue ELSE 0 END) AS ESHOP_net_revenue,
+    sum(case when product_codification = ('GIFT') then quantity else 0 end) as gift_quantity
   FROM `teamdata-291012.sales.shop_sales` ss
   WHERE order_Status = 'Validée'
   GROUP BY ALL
@@ -43,6 +44,7 @@ campaign_ranked AS (
     SUM(a.net_revenue)      AS net_revenue,
     SUM(a.LTE_net_revenue)  AS LTE_net_revenue,
     SUM(a.ESHOP_net_revenue) AS ESHOP_net_revenue,
+    sum(a.gift_quantity) as gift_quantity,
     ROW_NUMBER() OVER (
       PARTITION BY c.user_key, a.order_date
       ORDER BY campaign.startdate DESC
@@ -90,7 +92,8 @@ SELECT
   acquis,
   net_revenue,
   LTE_net_revenue,
-  ESHOP_net_revenue
+  ESHOP_net_revenue,
+  gift_quantity
 FROM campaign_ranked
 WHERE rn = 1
 ORDER BY order_date
