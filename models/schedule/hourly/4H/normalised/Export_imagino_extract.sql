@@ -81,7 +81,7 @@ COUNT(            IF(t.type = 'click' AND t.url NOT LIKE '%unsubscribe%', t.addr
 
 SELECT 
     'IMAGINO' AS source,
-ca.custom_Categorie_de_campagne,
+msg.custom_Categorie_de_campagne,
    custom_Categorie_de_Campagne_Lvl_2,
    custom_Code_operation,
    custom_Typologie,
